@@ -18,9 +18,10 @@
 #include <limits.h>
 
 const int PATHSIZE = 21;
-const char* PATH = "/sys/class/gpio";
+const char* PATH = "/sys/class/gpio/gpio";
+const char* PATH_SUFFIX = "/value";
 const int PIN = 17;
-const int SLEEPTIME = 100000; // 1/10 second
+const int SLEEPTIME = 100 * 1000; // 1/10 second
 
 
 void enforceMalloc(void* ptr) {
@@ -33,55 +34,39 @@ void enforceMalloc(void* ptr) {
     }
 }
 
-int validateInt(char* str){
-    char* ep;
-    long val;
-    
-    //Snippet from the manpage
-    errno = 0;
-    val = strtoul(str, &ep, 10);
-    
-    if ((errno == ERANGE && (val == LONG_MAX || val == LONG_MIN))
-        || (errno != 0 && val == -1)) {
-        perror("Strtol failed ");
-        exit(EXIT_FAILURE);
-    }
-    
-    //ep == str --> does not start with a num
-    //*ep != '\0' --> only a part of the string is a num
-    //int range checks
-    if (ep == str || *ep != '\0' || val > INT_MAX || val < INT_MIN) {
-        fprintf(stderr, "%s cannot be parsed to a int\n", str);
-        exit(EXIT_FAILURE);
-    }
-    
-    return (int)val;
-}
-
 int readGPIO(int pin) {
     int value = -1; //default ret
-    
-    
+       
     //preparing for open
-    int sizeConcat = strlen(PATH) + 1;
+    int sizeConcat = strlen(PATH) + 1 + strlen(PATH_SUFFIX);
     
     if (pin >= 10)
         sizeConcat++;
     
     char* concatPath = (char*) malloc(sizeConcat + 1); //nullbyte
     enforceMalloc(concatPath);
-    sprintf(concatPath, "%s%d%s", PATH, pin, "/value\n");
-    
+    sprintf(concatPath, "%s%d%s", PATH, pin, PATH_SUFFIX);
+
     //opening and reading Pin
     FILE *gpio;
     char buffer[10];
     
-    gpio = fopen(concatPath, O_RDONLY);
+    gpio = fopen(concatPath, "r");
     if (gpio != NULL){
         fread(buffer, 10, 1, gpio);
-        value = validateInt(buffer);
+
+        value = buffer[0] - '0'; 
+	if (value != 0 && value != 1){
+		printf("Value is unexpected. Buffer: %s\n", buffer);
+		exit(EXIT_FAILURE);
+	}
+
+	fclose(gpio);
+    } else {
+	perror("fopen failed");
+	exit(EXIT_FAILURE);
     }
-    fclose(gpio);
+    
     
     return value;
 }
@@ -96,15 +81,13 @@ int main() {
     
     while (isRunning) {
         if ((val = readGPIO(PIN)) > -1) {
-            
             if (val != oldValue ) {
                 oldValue = val;
                 if (val == 0) {
                     numberOfPushes++;
-                    printf("Pushes: %d", numberOfPushes);
+                    printf("Pushes: %d\n", numberOfPushes);
                 }
             }
-            
         }
         usleep(SLEEPTIME);
         
