@@ -70,9 +70,9 @@ int readGPIO(int pin) {
     gpio = fopen(concatPath, O_RDONLY);
     if (gpio != NULL){
         fread(buffer, 10, 1, gpio);
-        fclose(gpio);
         value = validateInt(buffer);
     }
+    fclose(gpio);
     
     return value;
 }
