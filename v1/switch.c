@@ -23,7 +23,15 @@ const int PIN = 17;
 const int SLEEPTIME = 100000; // 1/10 second
 
 
-
+void enforceMalloc(void* ptr) {
+    if (ptr == NULL) {
+        //If malloc failes, perror failes also. A direct works.
+        char * out = "Malloc failed!\n";
+        write(2, out, sizeof("Malloc failed!\n"));
+        //perror("Malloc failed!");
+        exit(EXIT_FAILURE);
+    }
+}
 
 int validateInt(char* str){
     char* ep;
@@ -61,7 +69,8 @@ int readGPIO(int pin) {
         sizeConcat++;
     
     char* concatPath = (char*) malloc(sizeConcat + 1); //nullbyte
-    sprintf(concatPath, "%s%d%s", PATH, pin, "/value");
+    enforceMalloc(concatPath);
+    sprintf(concatPath, "%s%d%s", PATH, pin, "/value\n");
     
     //opening and reading Pin
     FILE *gpio;
