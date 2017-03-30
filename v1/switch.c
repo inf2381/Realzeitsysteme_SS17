@@ -63,7 +63,7 @@ int readGPIO(int pin) {
     
     
     //preparing for open
-    int sizeConcat = PATHSIZE + 1;
+    int sizeConcat = strlen(PATH) + 1;
     
     if (pin >= 10)
         sizeConcat++;
