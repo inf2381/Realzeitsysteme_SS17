@@ -58,6 +58,27 @@ char* getValuePath(char* pin) {
     return concatPath;
 }
 
+void writeSafe(char* path, char* value){
+	FILE *gpio;
+    gpio = fopen(concatPath, "w");
+    if (gpio != NULL){
+
+		if (fwrite(&strValue, sizeof(char), 1, gpio) != 0){
+			perror("fwrite failed");
+			exit(EXIT_FAILURE);
+		}
+
+		if (fclose(gpio) = 0) {
+			perror("fclose failed");
+			exit(EXIT_FAILURE);
+		}
+    } else {
+		perror("fopen failed");
+		exit(EXIT_FAILURE);
+    }
+}
+
+
 int readGPIO(char* pin) {
     int value = -1; //default ret
     FILE *gpio;
@@ -109,25 +130,6 @@ void unexportGPIO(char* pin) {
 	writeSafe(PATH_UNEXPORT, pin)
 }
 
-void writeSafe(char* path, char* value){
-	FILE *gpio;
-    gpio = fopen(concatPath, "w");
-    if (gpio != NULL){
-
-		if (fwrite(&strValue, sizeof(char), 1, gpio) != 0){
-			perror("fwrite failed");
-			exit(EXIT_FAILURE);
-		}
-
-		if (fclose(gpio) = 0) {
-			perror("fclose failed");
-			exit(EXIT_FAILURE);
-		}
-    } else {
-		perror("fopen failed");
-		exit(EXIT_FAILURE);
-    }
-}
 
 void *threadFunc(void *arg)
 {
