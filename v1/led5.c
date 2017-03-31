@@ -34,7 +34,7 @@ const int SLEEPTIME = 100 * 1000; // 1/10 second
 const int BLINK_HERTZ = 5;
 
 volatile int enableBlinking = 1;
-
+volatile int killswitch = 1;
 
 void enforceMalloc(void* ptr) {
     if (ptr == NULL) {
@@ -60,15 +60,14 @@ char* getValuePath(char* pin) {
 
 void writeSafe(char* path, char* value){
 	FILE *gpio;
-    gpio = fopen(concatPath, "w");
+    gpio = fopen(path, "w");
     if (gpio != NULL){
-
-		if (fwrite(&strValue, sizeof(char), 1, gpio) != 0){
+		if (fwrite(&value, sizeof(char), strlen(value), gpio) != 0){
 			perror("fwrite failed");
 			exit(EXIT_FAILURE);
 		}
 
-		if (fclose(gpio) = 0) {
+		if (fclose(gpio) != 0) {
 			perror("fclose failed");
 			exit(EXIT_FAILURE);
 		}
@@ -123,11 +122,11 @@ void setGPIO(char* pin, char value) {
 
 
 void exportGPIO(char* pin) {
-	writeSafe(PATH_EXPORT, pin)
+	writeSafe((char*) PATH_EXPORT, pin);
 }
 
 void unexportGPIO(char* pin) {
-	writeSafe(PATH_UNEXPORT, pin)
+	writeSafe((char*)PATH_UNEXPORT, pin);
 }
 
 
@@ -159,12 +158,19 @@ void *threadFunc(void *arg)
 	return NULL;
 }
 
+void sig_handler(int signo)
+{
+	if (signo == SIGINT){
+		  printf("received SIGINT\n");
+		  killswitch = 0;
+	}
+}
 
 
 int main() {
-	//TODO: SIGKILL abfangen und killswitch auf 0 setzten
-	
-	int killswitch = 1;
+	 if (signal(SIGINT, sig_handler) == SIG_ERR){
+		 printf("Can't catch SIGINT\n");
+	 }
 	
 	pthread_t pth;	
 	pthread_create(&pth, NULL, threadFunc, &killswitch);
