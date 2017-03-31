@@ -18,11 +18,13 @@
 #include <limits.h>
 
 #include <pthread.h>
+#include <signal.h>
 
 const int BUFFER_SIZE = 16;
 
 const char* PATH = "/sys/class/gpio/gpio";
-const char* PATH_SUFFIX = "/value";
+const char* PATH_SUFFIX_VALUE = "/value";
+const char* PATH_SUFFIX_DIR = "/direction";
 
 const char* PATH_EXPORT = "/sys/class/gpio/export";
 const char* PATH_UNEXPORT = "/sys/class/gpio/unexport";
@@ -47,32 +49,37 @@ void enforceMalloc(void* ptr) {
 }
 
 
-char* getValuePath(char* pin) {
+char* getGPIOPath(char* pin, const char* suffix) {
 	 //preparing for open
-    int sizeConcat = strlen(PATH) + strlen(pin) + strlen(PATH_SUFFIX);
+    int sizeConcat = strlen(PATH) + strlen(pin) + strlen(suffix);
     
     char* concatPath = (char*) malloc(sizeConcat + 1); //nullbyte
     enforceMalloc(concatPath);
-    sprintf(concatPath, "%s%s%s", PATH, pin, PATH_SUFFIX);
+    sprintf(concatPath, "%s%s%s", PATH, pin, suffix);
     
     return concatPath;
 }
 
 void writeSafe(char* path, char* value){
+	printf("writeSafe path %s value %s\n", path, value);
 	FILE *gpio;
     gpio = fopen(path, "w");
     if (gpio != NULL){
-		if (fwrite(&value, sizeof(char), strlen(value), gpio) != 0){
+		if (fwrite(value, sizeof(char), strlen(value), gpio) != strlen(value)){
 			perror("fwrite failed");
 			exit(EXIT_FAILURE);
 		}
 
+		if (fflush(gpio) != 0){
+			perror("fflush fail");
+		}
+
 		if (fclose(gpio) != 0) {
-			perror("fclose failed");
+			perror("writeSafe: fclose failed");
 			exit(EXIT_FAILURE);
 		}
     } else {
-		perror("fopen failed");
+		perror("writeSafe: fopen failed");
 		exit(EXIT_FAILURE);
     }
 }
@@ -80,15 +87,17 @@ void writeSafe(char* path, char* value){
 
 int readGPIO(char* pin) {
     int value = -1; //default ret
+    int readCount = 0;
     FILE *gpio;
     char buffer[BUFFER_SIZE];
 	
-	char* path = getValuePath(pin);
+	char* path = getGPIOPath(pin, PATH_SUFFIX_VALUE);
     
     gpio = fopen(path, "r");
     if (gpio != NULL){
-        if (fread(buffer, BUFFER_SIZE, 1, gpio) != 0) {
-			perror("fwrite failed");
+        if ((readCount = fread(buffer, 1, BUFFER_SIZE, gpio)) != 2) {
+			perror("fread failed");
+			printf("cnt %d\n", readCount);
 			exit(EXIT_FAILURE);
 		}
 		
@@ -114,10 +123,11 @@ int readGPIO(char* pin) {
 }
 
 void setGPIO(char* pin, char value) {
-    char* path = getValuePath(pin);
+    char* path = getGPIOPath(pin, PATH_SUFFIX_VALUE);
     
-	char strValue = value + '0';   
-    writeSafe(concatPath, strValue);
+	char strValue = value + '0';
+	char buffer[2] = { strValue, 0 };   
+    writeSafe(path, (char*) buffer);
 }
 
 
@@ -129,15 +139,20 @@ void unexportGPIO(char* pin) {
 	writeSafe((char*)PATH_UNEXPORT, pin);
 }
 
+void GPIO_setDirection(char* pin, char* direction){
+	char* path = getGPIOPath(pin, PATH_SUFFIX_DIR);
+	writeSafe(path, direction);
+}
+
 
 void *threadFunc(void *arg)
 {
-	int isRunning = *((int*) arg);
 	int blink_sleep = (1000 * 1000) / BLINK_HERTZ;
 	int value = 1;
 
-	exportGPIO(WRITE_PIN);
-    while (isRunning) {
+	exportGPIO((char*) WRITE_PIN);
+	GPIO_setDirection((char*) WRITE_PIN, (char*) "out");
+    while (killswitch) {
 		//value = (~value) & 1
 		if (value == 1) {
 			value = 0;
@@ -146,15 +161,14 @@ void *threadFunc(void *arg)
 		}
 			
 		if (enableBlinking == 1) {
-			 setGPIO(WRITE_PIN, value);
+			 setGPIO((char*) WRITE_PIN, value);
 		}
 			  
         
         usleep(blink_sleep);
     }
     
-    unexportGPIO(WRITE_PIN);
-
+    unexportGPIO((char*) WRITE_PIN);
 	return NULL;
 }
 
@@ -173,20 +187,23 @@ int main() {
 	 }
 	
 	pthread_t pth;	
-	pthread_create(&pth, NULL, threadFunc, &killswitch);
-	
+	pthread_create(&pth, NULL, threadFunc, NULL);
+
     int oldValue = 1; //default value on rasp pi
     int numberOfPushes = 0;
     int val;
-    
+
+	exportGPIO((char*) READ_PIN);
     while (killswitch) {
-        if ((val = readGPIO(READ_PIN)) > -1) {
+        if ((val = readGPIO((char*) READ_PIN)) > -1) {
 			enableBlinking = val;           
         }
         usleep(SLEEPTIME);
     }
+	unexportGPIO((char*) READ_PIN);
     
-    
+	//wait for the read thread to cleanup & quit
+    pthread_join(pth, NULL);	    
     return EXIT_SUCCESS;
 }
 
