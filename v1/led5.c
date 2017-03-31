@@ -186,8 +186,9 @@ void sig_handler(int signo)
 
 int main(int argc, char** argv) {
 	printf("RESY Task 1.2 5Hz Blink\n");
-	
-	if (argc == 2 && argv[1] == "-v"){
+
+
+	if (argc > 1 && (strcmp(argv[1], "-v") == 0)){
 		verbose = 1;
 	}
 	
