@@ -21,6 +21,7 @@ int main(int args, char* argv[])
 	char* p;									// needed to convert argv to int to set loop times
 	long maxDifferenceTime = 0;					// store the maximum of delay
 	
+	long *valueArray;							//store all values in a array
 	
 	
 	if(argv[1] != NULL)
@@ -43,8 +44,15 @@ int main(int args, char* argv[])
 		printf("We start the mesurement with default 100 loops. \n");
 	}
 	
+	valueArray = (long*)malloc(loop * sizeof(long) * 3);		//couse we have start- end and difference time we need 3 times more space
+	
+	
+	
+	
 	printf("The sleeping time of clock_nanosleep is %d nanosec. \n", sleepingTime);
 	
+	
+	//start the loop
 	int i;
 	for( i = 0; i < loop; ++i)
 	{
@@ -72,7 +80,12 @@ int main(int args, char* argv[])
 		{
 			maxDifferenceTime = differenceTime;
 		}
-			
+		
+		//store the datas in the valueArray
+		valueArray[0 + i] = startNanoSec;
+		valueArray[1 + i] = endNanoSec;
+		valueArray[2 + i] = differenceTime;
+		
 		
 		printf("Start: %ld \t End: %ld \t Difference: %ld\n", startNanoSec, endNanoSec, differenceTime);
 		
@@ -82,6 +95,7 @@ int main(int args, char* argv[])
 	printf("The maximum of all delays are %ld nanosec \n", maxDifferenceTime);
 	
 	
+	free(valueArray);
 	
 	return 0;
 	
