@@ -1,5 +1,5 @@
 CFLGS=-g
-LDFLAGS=-pthread
+LDFLAGS=-pthread -lrt
 
 .PHONY : all
 all : switch led5
