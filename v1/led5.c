@@ -5,6 +5,8 @@
 //  
 //
 //
+#include "helper.h"
+#include "gpio.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,9 +21,6 @@
 
 #include <pthread.h>
 #include <signal.h>
-
-#include "helper.h"
-#include "gpio.h"
 
 
 const char* READ_PIN = "17";

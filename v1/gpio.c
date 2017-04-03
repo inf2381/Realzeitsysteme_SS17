@@ -13,7 +13,7 @@
 #include <limits.h>
 
 
-const int verbose = 0;
+int verbose = 0;
 const int BUFFER_SIZE = 16;
 
 const char* PATH = "/sys/class/gpio/gpio";
@@ -67,7 +67,7 @@ int GPIO_read(char* pin) {
 	FILE *gpio;
 	char buffer[BUFFER_SIZE];
 	
-	char* path = getGPIOPath(pin, PATH_SUFFIX_VALUE);
+	char* path = GPIO_getPath(pin, PATH_SUFFIX_VALUE);
 	
 	gpio = fopen(path, "r");
 	if (gpio != NULL){
@@ -99,7 +99,7 @@ int GPIO_read(char* pin) {
 }
 
 void GPIO_set(char* pin, char value) {
-	char* path = getGPIOPath(pin, PATH_SUFFIX_VALUE);
+	char* path = GPIO_getPath(pin, PATH_SUFFIX_VALUE);
 	
 	char strValue = value + '0';
 	char buffer[2] = { strValue, 0 };   
@@ -116,7 +116,7 @@ void GPIO_unexport(char* pin) {
 }
 
 void GPIO_setDirection(char* pin, char* direction){
-	char* path = getGPIOPath(pin, PATH_SUFFIX_DIR);
+	char* path = GPIO_getPath(pin, PATH_SUFFIX_DIR);
 	writeSafe(path, direction);
 }
 
