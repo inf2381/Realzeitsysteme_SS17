@@ -120,30 +120,3 @@ void GPIO_setDirection(char* pin, char* direction){
 	writeSafe(path, direction);
 }
 
-
-void *threadFunc(void *arg)
-{
-	int blink_sleep = (1000 * 1000) / BLINK_HERTZ;
-	int value = 1;
-
-	GPIO_export((char*) WRITE_PIN);
-	GPIO_setDirection((char*) WRITE_PIN, (char*) "out");
-	while (killswitch) {
-		//value = (~value) & 1
-		if (value == 1) {
-			value = 0;
-		} else {
-			value = 1;
-		}
-			
-		if (enableBlinking == 1) {
-			 GPIO_set((char*) WRITE_PIN, value);
-		}
-			  
-		
-		usleep(blink_sleep);
-	}
-	
-	GPIO_unexport((char*) WRITE_PIN);
-	return NULL;
-}
