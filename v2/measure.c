@@ -15,10 +15,11 @@ int main(int args, char* argv[])
 	long 				startNanoSec;	//convert and store the nanosec from startTime
 	long  				endNanoSec;		//convert and store the nanosec from endTime
 	
-	const int			sleepingTime = 10000; // 10k nanosec = 1/100.000 sec
-	long				differenceTime; 
-	int 				loop = 100;
-	char* p;
+	const int			sleepingTime = 10000; 	// 10k nanosec = 1/100.000 sec
+	long				differenceTime; 		// to store the difference time
+	int 				loop = 100;				// how much loops should be done
+	char* p;									// needed to convert argv to int to set loop times
+	long maxDifferenceTime = 0;					// store the maximum of delay
 	
 	
 	
@@ -29,7 +30,7 @@ int main(int args, char* argv[])
 		if(*p != '\0')							//check if isn't possible
 		{ 
 			loop = 100;
-			printf("Invalid input to set loops. Use default 100! \n");
+			printf("Invalid input to set loops. Use default 100 loops! \n");
 		}
 		 
 		else 									// if its possible use it
@@ -38,7 +39,11 @@ int main(int args, char* argv[])
 			printf("We start the mesurement with %s loops \n", argv[1]);
 			
 		}
+	} else {
+		printf("We start the mesurement with default 100 loops. \n");
 	}
+	
+	printf("The sleeping time of clock_nanosleep is %d nanosec. \n", sleepingTime);
 	
 	int i;
 	for( i = 0; i < loop; ++i)
@@ -59,12 +64,24 @@ int main(int args, char* argv[])
 	
 		//get the differnece between startTime and endTime
 		differenceTime = endNanoSec - startNanoSec;
-	
-		printf("Start: %ld \n", startNanoSec);
-		printf("End: %ld \n", endNanoSec);
-		printf("Difference: %ld \n", differenceTime);
+		
+		
+		
+		// get the maximum of all differnceTime
+		if( differenceTime > maxDifferenceTime)
+		{
+			maxDifferenceTime = differenceTime;
+		}
+			
+		
+		printf("Start: %ld \t End: %ld \t Difference: %ld\n", startNanoSec, endNanoSec, differenceTime);
+		
 	
 	}
+	
+	printf("The maximum of all delays are %ld nanosec \n", maxDifferenceTime);
+	
+	
 	
 	return 0;
 	
