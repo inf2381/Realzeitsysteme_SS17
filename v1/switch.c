@@ -20,7 +20,7 @@
 #include <errno.h>
 #include <limits.h>
 
-const char* READ_PIN = 17;
+const char* READ_PIN = "17";
 const int SLEEPTIME = 100 * 1000; // 1/10 second
 
 
