@@ -35,27 +35,22 @@ volatile int killswitch = 1;
 
 void *threadFunc(void *arg)
 {
-	long blink_sleep = (1000 * 1000 * 1000) / BLINK_HERTZ;
-	int value = 1;
+	int value = 0;
+	long blink_sleep = (1000 * 1000 * 1000) / (BLINK_HERTZ * 2);
 
 	struct timespec sleeptime;
+	sleeptime.tv_sec = 0;
+	sleeptime.tv_nsec = blink_sleep;
 
 	GPIO_export((char*) WRITE_PIN);
 	GPIO_setDirection((char*) WRITE_PIN, (char*) "out");
 	while (killswitch) {
-		//value = (~value) & 1
-		if (value == 1) {
-			value = 0;
-		} else {
-			value = 1;
-		}
+		value = (~value) & 1;
 			
 		if (enableBlinking == 1) {
 			 GPIO_set((char*) WRITE_PIN, value);
 		}
 			  
-		sleeptime.tv_sec = 0;
-		sleeptime.tv_nsec = blink_sleep;
 		clock_nanosleep(CLOCK_MONOTONIC, 0, &sleeptime, NULL);
 	}
 	
