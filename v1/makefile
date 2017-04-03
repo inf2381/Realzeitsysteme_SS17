@@ -5,3 +5,4 @@ LDFLAGS=-pthread
 all : switch led5
 
 led5 : led5.o gpio.o helper.o
+switch : switch.o gpio.o helper.o
