@@ -1,14 +1,89 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <getopt.h>
+#include "helper.h"
 
 
+#define defaultSleepMin 1000
+#define defaultSleepMax 10000
+#define defaultStep 1000
+#define defaultLoop 100
+
+int sleep_min = defaultSleepMin;
+int sleep_max = defaultSleepMax;
+int loop_count = defaultLoop;
+int step = defaultStep;
+
+int verbose = 0;
+int enable_rt = 0;
+char* outFilename;
+
+void parseOptions(){
+	 while (42) {
+        static struct option long_options[] = {
+            {"h", no_argument, 0, 'h'},
+            {"v", no_argument, 0, 'v'},
+            {"min", required_argument, 0, 'a'},
+            {"max", required_argument, 0, 'b'},
+            {"loop", required_argument, 0, 'l'},
+            {"step", required_argument, 0, 's'},
+            {"out", required_argument, 0, 'o'},
+            {"rt", no_argument, 0, 'r'},
+            {NULL, 0, 0, 0}
+        };
+        int option_index = 0;
+        option = getopt_long_only(argc, argv, "a:b:l:s:o:rvh", long_options, &option_index);
+
+        if (option == -1)
+            break;
+
+        switch(option){
+		case 'h':
+			break;
+		case 'v':
+			verbose = 1;
+			break;
+		case 'a':
+			sleep_min = validateInt(optarg);
+			break;	
+		case 'b':
+			sleep_max = validateInt(optarg);
+			break;
+		case 'l':
+			loop_count = validateInt(optarg);
+			break;
+		case 's':
+			step = validateInt(optarg);
+			break;
+					
+		case 'r':
+			enable_rt = 1;
+			break;	
+			
+		case 'o':
+			outFilename = optarg;
+			break;
+					
+			
+        case ':':
+            if(optopt == 'e' || optopt == 'E')
+                break;
+            //printArgumentMissing(optopt);
+            break;
+        case '?':
+            break;
+        default:
+            abort();
+        }
+    }
+
+}
 
 
 
 int main(int args, char* argv[])
 {
-	
 	//initialize everything
 	struct timespec 	startTime;		//store the realtime starting time
 	struct timespec 	endTime;		//store the realtime ending time
@@ -23,37 +98,13 @@ int main(int args, char* argv[])
 	
 	long *valueArray;							//store all values in a array
 	
+	parseOptions();
 	
 	sleepTime.tv_sec = 0;
 	sleepTime.tv_nsec = 1000000;
-	
-	if(argv[1] != NULL)
-	{
-		loop = strtol(argv[1], &p, 10);			//convert argv[0] to int
-		
-		if(*p != '\0')							//check if isn't possible
-		{ 
-			loop = 100;
-			printf("Invalid input to set loops. Use default 100 loops! \n");
-		}
-		 
-		else 									// if its possible use it
-		 
-		{
-			printf("We start the mesurement with %s loops \n", argv[1]);
-			
-		}
-	} else {
-		printf("We start the mesurement with default 100 loops. \n");
-	}
-	
-	valueArray = (long*)malloc(loop * sizeof(long) * 3);		//couse we have start- end and difference time we need 3 times more space
-	
-	
-	
+	valueArray = (long*)malloc(loop * sizeof(long) * 3);		//couse we have start- end and difference time we need 3 times more space	
 	
 	printf("The sleeping time of clock_nanosleep is %d nanosec. \n", sleepTime.tv_nsec);
-	
 	
 	//start the loop
 	int i;
@@ -66,11 +117,9 @@ int main(int args, char* argv[])
 		clock_gettime(CLOCK_MONOTONIC, &endTime);
 	
 	
-	
 		//convert and store the measure
 		startNanoSec = startTime.tv_nsec;
 		endNanoSec = endTime.tv_nsec;
-	
 	
 	
 		//get the differnece between startTime and endTime
@@ -91,8 +140,6 @@ int main(int args, char* argv[])
 		
 		
 		printf("Start: %ld, \t End: %ld, \t Difference: %ld, \t Delay %ld\n", startNanoSec, endNanoSec, differenceTime, delay);
-		
-	
 	}
 	
 	printf("The maximum of all delays is %ld nanosec \n", maxDelay);	
