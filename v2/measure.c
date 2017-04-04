@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <getopt.h>
+#include <math.h>
 #include "helper.h"
 
 
@@ -17,7 +18,9 @@ int step = defaultStep;
 
 int verbose = 0;
 int enable_rt = 0;
-char* outFilename;
+char* outFilename = NULL;
+long *valueArray;
+	
 
 void parseOptions(int argc, char** argv){
 	int option ;
@@ -82,9 +85,7 @@ void parseOptions(int argc, char** argv){
 
 }
 
-
-
-int main(int argc, char* argv[])
+long loop(int numberLoop, int sleepTime)
 {
 	//initialize everything
 	struct timespec 	startTime;		//store the realtime starting time
@@ -94,23 +95,16 @@ int main(int argc, char* argv[])
 	long  				endNanoSec;		//convert and store the nanosec from endTime	
 	long				differenceTime; 		// to store the difference time
 	long 				delay;				//delay? delay!
-	int 				loop = 100;			// how much loops should be done
-	char* p;							// needed to convert argv to int to set loop times
-	long maxDelay = 0;						// store the maximum of delay
+	long 				maxDelay = 0;						// store the maximum of delay
 	
-	long *valueArray;							//store all values in a array
-	
-	parseOptions(argc, argv);
-	
+
 	sleepTime.tv_sec = 0;
-	sleepTime.tv_nsec = 1000000;
-	valueArray = (long*)malloc(loop * sizeof(long) * 3);		//couse we have start- end and difference time we need 3 times more space	
-	
-	printf("The sleeping time of clock_nanosleep is %d nanosec. \n", sleepTime.tv_nsec);
+	sleepTime.tv_nsec = sleepTime;
+
 	
 	//start the loop
 	int i;
-	for(i = 0; i < loop; ++i)
+	for(i = 0; i < numberLoop; ++i)
 	{
 	
 		//Here we got the timemeasure 
@@ -144,7 +138,41 @@ int main(int argc, char* argv[])
 		printf("Start: %ld, \t End: %ld, \t Difference: %ld, \t Delay %ld\n", startNanoSec, endNanoSec, differenceTime, delay);
 	}
 	
-	printf("The maximum of all delays is %ld nanosec \n", maxDelay);	
+	printf("The sleeping time of clock_nanosleep is %d nanosec. \n", sleepTime.tv_nsec);
+	printf("The maximum of all delays is %ld nanosec \n", maxDelay);
+	return maxDelay;
+}
+
+
+int main(int argc, char* argv[])
+{
+	FILE* fd = NULL;
+	
+	printf("Measure Resy-Grp4");
+	parseOptions(argc, argv);
+	
+	int stepCount = (int) ceil(((double) (sleep_max - sleep_min)) / (double) step);
+	int totalCount = stepCount * loop_count;	
+	if (verbose) printf("stepCount %i, loopCount %i, totalCount %i\n"); 
+	
+	//couse we have start- end and difference time we need 3 times more space	
+	valueArray = (long*)malloc(sizeof(long) * 3 * totalCount);	
+	
+	if (outfile != NULL){
+		fd = fopen(outfile, "w+");
+	}
+	
+	for(int curSleep = sleep_min; curSleep < sleep_max; curSleep += step)  {
+		long maxDelay = loop(loop_count, curSleep);
+		if (fd != NULL){
+			fdprintf(fd, "%d\t%d\n", curSleep, maxDelay);
+		}
+	}
+	
+	if (fd != NULL){
+		fclose(fd);
+	}
+	
 	free(valueArray);
 	
 	return 0;
