@@ -135,7 +135,7 @@ long loop(int numberLoop, int intSleep)
 		valueArray[2 + (i * 3)] = differenceTime;
 		
 		
-		printf("Start: %ld, \t End: %ld, \t Difference: %ld, \t Delay %ld\n", startNanoSec, endNanoSec, differenceTime, delay);
+		if (verbose) printf("Start: %ld, \t End: %ld, \t Difference: %ld, \t Delay %ld\n", startNanoSec, endNanoSec, differenceTime, delay);
 	}
 	
 	printf("The sleeping time of clock_nanosleep is %d nanosec. \n", sleepTime.tv_nsec);
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
 {
 	FILE* fd = NULL;
 	
-	printf("Measure Resy-Grp4");
+	printf("Measure Resy-Grp4\n");
 	parseOptions(argc, argv);
 	
 	int stepCount = (int) ceil(((double) (sleep_max - sleep_min)) / (double) step);
