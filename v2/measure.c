@@ -18,7 +18,7 @@ int step = defaultStep;
 
 int verbose = 0;
 int enable_rt = 0;
-char* outFilename = NULL;
+char* outfile = NULL;
 long *valueArray;
 	
 
@@ -67,7 +67,7 @@ void parseOptions(int argc, char** argv){
 			break;	
 			
 		case 'o':
-			outFilename = optarg;
+			outfile = optarg;
 			break;
 					
 			
@@ -85,7 +85,7 @@ void parseOptions(int argc, char** argv){
 
 }
 
-long loop(int numberLoop, int sleepTime)
+long loop(int numberLoop, int intSleep)
 {
 	//initialize everything
 	struct timespec 	startTime;		//store the realtime starting time
@@ -99,7 +99,7 @@ long loop(int numberLoop, int sleepTime)
 	
 
 	sleepTime.tv_sec = 0;
-	sleepTime.tv_nsec = sleepTime;
+	sleepTime.tv_nsec = intSleep;
 
 	
 	//start the loop
@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
 	for(int curSleep = sleep_min; curSleep < sleep_max; curSleep += step)  {
 		long maxDelay = loop(loop_count, curSleep);
 		if (fd != NULL){
-			fdprintf(fd, "%d\t%d\n", curSleep, maxDelay);
+			fprintf(fd, "%d\t%d\n", curSleep, maxDelay);
 		}
 	}
 	
