@@ -102,7 +102,7 @@ void parseOptions(int argc, char** argv){
 		}
 
 		param.sched_priority = high_priority;
-		if (sched_setscheduler(my_pid, SCHED_FIFO, &param) != SCHED_FIFO){
+		if (sched_setscheduler(my_pid, SCHED_FIFO, &param) == -1){
 			perror("sched_setscheduler failed");
 			exit(EXIT_FAILURE);
 		}		
