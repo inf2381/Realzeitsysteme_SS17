@@ -1,8 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
 #include <time.h>
 #include <getopt.h>
 #include <math.h>
+#include <linux/sched.h>
+#include <sched.h>
+
 #include "helper.h"
 
 
