@@ -12,17 +12,20 @@ int main(int args, char* argv[])
 	//initialize everything
 	struct timespec 	startTime;		//store the realtime starting time
 	struct timespec 	endTime;		//store the realtime ending time
+	struct timespec		sleepTime;	
 	long 				startNanoSec;	//convert and store the nanosec from startTime
-	long  				endNanoSec;		//convert and store the nanosec from endTime
-	
-	const int			sleepingTime = 10000; 	// 10k nanosec = 1/100.000 sec
+	long  				endNanoSec;		//convert and store the nanosec from endTime	
 	long				differenceTime; 		// to store the difference time
-	int 				loop = 100;				// how much loops should be done
-	char* p;									// needed to convert argv to int to set loop times
-	long maxDifferenceTime = 0;					// store the maximum of delay
+	long 				delay;				//delay? delay!
+	int 				loop = 100;			// how much loops should be done
+	char* p;							// needed to convert argv to int to set loop times
+	long maxDelay = 0;						// store the maximum of delay
 	
 	long *valueArray;							//store all values in a array
 	
+	
+	sleepTime.tv_sec = 0;
+	sleepTime.tv_nsec = 1000000;
 	
 	if(argv[1] != NULL)
 	{
@@ -49,52 +52,50 @@ int main(int args, char* argv[])
 	
 	
 	
-	printf("The sleeping time of clock_nanosleep is %d nanosec. \n", sleepingTime);
+	printf("The sleeping time of clock_nanosleep is %d nanosec. \n", sleepTime.tv_nsec);
 	
 	
 	//start the loop
 	int i;
-	for( i = 0; i < loop; ++i)
+	for(i = 0; i < loop; ++i)
 	{
 	
 		//Here we got the timemeasure 
-		clock_gettime(CLOCK_REALTIME, &startTime);
-		clock_nanosleep(CLOCK_REALTIME, sleepingTime ,NULL , NULL);
-		clock_gettime(CLOCK_REALTIME, &endTime);
+		clock_gettime(CLOCK_MONOTONIC, &startTime);
+		clock_nanosleep(CLOCK_MONOTONIC, 0, &sleepTime, NULL);
+		clock_gettime(CLOCK_MONOTONIC, &endTime);
 	
 	
 	
 		//convert and store the measure
-		startNanoSec 	= 	startTime.tv_nsec;
-		endNanoSec		=  	endTime.tv_nsec;
+		startNanoSec = startTime.tv_nsec;
+		endNanoSec = endTime.tv_nsec;
 	
 	
 	
 		//get the differnece between startTime and endTime
 		differenceTime = endNanoSec - startNanoSec;
-		
+		delay = differenceTime - sleepTime.tv_nsec;
 		
 		
 		// get the maximum of all differnceTime
-		if( differenceTime > maxDifferenceTime)
+		if(delay > maxDelay)
 		{
-			maxDifferenceTime = differenceTime;
+			maxDelay = delay;
 		}
 		
 		//store the datas in the valueArray
-		valueArray[0 + i] = startNanoSec;
-		valueArray[1 + i] = endNanoSec;
-		valueArray[2 + i] = differenceTime;
+		valueArray[0 + (i * 3)] = startNanoSec;
+		valueArray[1 + (i * 3)] = endNanoSec;
+		valueArray[2 + (i * 3)] = differenceTime;
 		
 		
-		printf("Start: %ld \t End: %ld \t Difference: %ld\n", startNanoSec, endNanoSec, differenceTime);
+		printf("Start: %ld, \t End: %ld, \t Difference: %ld, \t Delay %ld\n", startNanoSec, endNanoSec, differenceTime, delay);
 		
 	
 	}
 	
-	printf("The maximum of all delays are %ld nanosec \n", maxDifferenceTime);
-	
-	
+	printf("The maximum of all delays is %ld nanosec \n", maxDelay);	
 	free(valueArray);
 	
 	return 0;
