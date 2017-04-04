@@ -19,8 +19,10 @@ int verbose = 0;
 int enable_rt = 0;
 char* outFilename;
 
-void parseOptions(){
-	 while (42) {
+void parseOptions(int argc, char** argv){
+	int option ;
+
+	while (42) {
         static struct option long_options[] = {
             {"h", no_argument, 0, 'h'},
             {"v", no_argument, 0, 'v'},
@@ -82,7 +84,7 @@ void parseOptions(){
 
 
 
-int main(int args, char* argv[])
+int main(int argc, char* argv[])
 {
 	//initialize everything
 	struct timespec 	startTime;		//store the realtime starting time
@@ -98,7 +100,7 @@ int main(int args, char* argv[])
 	
 	long *valueArray;							//store all values in a array
 	
-	parseOptions();
+	parseOptions(argc, argv);
 	
 	sleepTime.tv_sec = 0;
 	sleepTime.tv_nsec = 1000000;
