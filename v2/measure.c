@@ -96,10 +96,16 @@ void parseOptions(int argc, char** argv){
 		high_priority = sched_get_priority_max(SCHED_FIFO);
 		low_priority = sched_get_priority_min(SCHED_FIFO);
 
-		sched_getparam(my_pid, &param);
+		if (sched_getparam(my_pid, &param) != 0){
+			perror("sched_getparam failed");
+			exit(EXIT_FAILURE);
+		}
 
 		param.sched_priority = high_priority;
-		sched_setscheduler(my_pid, SCHED_FIFO, &param);
+		if (sched_setscheduler(my_pid, SCHED_FIFO, &param) != SCHED_FIFO){
+			perror("sched_setscheduler failed");
+			exit(EXIT_FAILURE);
+		}		
 	}
 
 
@@ -124,8 +130,7 @@ long loop(int numberLoop, int intSleep)
 	
 	//start the loop
 	int i;
-	for(i = 0; i < numberLoop; ++i)
-	{
+	for(i = 0; i < numberLoop; ++i) {
 	
 		//Here we got the timemeasure 
 		clock_gettime(CLOCK_MONOTONIC, &startTime);
@@ -144,8 +149,7 @@ long loop(int numberLoop, int intSleep)
 		
 		
 		// get the maximum of all differnceTime
-		if(delay > maxDelay)
-		{
+		if(delay > maxDelay) {
 			maxDelay = delay;
 		}
 		
@@ -196,7 +200,7 @@ int main(int argc, char* argv[])
 	
 	free(valueArray);
 	
-	return 0;
+	return EXIT_SUCCESS;
 	
 }
 	
