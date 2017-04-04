@@ -80,8 +80,23 @@ void parseOptions(int argc, char** argv){
             break;
         default:
             abort();
-        }
-    }
+       }
+        
+	}
+	if (enable_rt) {
+		struct sched_param param;
+		int my_pid = getpid();
+		int low_priority, high_priority;
+
+		high_priority = sched_get_priority_max(SCHED_FIFO);
+		low_priority = sched_get_priority_min(SCHED_FIFO);
+
+		sched_getparam(my_pid, &param);
+
+		param.sched_priority = high_priority;
+		sched_setscheduler(my_pid, SCHED_FIFO, &param);
+	}
+
 
 }
 
@@ -153,7 +168,8 @@ int main(int argc, char* argv[])
 	
 	int stepCount = (int) ceil(((double) (sleep_max - sleep_min)) / (double) step);
 	int totalCount = stepCount * loop_count;	
-	if (verbose) printf("stepCount %i, loopCount %i, totalCount %i\n"); 
+	if (verbose) printf("stepCount %i, loopCount %i, totalCount %i, enablert %d\n", 
+						stepCount, loop_count, totalCount, enable_rt); 
 	
 	//couse we have start- end and difference time we need 3 times more space	
 	valueArray = (long*)malloc(sizeof(long) * 3 * totalCount);	
