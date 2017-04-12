@@ -1,5 +1,5 @@
-//engine.c
-//ReSy SS17 -- Group 4
+/* engine.c */
+/* ReSy SS17 -- Group 4 */
 
 #include <stdio.h>
 #include "helper.h"
@@ -36,7 +36,7 @@ void engineSetup(){
 
 void engineDrive(int left, int right){
     
-    GPIO_set(PIN_1, 1);
+    GPIO_set(PIN_1, 0);
     
 
 }

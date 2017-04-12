@@ -1,7 +1,26 @@
-CFLAGS := -g -std=gnu99
-LDFLAGS=-pthread -lrt
+### .........  MAKEFILE .........................####
+###                                              ####
+### .......generic Makefile .....................####
+CC=gcc
+CFLAGS=-Wall -g -std=gnu99 
+LDFLAGS=-lpthread
 
-.PHONY : all
-all : engine
+TARGET=engine
 
-engine : engine.o gpio.o helper.o
+#Def Targets
+.PHONY: all clean
+all: $(TARGET)
+
+clean:
+	rm -f -r *.o *.a *.so $(TARGET)
+	
+#Concrete		
+engine: engine.o gpio.o helper.o
+
+#Musterreglen
+%.o:%.c
+	$(CC) $(CFLAGS) -o $@ -c $^
+
+%:%.o
+	$(CC) $(CFLAGS) $^ $(LDFLAGS) -o $@
+	

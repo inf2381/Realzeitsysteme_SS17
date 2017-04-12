@@ -1,8 +1,8 @@
 #ifndef GPIO_H
 #define GPIO_H
 
-#define PIN_IN "IN"
-#define PIN_OUT "OUT"
+#define PIN_IN "in"
+#define PIN_OUT "out"
 
 extern int verbose;
 
