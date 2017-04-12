@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
-
+#include <signal.h>
 
 #define PIN_1 "5"
 #define PIN_2 "6"
@@ -108,7 +108,7 @@ int main(int argc, const char * argv[]) {
         engineDrive(left, right);
         
         
-        sleep(2);
+        sleep(5);
     }
     
     
