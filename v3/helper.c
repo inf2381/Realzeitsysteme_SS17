@@ -95,7 +95,7 @@ void activWait(int waitTimeMillis){
         for (int i = 0; i < 1337; i++) {
             pogo = (i^7) / 0.13 + 42;
         }
-        
+        printf("%lf\n", pogo);
         t2 = get_time_ms();
         if ((t2-t1) > toReach)
             break;
