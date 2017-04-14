@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <stdbool.h>
-
+#include <signal.h>
 
 void engineSetup(){
     GPIO_export(PIN_1);
