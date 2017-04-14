@@ -1,0 +1,3 @@
+language: C
+before_script: cd v3
+script: make
