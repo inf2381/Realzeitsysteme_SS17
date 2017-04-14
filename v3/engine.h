@@ -16,7 +16,7 @@ enum direction {
     reverse = -1
 };
 
-/** Exports the predined GPIO pins.
+/** Exports the predefined GPIO pins.
  *  First function to call if you want to start the race
  */
 void engineSetup();
