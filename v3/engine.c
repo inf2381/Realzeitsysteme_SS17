@@ -1,26 +1,14 @@
 /* engine.c */
 /* ReSy SS17 -- Group 4 */
 
+#include "engine.h"
 #include <stdio.h>
 #include "helper.h"
 #include "gpio.h"
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
-#include <signal.h>
-
-#define PIN_1 "5"
-#define PIN_2 "6"
-#define PIN_3 "13"
-#define PIN_4 "19"
-
-#define True "42"
-
-enum direction {
-    stop = 0,
-    forward = 1,
-    reverse = -1
-};
+#include <stdbool.h>
 
 
 void engineSetup(){
@@ -78,7 +66,6 @@ void changeMovement(char* pin_1, char* pin_2, int direction){
 }
 
 void engineDrive(int left, int right){
-    printf("changeDrive: l %d, r %d\n", left, right);
     changeMovement(PIN_1, PIN_2, left);
     changeMovement(PIN_3, PIN_4, right);
 }
@@ -102,7 +89,7 @@ int main(int argc, const char * argv[]) {
         printf("Can't catch SIGINT\n");
     }
     
-    while (True) {
+    while (true) {
         int left = genRandom(reverse, forward);
         int right = genRandom(reverse, forward);
         engineDrive(left, right);
