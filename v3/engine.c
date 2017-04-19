@@ -6,10 +6,7 @@
 #include "helper.h"
 #include "gpio.h"
 #include <stdlib.h>
-#include <unistd.h>
-#include <time.h>
-#include <stdbool.h>
-#include <signal.h>
+
 
 void engineSetup(){
     GPIO_export(PIN_1);
@@ -70,34 +67,3 @@ void engineDrive(int left, int right){
     changeMovement(PIN_3, PIN_4, right);
 }
 
-
-void sig_handler(int signo)
-{
-    if (signo == SIGINT){
-        printf("received SIGINT, terminating\n");
-        engineStop();
-        engineSetdown();
-        exit(EXIT_SUCCESS);
-    }
-}
-
-
-int main(int argc, const char * argv[]) {
-    engineSetup();
-    
-    if (signal(SIGINT, sig_handler) == SIG_ERR){
-        printf("Can't catch SIGINT\n");
-    }
-    
-    while (true) {
-        int left = genRandom(reverse, forward);
-        int right = genRandom(reverse, forward);
-        engineDrive(left, right);
-        
-        
-        sleep(5);
-    }
-    
-    
-    return EXIT_SUCCESS;
-}

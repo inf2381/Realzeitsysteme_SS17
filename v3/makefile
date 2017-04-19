@@ -15,7 +15,7 @@ clean:
 	rm -f -r *.o *.a *.so $(TARGET)
 	
 #Concrete		
-engine: engine.o gpio.o helper.o
+engine: main.o engine.o gpio.o helper.o
 
 #Musterreglen
 %.o:%.c
