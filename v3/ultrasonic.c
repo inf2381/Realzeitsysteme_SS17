@@ -1,5 +1,7 @@
 /* https://tutorials-raspberrypi.de/entfernung-messen-mit-ultraschallsensor-hc-sr04/ */
 
+#include "ultrasonic.h"
+
 #include <stdlib.h>
 #include <unistd.h>
 #include "gpio.h"
