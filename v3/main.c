@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <signal.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #include "engine.h"
 #include "ultrasonic.h"
