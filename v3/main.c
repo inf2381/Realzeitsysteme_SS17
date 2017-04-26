@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "engine.h"
+#include "ultrasonic.h"
 
 
 void sig_handler(int signo)
@@ -19,6 +20,7 @@ void sig_handler(int signo)
 void setUp() {
 
 	engineSetup();
+    ultrasonic_Setup();
 
 }
 
@@ -33,7 +35,8 @@ int main(int argc, char *argv[]) {
 
 	while (true) {
 
-		engineDrive(forward, forward);
+		//engineDrive(forward, forward);
+        printf("Distance: %lf", getDistance());
 		sleep(5);
 
 	}
