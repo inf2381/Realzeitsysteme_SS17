@@ -4,6 +4,9 @@
 #define PIN_IN "in"
 #define PIN_OUT "out"
 
+#define GPIO_HIGH 1
+#define GPIO_LOW 0
+
 extern int verbose;
 
 char* GPIO_getPath(char* pin, const char* suffix);

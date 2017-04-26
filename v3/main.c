@@ -13,6 +13,7 @@ void sig_handler(int signo)
     if (signo == SIGINT){
         engineStop();
         engineSetdown();
+	ultrasonicSetdown();
         exit(EXIT_SUCCESS);
     }
 }
@@ -37,8 +38,8 @@ int main(int argc, char *argv[]) {
 	while (true) {
 
 		//engineDrive(forward, forward);
-        printf("Distance: %lf", getDistance());
-		sleep(5);
+        printf("Distance: %lf\n", getDistance());
+		sleep(1);
 
 	}
 

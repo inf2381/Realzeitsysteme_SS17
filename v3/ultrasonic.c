@@ -18,6 +18,11 @@ void ultrasonic_Setup() {
 }
 
 
+void ultrasonicSetdown() {
+	GPIO_unexport(PIN_TRIGGER);
+	GPIO_unexport(PIN_ECHO);
+}
+
 /* TODO:
  * 		- change from double to int or long (including get_time_ms)
  *		- define high and low in gpio.h
@@ -26,18 +31,18 @@ double getDistance() {
 	double startTime, endTime, timeDiff;
 
 	//Trigger measurement
-	GPIO_set(PIN_TRIGGER, '1');
+	GPIO_set(PIN_TRIGGER, GPIO_HIGH);
 
 	usleep(WAIT_TO_END_TRIGGER_ys);
-	GPIO_set(PIN_TRIGGER, '0');
+	GPIO_set(PIN_TRIGGER, GPIO_LOW);
 
 	startTime = get_time_ms();
 	endTime = startTime;
 
-	while (GPIO_read(PIN_ECHO) == 1) {	 //Is this too fast for gpio?
+	while (GPIO_read(PIN_ECHO) == 0) {	 //Is this too fast for gpio?
 		startTime = get_time_ms();
 	}
-	while (GPIO_read(PIN_ECHO) == 0) {
+	while (GPIO_read(PIN_ECHO) == 1) {
 		endTime = get_time_ms();
 	}
 
