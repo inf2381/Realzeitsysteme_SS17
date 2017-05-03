@@ -29,7 +29,7 @@ void setUp() {
 
 
 int main(int argc, char *argv[]) {
-
+	long dist;
 	setUp();
 
 	if (signal(SIGINT, sig_handler) == SIG_ERR){
@@ -37,12 +37,17 @@ int main(int argc, char *argv[]) {
     }
     
 	while (true) {
-
+		dist = getDistance();
+		printf("Distance: %ld\n", dist);
+		if(dist < 8000000) {
+			engineStop();
+			continue;;
+		}
 		//engineDrive(forward, forward);
-        printf("Distance: %lf\n", getDistance());
 		sleep(1);
 
 	}
-
+	engineSetdown();
+	ultrasonicSetdown();
 	return EXIT_SUCCESS;
 }
