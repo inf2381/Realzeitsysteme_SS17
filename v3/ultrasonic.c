@@ -56,7 +56,7 @@ long getDistance() {
 
 void *measureDistance(void *result) {
     
-    *((int*)result) = getDistance();
+    *((long*)result) = getDistance();
     
     pthread_exit(NULL);
 }
