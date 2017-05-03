@@ -84,6 +84,13 @@ double get_time_ms(){
     return (t.tv_sec + (t.tv_usec / 1000000.0)) * 1000.0;
 }
 
+long get_time_ns() {
+    struct timespec t;
+    clock_gettime(CLOCK_REALTIME, &t);
+    
+    return t.tv_sec * 1000000000 + t.tv_nsec;
+}
+
 void activWait(int waitTimeMillis){
     double t1, t2;
     double toReach = (double)waitTimeMillis;

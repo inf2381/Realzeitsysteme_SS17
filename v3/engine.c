@@ -6,6 +6,7 @@
 #include "helper.h"
 #include "gpio.h"
 #include <stdlib.h>
+#include <pthread.h>
 
 
 void engineSetup(){

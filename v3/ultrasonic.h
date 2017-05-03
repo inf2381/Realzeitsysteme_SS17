@@ -10,6 +10,6 @@
 
 void ultrasonic_Setup();
 void ultrasonicSetdown();
-double getDistance();
+long getDistance();
 
 #endif

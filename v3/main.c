@@ -3,6 +3,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <pthread.h>
 
 #include "engine.h"
 #include "ultrasonic.h"
@@ -34,7 +35,7 @@ int main(int argc, char *argv[]) {
 	if (signal(SIGINT, sig_handler) == SIG_ERR){
         	exit(EXIT_FAILURE);
     }
-
+    
 	while (true) {
 
 		//engineDrive(forward, forward);

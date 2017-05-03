@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <pthread.h>
 #include "gpio.h"
 #include "helper.h"
 
@@ -27,8 +28,8 @@ void ultrasonicSetdown() {
  * 		- change from double to int or long (including get_time_ms)
  *		- define high and low in gpio.h
  */
-double getDistance() {
-	double startTime, endTime, timeDiff;
+long getDistance() {
+	long startTime, endTime, timeDiff;
 
 	//Trigger measurement
 	GPIO_set(PIN_TRIGGER, GPIO_HIGH);
@@ -36,17 +37,28 @@ double getDistance() {
 	usleep(WAIT_TO_END_TRIGGER_ys);
 	GPIO_set(PIN_TRIGGER, GPIO_LOW);
 
-	startTime = get_time_ms();
+	startTime = get_time_ns();
 	endTime = startTime;
 
 	while (GPIO_read(PIN_ECHO) == 0) {	 //Is this too fast for gpio?
-		startTime = get_time_ms();
+		startTime = get_time_ns();
 	}
 	while (GPIO_read(PIN_ECHO) == 1) {
-		endTime = get_time_ms();
+		endTime = get_time_ns();
 	}
 
 	timeDiff = endTime - startTime;
 
 	return (timeDiff * SONIC_SPEED) / 2;
 }
+
+
+
+void *measureDistance(void *result) {
+    
+    *((int*)result) = getDistance();
+    
+    pthread_exit(NULL);
+}
+
+
