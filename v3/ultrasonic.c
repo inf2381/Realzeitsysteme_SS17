@@ -24,10 +24,7 @@ void ultrasonicSetdown() {
 	GPIO_unexport(PIN_ECHO);
 }
 
-/* TODO:
- * 		- change from double to int or long (including get_time_ms)
- *		- define high and low in gpio.h
- */
+
 long getDistance() {
 	long startTime, endTime, timeDiff;
 
@@ -37,14 +34,14 @@ long getDistance() {
 	usleep(WAIT_TO_END_TRIGGER_ys);
 	GPIO_set(PIN_TRIGGER, GPIO_LOW);
 
-	startTime = get_time_ns();
+	startTime = get_time_ms();
 	endTime = startTime;
 
-	while (GPIO_read(PIN_ECHO) == 0) {	 //Is this too fast for gpio?
-		startTime = get_time_ns();
+	while (GPIO_read(PIN_ECHO) == 0) {
+        startTime = get_time_ms();
 	}
 	while (GPIO_read(PIN_ECHO) == 1) {
-		endTime = get_time_ns();
+		endTime = get_time_ms();
 	}
 
 	timeDiff = endTime - startTime;

@@ -77,18 +77,10 @@ void enforceTime(int retval){
     }
 }
 
-//timmurphy.org/2009/10/18/millisecond-timer-in-c-c/
-double get_time_ms(){
-    struct timeval t;
-    gettimeofday(&t, NULL);
-    return (t.tv_sec + (t.tv_usec / 1000000.0)) * 1000.0;
-}
-
-long get_time_ns() {
-    struct timespec t;
-    clock_gettime(CLOCK_REALTIME, &t);
-    
-    return t.tv_sec * 1000000000 + t.tv_nsec;
+long get_time_ms() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
 }
 
 void activWait(int waitTimeMillis){
