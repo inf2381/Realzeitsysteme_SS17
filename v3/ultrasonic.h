@@ -10,6 +10,9 @@
 
 void ultrasonic_Setup();
 void ultrasonicSetdown();
-long getDistance();
+
+//Threads
+void *exploitDistance(void *arg);
+void *measureDistance(void *arg);
 
 #endif

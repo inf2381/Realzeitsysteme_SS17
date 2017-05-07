@@ -20,7 +20,7 @@ void sig_handler(int signo)
 }
 
 
-void setUp() {
+void setup() {
 
 	engineSetup();
     ultrasonic_Setup();
@@ -29,21 +29,28 @@ void setUp() {
 
 
 int main(int argc, char *argv[]) {
-	long dist;
-	setUp();
-
+	int ultasonicPipeFD[2], createPipe;
+    pthread_t       thread_US_write, thread_US_read;
+    
+	setup();
+    //additional setup
+    createPipe = pipe(ultasonicPipeFD);
+    if (createPipe < 0){
+        perror("pipe ");
+        exit(1);
+    }
+    
 	if (signal(SIGINT, sig_handler) == SIG_ERR){
         	exit(EXIT_FAILURE);
     }
     
+    //starting threads
+    pthread_create(&thread_US_read,NULL,exploitDistance,&ultasonicPipeFD[0]);
+    pthread_create(&thread_US_write,NULL,measureDistance,&ultasonicPipeFD[1]);
+    
 	while (true) {
-		dist = getDistance();
-		printf("Distance: %ld\n", dist);
-		if(dist < 8000000) {
-			engineStop();
-			continue;;
-		}
-		//engineDrive(forward, forward);
+		
+        engineDrive(forward, forward);
 		sleep(1);
 
 	}
