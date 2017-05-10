@@ -38,7 +38,7 @@ void infrared_Setdown() {
 
 void *infrared_read(void *arg) {
 	if (VERBOSE_DEF) {
-    	print("infrared_read");
+    	printf("infrared_read");
 	}
 
 	while (true) { 
@@ -48,7 +48,7 @@ void *infrared_read(void *arg) {
 		int in4 = GPIO_read(PIN_IR_IN4);
 
 		if (VERBOSE_DEF) {
-			print("infrared_read: in1 %s, in2 %s, in3 %s, in4 %s");
+			printf("infrared_read: in1 %d, in2 %d, in3 %d, in4 %d", in1, in2, in3, in4);
 		}
 		
 		

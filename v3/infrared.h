@@ -6,7 +6,7 @@
 #define PIN_IR_IN3 "20"
 #define PIN_IR_IN4 "21"
 
-
+#define VERBOSE_DEF 1 
 
 void infrared_Setup();
 void infrared_Setdown();

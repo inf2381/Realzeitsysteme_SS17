@@ -9,7 +9,6 @@
 #include "ultrasonic.h"
 #include "infrared.h"
 
-#define VERBOSE_DEF 1 
 
 
 void sig_handler(int signo)
@@ -27,7 +26,7 @@ void setup() {
 
 	engineSetup();
     ultrasonic_Setup();
-	infrared_setup();
+	infrared_Setup();
 }
 
 void shutdown(){
