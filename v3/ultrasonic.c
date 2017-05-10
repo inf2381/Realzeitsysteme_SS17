@@ -70,7 +70,7 @@ void *measureDistance(void *arg) {
         }
         
         timeDiff = endTime - startTime;
-	printf("Timedifferent: %ld\n", timeDiff);
+	printf("Timedifference: %ld\n", timeDiff);
         distance = (timeDiff * SONIC_SPEED) / 2;
 	printf("doubled way: %ld\n", timeDiff * SONIC_SPEED);
         

@@ -81,7 +81,7 @@ long get_time_us() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
     long seconds = (tv.tv_sec - 1480464000) * 1000000 ; //1.1.2017 00:00:00UTC
-    return seconds + tv.tv_usec;
+    return (seconds + tv.tv_usec);
 }
 
 void activWait(int waitTimeMillis){
