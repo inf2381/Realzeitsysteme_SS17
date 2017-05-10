@@ -30,7 +30,7 @@ void setup() {
 
 int main(int argc, char *argv[]) {
 	int ultasonicPipeFD[2], createPipe;
-    pthread_t       thread_US_write, thread_US_read;
+    pthread_t   thread_US_write, thread_US_read;
     
 	setup();
     //additional setup

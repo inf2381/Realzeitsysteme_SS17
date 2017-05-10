@@ -80,7 +80,8 @@ void enforceTime(int retval){
 long get_time_us() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    return (tv.tv_sec * 1000 + tv.tv_usec ) - 1480464000; //1.1.2017 00:00:00UTC
+    long seconds = (tv.tv_sec - 1480464000) * 1000000 ; //1.1.2017 00:00:00UTC
+    return seconds + tv.tv_usec;
 }
 
 void activWait(int waitTimeMillis){
