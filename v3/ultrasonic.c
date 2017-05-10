@@ -40,7 +40,7 @@ void *exploitDistance(void *arg) {
             perror("read");
             exit(3);
         }
-        
+	printf("Distance: %ld\n", readDistance);        
         sleep(1); //TODO: Reasonable or no sleeptime
     }
 }
@@ -59,18 +59,20 @@ void *measureDistance(void *arg) {
         usleep(WAIT_TO_END_TRIGGER_ys);
         GPIO_set(PIN_TRIGGER, GPIO_LOW);
         
-        startTime = get_time_ms();
+        startTime = get_time_us();
         endTime = startTime;
         
         while (GPIO_read(PIN_ECHO) == 0) {
-            startTime = get_time_ms();
+            startTime = get_time_us();
         }
         while (GPIO_read(PIN_ECHO) == 1) {
-            endTime = get_time_ms();
+            endTime = get_time_us();
         }
         
         timeDiff = endTime - startTime;
+	printf("Timedifferent: %ld\n", timeDiff);
         distance = (timeDiff * SONIC_SPEED) / 2;
+	printf("doubled way: %ld\n", timeDiff * SONIC_SPEED);
         
         
         resultWrite = write(pipeFD, &distance, __SIZEOF_LONG__);

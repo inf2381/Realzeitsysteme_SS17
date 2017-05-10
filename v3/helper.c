@@ -38,7 +38,7 @@ int validateInt(char* str){
 	}
 
 	//ep == str --> does not start with a num
-	//*ep != '\0' --> only a part of the string is a num
+	// *ep != '\0' --> only a part of the string is a num
 	//int range checks
 	if (ep == str || *ep != '\0' || val > INT_MAX || val < INT_MIN) {
 	   fprintf(stderr, "%s cannot be parsed to a int\n", str);
@@ -77,16 +77,16 @@ void enforceTime(int retval){
     }
 }
 
-long get_time_ms() {
+long get_time_us() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+    return (tv.tv_sec * 1000 + tv.tv_usec ) - 1480464000; //1.1.2017 00:00:00UTC
 }
 
 void activWait(int waitTimeMillis){
     double t1, t2;
     double toReach = (double)waitTimeMillis;
-    t1 = get_time_ms();
+    t1 = get_time_us()/1000.0;
     
     //just some stuff to let time pass
     double pogo;
@@ -95,7 +95,7 @@ void activWait(int waitTimeMillis){
             pogo = (i^7) / 0.13 + 42;
         }
         printf("%lf\n", pogo);
-        t2 = get_time_ms();
+        t2 = get_time_us()/1000.0;
         if ((t2-t1) > toReach)
             break;
     }
