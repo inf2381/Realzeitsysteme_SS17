@@ -7,7 +7,7 @@
 #include "gpio.h"
 #include <stdlib.h>
 #include <pthread.h>
-
+#include <unistd.h>
 
 void engineSetup(){
     GPIO_export(PIN_1);
@@ -31,6 +31,12 @@ void engineSetdown(){
 }
 
 void engineStop(){
+    GPIO_set(PIN_1, 0);
+    GPIO_set(PIN_2, 1);
+    GPIO_set(PIN_3, 0);
+    GPIO_set(PIN_4, 1);
+
+    usleep(100000);
     GPIO_set(PIN_1, 0);
     GPIO_set(PIN_2, 0);
     GPIO_set(PIN_3, 0);
