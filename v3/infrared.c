@@ -57,3 +57,8 @@ void *infrared_read(void *arg) {
 	}
 }
 
+int main(int argc, char *argv[]) {
+	infrared_Setup();
+	infrared_read();
+}
+
