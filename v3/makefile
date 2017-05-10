@@ -16,7 +16,7 @@ clean:
 	
 #Concrete		
 engine: main.o engine.o gpio.o helper.o ultrasonic.o infrared.o
-infrared: infrared.o
+infrared: infrared.o helper.o gpio.o
 
 #Musterreglen
 %.o:%.c
