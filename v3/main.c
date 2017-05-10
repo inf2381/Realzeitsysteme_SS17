@@ -7,6 +7,9 @@
 
 #include "engine.h"
 #include "ultrasonic.h"
+#include "infrared.h"
+
+#define VERBOSE_DEF 1 
 
 
 void sig_handler(int signo)
@@ -24,7 +27,13 @@ void setup() {
 
 	engineSetup();
     ultrasonic_Setup();
+	infrared_setup();
+}
 
+void shutdown(){
+	engineSetdown();
+	ultrasonicSetdown();
+	infrared_Setdown();
 }
 
 
@@ -54,7 +63,7 @@ int main(int argc, char *argv[]) {
 		sleep(1);
 
 	}
-	engineSetdown();
-	ultrasonicSetdown();
+
+	shutdown();
 	return EXIT_SUCCESS;
 }
