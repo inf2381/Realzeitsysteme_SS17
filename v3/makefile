@@ -5,7 +5,7 @@ CC=gcc
 CFLAGS=-Wall -g -std=gnu99 
 LDFLAGS=-lpthread
 
-TARGET=engine infrared
+TARGET=engine
 
 #Def Targets
 .PHONY: all clean
@@ -16,7 +16,6 @@ clean:
 	
 #Concrete		
 engine: main.o engine.o gpio.o helper.o ultrasonic.o infrared.o
-infrared: infrared.o helper.o gpio.o
 
 #Musterreglen
 %.o:%.c

@@ -1,16 +1,17 @@
 /* https://tutorials-raspberrypi.de/entfernung-messen-mit-ultraschallsensor-hc-sr04/ */
 
-#include "ultrasonic.h"
 
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <limits.h>
 #include <stdbool.h>
+#include <stdio.h>
+
+#include "common.h"
+#include "ultrasonic.h"
 #include "gpio.h"
 #include "helper.h"
-
-#include <stdio.h>
 
 
 
@@ -40,20 +41,20 @@ void *exploitDistance(void *arg) {
             perror("read");
             exit(3);
         }
-	printf("Distance: %ld\n", readDistance);        
+		printf("Distance: %ld\n", readDistance);        
         sleep(1); //TODO: Reasonable or no sleeptime
     }
 }
 
 void *measureDistance(void *arg) {
-    int pipeFD = *((int *) arg);
-    ssize_t resultWrite;
+    thread_args* ir_args = (thread_args*) arg;
+
     long distance;
     long startTime, endTime, timeDiff;
     
     while (true) {
         
-        //measure distance
+        //measure distance  
         GPIO_set(PIN_TRIGGER, GPIO_HIGH);
         
         usleep(WAIT_TO_END_TRIGGER_ys);
@@ -70,17 +71,24 @@ void *measureDistance(void *arg) {
         }
         
         timeDiff = endTime - startTime;
-	printf("Timedifference: %ld\n", timeDiff);
+		printf("Timedifference: %ld\n", timeDiff);
         distance = (timeDiff * SONIC_SPEED) / 2;
-	printf("doubled way: %ld\n", timeDiff * SONIC_SPEED);
+		printf("doubled way: %ld\n", timeDiff * SONIC_SPEED);
         
+       
         
-        resultWrite = write(pipeFD, &distance, __SIZEOF_LONG__);
-        if (resultWrite != __SIZEOF_LONG__) {
-            perror("Write");
-            exit(2);
-        }
-        
+		//ipc to main
+		if(!pthread_rwlock_wrlock(ir_args->lock)){
+			perror("us_lock failed");
+		}
+
+		ir_args->timestamp = get_time_us();
+		ir_args->data = &distance;
+		
+		if(!pthread_rwlock_unlock(ir_args->lock)){
+			perror("us_lock failed");
+		}
+
         sleep(1); //TODO: Reasonable or no sleeptime
         
     }

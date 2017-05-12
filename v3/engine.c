@@ -1,13 +1,14 @@
 /* engine.c */
 /* ReSy SS17 -- Group 4 */
 
-#include "engine.h"
 #include <stdio.h>
-#include "helper.h"
-#include "gpio.h"
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
+
+#include "engine.h"
+#include "helper.h"
+#include "gpio.h"
 
 void engineSetup(){
     GPIO_export(PIN_1);
@@ -31,6 +32,7 @@ void engineSetdown(){
 }
 
 void engineStop(){
+	//Fast stopping, short reverse phase
     GPIO_set(PIN_1, 0);
     GPIO_set(PIN_2, 1);
     GPIO_set(PIN_3, 0);

@@ -1,14 +1,17 @@
-#include "infrared.h"
 
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <limits.h>
 #include <stdbool.h>
+
 #include "gpio.h"
 #include "helper.h"
+#include "infrared.h"
+#include "common.h"
 
-#include <stdio.h>
 
 
 
@@ -37,6 +40,9 @@ void infrared_Setdown() {
 
 
 void *infrared_read(void *arg) {
+	thread_args* ir_args = (thread_args*) arg;
+	
+
 	if (VERBOSE_DEF) {
     	printf("infrared_read");
 	}
@@ -51,14 +57,30 @@ void *infrared_read(void *arg) {
 			printf("infrared_read: in1 %d, in2 %d, in3 %d, in4 %d \n", in1, in2, in3, in4);
 		}
 		
+		if(!pthread_rwlock_wrlock(ir_args->lock)){
+			perror("ir_wrlock failed");
+		}
+
+		ir_args->timestamp = get_time_us();
+		int data = 0;
+		if (in1) data |= IR_IN1_BIT;
+		if (in2) data |= IR_IN2_BIT;
+		if (in3) data |= IR_IN3_BIT;
+		if (in4) data |= IR_IN4_BIT;
+		ir_args->data = &data;
 		
+		if(!pthread_rwlock_unlock(ir_args->lock)){
+			perror("ir_wrlock failed");
+		}
 		
 		sleep(1); //TODO: Reasonable or no sleeptime
 	}
 }
 
+/*
 int main(int argc, char *argv[]) {
 	infrared_Setup();
 	infrared_read(NULL);
 }
+*/
 
