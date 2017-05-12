@@ -49,8 +49,8 @@ void *exploitDistance(void *arg) {
 void *measureDistance(void *arg) {
     thread_args* ir_args = (thread_args*) arg;
 
-    long distance;
-    long startTime, endTime, timeDiff;
+    long distance, timeDiff;
+    struct timeval startTime, endTime;
     
     while (true) {
         
@@ -60,20 +60,18 @@ void *measureDistance(void *arg) {
         usleep(WAIT_TO_END_TRIGGER_ys);
         GPIO_set(PIN_TRIGGER, GPIO_LOW);
         
-        startTime = get_time_us();
+        gettimeofday(&startTime, NULL);
         endTime = startTime;
         
         while (GPIO_read(PIN_ECHO) == 0) {
-            startTime = get_time_us();
+            gettimeofday(&startTime, NULL);
         }
         while (GPIO_read(PIN_ECHO) == 1) {
-            endTime = get_time_us();
+            gettimeofday(&endTime, NULL);
         }
         
-        timeDiff = endTime - startTime;
-		printf("Timedifference: %ld\n", timeDiff);
+        timeDiff = diff_time_us(startTime, endTime);
         distance = (timeDiff * SONIC_SPEED) / 2;
-		printf("doubled way: %ld\n", timeDiff * SONIC_SPEED);
         
        
         
