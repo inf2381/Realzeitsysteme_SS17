@@ -9,13 +9,16 @@
 #include "engine.h"
 #include "ultrasonic.h"
 #include "infrared.h"
-
-
+#include "logic.h"
 
 
 pthread_t   thread_US_write, thread_US_read, thread_ir;
 pthread_rwlock_t ir_lock, US_lock, rfid_lock;
 thread_args ir_args, US_args, rfid_args;
+
+char ir_state;
+long us_distance;
+char rfid_state;
 
 void sig_handler(int signo)
 {
@@ -32,6 +35,8 @@ void setup() {
 	engineSetup();
     ultrasonic_Setup();
 	infrared_Setup();
+
+	logic_setup(test_ir);
 }
 
 void shutdown(){
@@ -42,10 +47,8 @@ void shutdown(){
 
 void collectData(){
 	//central collection point, should pass data to a logic unit
-	char ir_state;
-	long us_distance;
-	char rfid_state;
 
+	//TODO: check timestamps, maybe include trylocks
 	//infrared
 	if(!pthread_rwlock_rdlock(ir_args.lock)){
 		perror("ir_rdlock failed");
@@ -99,14 +102,17 @@ int main(int argc, char *argv[]) {
 	
     
     //starting threads
-    pthread_create(&thread_US_read,NULL,exploitDistance, (void*) &US_args);
+    //pthread_create(&thread_US_read,NULL,exploitDistance, (void*) &US_args);
     pthread_create(&thread_US_write,NULL,measureDistance, (void*) &US_args);
 	pthread_create(&thread_ir,NULL,infrared_read, (void*) &ir_args);
     
 	while (true) {
 		collectData();
+		logic_compute(ir_state, us_distance, rfid_state);
 
+	
 		//defined in commom.h
+		//TODO: remove this, movement should be handeled over logic.c
 		if (MOVE_ENABLED) {
         	engineDrive(forward, forward);
 		}
