@@ -12,6 +12,11 @@
 
 
 
+
+pthread_t   thread_US_write, thread_US_read, thread_ir;
+pthread_rwlock_t ir_lock, US_lock, rfid_lock;
+thread_args ir_args, US_args, rfid_args;
+
 void sig_handler(int signo)
 {
     if (signo == SIGINT){
@@ -35,47 +40,79 @@ void shutdown(){
 	infrared_Setdown();
 }
 
+void collectData(){
+	//central collection point, should pass data to a logic unit
+	char ir_state;
+	long us_distance;
+	char rfid_state;
 
-int main(int argc, char *argv[]) {
-	int ultasonicPipeFD[2], createPipe;
-    pthread_t   thread_US_write, thread_US_read, thread_ir;
-	pthread_rwlock_t ir_lock, US_lock, rfid_lock;
-	thread_args ir_args, US_args, rfid_args;
-	long data_stub;
-    
-	    
+	//infrared
+	if(!pthread_rwlock_rdlock(ir_args.lock)){
+		perror("ir_rdlock failed");
+	}
+
+	ir_state = *((char*) ir_args.data);
+
+
+	if(!pthread_rwlock_unlock(ir_args.lock)){
+		perror("ir_wrlock failed");
+	}
+
+	//ultrasonic
+	if(!pthread_rwlock_rdlock(US_args.lock)){
+		perror("us_rdlock failed");
+	}
+
+	us_distance = *((long*) US_args.data);
+
+
+	if(!pthread_rwlock_unlock(US_args.lock)){
+		perror("us_wrlock failed");
+	}
+
+	//rifd
+	rfid_state = 0;
+
+	if (VERBOSE_DEF){
+		printf("collectData:: ir_state %d, us_distance %ld, rfid_state %d \n", ir_state, us_distance, rfid_state);
+	}
+	
+}
+
+
+int main(int argc, char *argv[]) {	    
 	if (signal(SIGINT, sig_handler) == SIG_ERR){
         	exit(EXIT_FAILURE);
     }
 
 	setup();
 
-	//sync stuff
- 	createPipe = pipe(ultasonicPipeFD);
-    if (createPipe < 0){
-        perror("pipe ");
-        exit(1);
-    }
- 
+	//sync stuff 
 	if (!pthread_rwlock_init(&ir_lock, NULL)){
 		perror("ir_lock");
         exit(1);
 	}	
 
 	ir_args.lock = &ir_lock;
-	ir_args.data = &data_stub;
+	ir_args.timestamp = 0;
+	ir_args.data = NULL;
 	
     
     //starting threads
-    pthread_create(&thread_US_read,NULL,exploitDistance,&ultasonicPipeFD[0]);
-    pthread_create(&thread_US_write,NULL,measureDistance,&ultasonicPipeFD[1]);
+    pthread_create(&thread_US_read,NULL,exploitDistance, (void*) &US_args);
+    pthread_create(&thread_US_write,NULL,measureDistance, (void*) &US_args);
 	pthread_create(&thread_ir,NULL,infrared_read, (void*) &ir_args);
     
 	while (true) {
+		collectData();
+
 		//defined in commom.h
 		if (MOVE_ENABLED) {
         	engineDrive(forward, forward);
 		}
+
+		
+
 		sleep(1);
 
 	}
