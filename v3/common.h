@@ -1,5 +1,6 @@
 #ifndef common_h
 #define common_h
+#import <pthread.h>
 
 #define VERBOSE_DEF 1 
 #define MOVE_ENABLED 0

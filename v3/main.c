@@ -10,6 +10,7 @@
 #include "ultrasonic.h"
 #include "infrared.h"
 #include "logic.h"
+#include "piezo.h"
 
 
 pthread_t   thread_US_write, thread_US_read, thread_ir;
@@ -35,6 +36,7 @@ void setup() {
 	engineSetup();
     ultrasonic_Setup();
 	infrared_Setup();
+    piezoSetup();
 
 	logic_setup(test_ir);
 }
@@ -43,6 +45,7 @@ void shutdown(){
 	engineSetdown();
 	ultrasonicSetdown();
 	infrared_Setdown();
+    void piezoSetdown();
 }
 
 void collectData(){
@@ -89,6 +92,8 @@ int main(int argc, char *argv[]) {
     }
 
 	setup();
+    playTone();
+    return EXIT_SUCCESS;
 
 	//sync stuff 
 	if (!pthread_rwlock_init(&ir_lock, NULL)){
