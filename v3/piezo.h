@@ -7,5 +7,7 @@ void piezoSetup();
 void piezoSetdown();
 void playTone();
 
+void piezo_playReverse();
+void piezo_stopReverse();
 
 #endif

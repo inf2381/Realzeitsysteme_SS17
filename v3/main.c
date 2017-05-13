@@ -92,7 +92,10 @@ int main(int argc, char *argv[]) {
     }
 
 	setup();
-    playTone();
+    void piezo_startReverse();
+    sleep(5);
+    void piezo_stopReverse();
+    shutdown();
     return EXIT_SUCCESS;
 
 	//sync stuff 
