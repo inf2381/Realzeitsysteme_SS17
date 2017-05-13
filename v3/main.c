@@ -91,24 +91,18 @@ int main(int argc, char *argv[]) {
         	exit(EXIT_FAILURE);
     }
 
-	setup();
-    void piezo_startReverse();
-    sleep(5);
-    void piezo_stopReverse();
-    shutdown();
-    return EXIT_SUCCESS;
-
-	//sync stuff 
-	if (!pthread_rwlock_init(&ir_lock, NULL)){
-		perror("ir_lock");
+    setup();
+    //sync stuff 
+     if (!pthread_rwlock_init(&ir_lock, NULL)){
+	perror("ir_lock");
         exit(1);
-	}	
+     }
 
-	ir_args.lock = &ir_lock;
-	ir_args.timestamp = 0;
-	ir_args.data = NULL;
-	
-    
+    ir_args.lock = &ir_lock;
+    ir_args.timestamp = 0;
+    ir_args.data = NULL;
+
+
     //starting threads
     //pthread_create(&thread_US_read,NULL,exploitDistance, (void*) &US_args);
     pthread_create(&thread_US_write,NULL,measureDistance, (void*) &US_args);
