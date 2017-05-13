@@ -30,22 +30,6 @@ void ultrasonicSetdown() {
 }
 
 
-void *exploitDistance(void *arg) {
-    int pipeFD = *((int *) arg);
-    ssize_t resultRead;
-    long readDistance;
-    
-    while (true) {
-        resultRead = read(pipeFD, &readDistance, __SIZEOF_LONG__);
-        if (resultRead != __SIZEOF_LONG__) {
-            perror("read");
-            exit(3);
-        }
-		printf("Distance: %ld\n", readDistance);        
-        sleep(1); //TODO: Reasonable or no sleeptime
-    }
-}
-
 void *measureDistance(void *arg) {
     thread_args* ir_args = (thread_args*) arg;
 

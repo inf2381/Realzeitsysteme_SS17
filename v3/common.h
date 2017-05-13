@@ -13,7 +13,11 @@ typedef struct {
 	void* data;
 } thread_args;
 
-
+typedef struct {
+    thread_args *ir;
+    thread_args *us;
+    thread_args *rfid;
+} exploiterParams;
 
 #define IR_IN1_BIT 0x01
 #define IR_IN2_BIT 0x02

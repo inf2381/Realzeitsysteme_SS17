@@ -11,8 +11,6 @@
 void ultrasonic_Setup();
 void ultrasonicSetdown();
 
-//Threads
-void *exploitDistance(void *arg);
 void *measureDistance(void *arg);
 
 #endif

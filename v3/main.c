@@ -13,13 +13,11 @@
 #include "piezo.h"
 
 
-pthread_t   thread_US_write, thread_US_read, thread_ir;
-pthread_rwlock_t ir_lock, US_lock, rfid_lock;
-thread_args ir_args, US_args, rfid_args;
+pthread_t   thread_us, thread_ir, thread_exploit;
+pthread_rwlock_t ir_lock, us_lock, rfid_lock;
+thread_args ir_args, us_args, rfid_args;
+exploiterParams explParam;
 
-char ir_state;
-long us_distance;
-char rfid_state;
 
 void sig_handler(int signo)
 {
@@ -48,43 +46,6 @@ void shutdown(){
     void piezoSetdown();
 }
 
-void collectData(){
-	//central collection point, should pass data to a logic unit
-
-	//TODO: check timestamps, maybe include trylocks
-	//infrared
-	if(!pthread_rwlock_rdlock(ir_args.lock)){
-		perror("ir_rdlock failed");
-	}
-
-	ir_state = *((char*) ir_args.data);
-
-
-	if(!pthread_rwlock_unlock(ir_args.lock)){
-		perror("ir_wrlock failed");
-	}
-
-	//ultrasonic
-	if(!pthread_rwlock_rdlock(US_args.lock)){
-		perror("us_rdlock failed");
-	}
-
-	us_distance = *((long*) US_args.data);
-
-
-	if(!pthread_rwlock_unlock(US_args.lock)){
-		perror("us_wrlock failed");
-	}
-
-	//rifd
-	rfid_state = 0;
-
-	if (VERBOSE_DEF){
-		printf("collectData:: ir_state %d, us_distance %ld, rfid_state %d \n", ir_state, us_distance, rfid_state);
-	}
-	
-}
-
 
 int main(int argc, char *argv[]) {	    
 	if (signal(SIGINT, sig_handler) == SIG_ERR){
@@ -93,37 +54,45 @@ int main(int argc, char *argv[]) {
 
     setup();
     //sync stuff 
-     if (!pthread_rwlock_init(&ir_lock, NULL)){
+    if (!pthread_rwlock_init(&ir_lock, NULL)){
 	perror("ir_lock");
         exit(1);
-     }
+    }
+    if (!pthread_rwlock_init(&us_lock, NULL)){
+        perror("ir_lock");
+        exit(1);
+    }
+    if (!pthread_rwlock_init(&rfid_lock, NULL)){
+        perror("ir_lock");
+        exit(1);
+    }
 
+    //preparing structs
     ir_args.lock = &ir_lock;
     ir_args.timestamp = 0;
     ir_args.data = NULL;
-
-
-    //starting threads
-    //pthread_create(&thread_US_read,NULL,exploitDistance, (void*) &US_args);
-    pthread_create(&thread_US_write,NULL,measureDistance, (void*) &US_args);
-	pthread_create(&thread_ir,NULL,infrared_read, (void*) &ir_args);
     
-	while (true) {
-		collectData();
-		logic_compute(ir_state, us_distance, rfid_state);
+    us_args.lock = &us_lock;
+    us_args.timestamp = 0;
+    us_args.data = NULL;
+    
+    rfid_args.lock = &rfid_lock;
+    rfid_args.timestamp = 0;
+    rfid_args.data = NULL;
+    
+    
+    explParam.ir = &ir_args;
+    explParam.us = &us_args;
+    explParam.rfid = &rfid_args;
 
-	
-		//defined in commom.h
-		//TODO: remove this, movement should be handeled over logic.c
-		if (MOVE_ENABLED) {
-        	engineDrive(forward, forward);
-		}
-
-		
-
-		sleep(1);
-
-	}
+    
+    //starting threads
+    pthread_create(&thread_us, NULL, measureDistance, (void*) &us_args);
+	pthread_create(&thread_ir, NULL, infrared_read, (void*) &ir_args);
+    pthread_create(&thread_exploit, NULL, exploitMeasurements, (void*) &explParam);
+    
+    //wait for exploiting thread to finish
+    pthread_join(thread_exploit, NULL);
 
 	shutdown();
 	return EXIT_SUCCESS;

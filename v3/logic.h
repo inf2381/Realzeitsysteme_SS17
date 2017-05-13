@@ -4,6 +4,7 @@
 void logic_setup(int mode);
 void logic_shutdown();
 void logic_compute(char ir_state, long us_distance, char rfid_state);
+void *exploitMeasurements(void *arg);
 
 enum logic_mode {
     track = 0,
@@ -13,7 +14,5 @@ enum logic_mode {
 	test_us = 4,
 	test_rfid = 5
 };
-
-
 
 #endif
