@@ -1,6 +1,6 @@
 #ifndef HELPER_H
 #define HELPER_H
-#import <sys/time.h>
+#include <sys/time.h>
 
 #define MICROSECONDS_PER_SECOND 1000000
 

@@ -5,6 +5,7 @@
 #include <limits.h>
 #include <assert.h>
 #include <ctype.h>
+#include <string.h>
 
 #include <time.h>
 #include <sys/time.h>
@@ -17,7 +18,7 @@ void enforceMalloc(void* ptr) {
 	if (ptr == NULL) {
 		//If malloc failes, perror failes also. A direct works. 
 		char * out = "Malloc failed!\n";
-		write(2, out, sizeof("Malloc failed!\n"));
+		write(2, out, strlen(out));
 		//perror("Malloc failed!");
 		exit(EXIT_FAILURE);
 	}

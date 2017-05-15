@@ -38,24 +38,20 @@ char* GPIO_getPath(char* pin, const char* suffix) {
 void writeSafe(char* path, char* value){
 	if (verbose) printf("writeSafe path %s value %s\n", path, value);
 	
-	FILE *gpio;
-	gpio = fopen(path, "w");
-	if (gpio != NULL){
-		if (fwrite(value, sizeof(char), strlen(value), gpio) != strlen(value)){
-			perror("fwrite failed");
+	int gpio;
+	gpio = open(path, O_WRONLY);
+	if (gpio != -1){
+		if (write(gpio, value, strlen(value)) != strlen(value)){
+			perror("write failed");
 			exit(EXIT_FAILURE);
 		}
 
-		if (fflush(gpio) != 0){
-			perror("fflush fail");
-		}
-
-		if (fclose(gpio) != 0) {
-			perror("writeSafe: fclose failed");
+		if (close(gpio) != 0) {
+			perror("writeSafe: close failed");
 			exit(EXIT_FAILURE);
 		}
 	} else {
-		perror("writeSafe: fopen failed");
+		perror("writeSafe: open failed");
 		exit(EXIT_FAILURE);
 	}
 }
@@ -64,15 +60,15 @@ void writeSafe(char* path, char* value){
 int GPIO_read(char* pin) {
 	int value = -1; //default ret
 	int readCount = 0;
-	FILE *gpio;
+	int gpio;
 	char buffer[BUFFER_SIZE];
 	
 	char* path = GPIO_getPath(pin, PATH_SUFFIX_VALUE);
 	
-	gpio = fopen(path, "r");
-	if (gpio != NULL){
-		if ((readCount = fread(buffer, 1, BUFFER_SIZE, gpio)) != 2) {
-			perror("fread failed");
+	gpio = open(path, O_RDONLY);
+	if (gpio != -1){
+		if ((readCount = read(gpio, buffer, BUFFER_SIZE)) != 2) {
+			perror("read failed");
 			printf("cnt %d\n", readCount);
 			exit(EXIT_FAILURE);
 		}
@@ -85,8 +81,8 @@ int GPIO_read(char* pin) {
 			exit(EXIT_FAILURE);
 		}
 
-		if (fclose(gpio) != 0) {
-			perror("fclose failed");
+		if (close(gpio) != 0) {
+			perror("close failed");
 			exit(EXIT_FAILURE);
 		}
 	} else {
