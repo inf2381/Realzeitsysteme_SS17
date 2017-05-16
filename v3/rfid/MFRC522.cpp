@@ -89,6 +89,7 @@ byte MFRC522::PCD_ReadRegister(	byte reg	///< The register to read from. One of 
   char data[2];
   data[0] = 0x80 | ((reg) & 0x7E);
   bcm2835_spi_transfern(data,2);
+//printf("readReg %d, value %d\n", reg, data[1]);
   return (byte)data[1];
 } // End PCD_ReadRegister()
 
