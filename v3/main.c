@@ -43,43 +43,35 @@ void shutdown(){
 	engineSetdown();
 	ultrasonicSetdown();
 	infrared_Setdown();
-    void piezoSetdown();
+    piezoSetdown();
+
+	logic_shutdown();
 }
 
 
-int main(int argc, char *argv[]) {	    
+void initArgsGeneric(thread_args args, pthread_rwlock_t* lock){
+	if (!pthread_rwlock_init(lock, NULL)){
+		perror("genric_lock_init");
+        exit(1);
+    }
+
+	args.lock = lock;
+	args.timestamp = 0;
+	args.data = NULL;
+} 
+
+int main(int argc, char *argv[]) {	  
+	printf("RESY ROBOT - TEAM 4\n");  
 	if (signal(SIGINT, sig_handler) == SIG_ERR){
-        	exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     setup();
-    //sync stuff 
-    if (!pthread_rwlock_init(&ir_lock, NULL)){
-	perror("ir_lock");
-        exit(1);
-    }
-    if (!pthread_rwlock_init(&us_lock, NULL)){
-        perror("ir_lock");
-        exit(1);
-    }
-    if (!pthread_rwlock_init(&rfid_lock, NULL)){
-        perror("ir_lock");
-        exit(1);
-    }
 
     //preparing structs
-    ir_args.lock = &ir_lock;
-    ir_args.timestamp = 0;
-    ir_args.data = NULL;
-    
-    us_args.lock = &us_lock;
-    us_args.timestamp = 0;
-    us_args.data = NULL;
-    
-    rfid_args.lock = &rfid_lock;
-    rfid_args.timestamp = 0;
-    rfid_args.data = NULL;
-    
+	initArgsGeneric(ir_args, &ir_lock);
+	initArgsGeneric(us_args, &us_lock);
+	initArgsGeneric(rfid_args, &rfid_lock);
     
     explParam.ir = &ir_args;
     explParam.us = &us_args;
