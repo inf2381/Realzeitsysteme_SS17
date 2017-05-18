@@ -13,7 +13,7 @@ ECHO = echo
 
 BCM_PATH = rfid/bcm2835-1.50/
 OBJFILES = main.o engine.o gpio.o helper.o ultrasonic.o infrared.o logic.o piezo.o rfid.o rfid/bridging_header.o rfid/MFRC522.o
-TARGET=rfid_wrapper libbcm2835  engine
+TARGET= libbcm2835 rfid_wrapper engine
 
 #Def Targets
 .PHONY: all clean
