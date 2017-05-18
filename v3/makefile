@@ -7,13 +7,13 @@ CFLAGS=-Wall -g -std=gnu99 -I. -I./rfid
 CPLUS = g++
 CPLUS_FLAGS = -std=c++0x
 
-LDFLAGS=-L. -L./$(BCM_PATH) -lpthread -lbcm2835
+LDFLAGS=-L. -L./$(BCM_PATH)/src -lpthread -lbcm2835
 
 ECHO = echo
 
-BCM_PATH = rfid/bcm2835-1.50/src
+BCM_PATH = rfid/bcm2835-1.50/
 OBJFILES = main.o engine.o gpio.o helper.o ultrasonic.o infrared.o logic.o piezo.o rfid.o rfid/bridging_header.o rfid/MFRC522.o
-TARGET=rfid_wrapper engine
+TARGET=rfid_wrapper libbcm2835  engine
 
 #Def Targets
 .PHONY: all clean
@@ -38,9 +38,9 @@ rfid_wrapper: rfid/bridging_header.o rfid/MFRC522.o
 	$(CPLUS) $(CPLUS_FLAGS) -o $@ -c $^
 
 #Sub makefiles
-libbcm2835.a : force_look
+libbcm2835 : force_look
 	$(ECHO) looking into $(BCM_PATH) : $(MAKE) $(MFLAGS)
-	cd $(BCM_PATH); $(MAKE) $(MFLAGS)
+	cd $(BCM_PATH); ./configure;  $(MAKE) $(MFLAGS)
 
 force_look :
 	true
