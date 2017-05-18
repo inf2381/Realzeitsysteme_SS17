@@ -11,17 +11,101 @@ int logic_mode = -1;
 
 char ir_state;
 long us_distance;
-char rfid_state;
+int rfid_state;
+
+
+
+void logic_test_engine(){
+	//left test
+	engineDrive(forward, stop);
+	sleep(1); 
+	engineDrive(reverse, stop);
+	sleep(1);
+
+	//right test
+	engineDrive(stop, forward);
+	sleep(1); 
+	engineDrive(stop, reverse);
+	sleep(1);
+
+	//both
+	engineDrive(forward, forward);
+	sleep(1); 
+	engineDrive(reverse, reverse);
+	sleep(1);
+
+	engineStop();
+	sleep(5);
+}
+
+
+void logic_test_rfid(){
+	//simple rfid detectiont est: drive forward and stop if we detect a chip
+	if (rfid_state == 1) {
+		engineStop();
+		logic_mode = none;
+
+		if (VERBOSE_DEF) {
+			printf("found chip, stopping logic");
+		}
+	} else {
+		engineDrive(forward, forward);
+	}
+
+}
+
+void logic_test_us(){
+	//simple test: drive until we found a object
+	if (us_distance < 10) {
+		engineStop();
+		logic_mode = none;
+
+		if (VERBOSE_DEF) {
+			printf("found obejct, stopping logic");
+		}
+	} else {
+		engineDrive(forward, forward);
+	}
+
+}
+
+void logic_test_ir(){
+	//TODO: find a useful testcase
+	
+
+}
+
 
 void logic_setup(int mode){
 	logic_mode = mode;
 }
 void logic_shutdown(){
 }
-void logic_compute(char ir_state, long us_distance, char rfid_state){
+void logic_compute(){
 	switch(logic_mode){
+		case track_path:
+			break;
+		case track_rfid_search:
+			break;
+
+
 		case test_ir:
-		break;
+			logic_test_ir();
+			break;
+
+
+		case test_us:
+			logic_test_us();
+			break;
+
+		case test_rfid:
+			logic_test_rfid();
+			break;
+
+		case test_engine:
+			logic_test_engine();	
+
+			break;
 	}
 
 }
@@ -57,13 +141,25 @@ void *exploitMeasurements(void *arg) {
         }
         
         //rifd
-        rfid_state = 0;
+        if(!pthread_rwlock_rdlock(explparam.rfid->lock)){
+            perror("rfid_rdlock failed");
+        }
+        
+        rfid_state = *((int*) explparam.rfid->data);
+        
+        
+        if(!pthread_rwlock_unlock(explparam.rfid->lock)){
+ 			perror("rifd_unlock failed");
+        }
+          
         
         if (VERBOSE_DEF){
             printf("collectData:: ir_state %d, us_distance %ld, rfid_state %d \n", ir_state, us_distance, rfid_state);
         }
         
         // not finished yet
+		logic_compute();
+		usleep(10 * 1000)
     }
 }
 

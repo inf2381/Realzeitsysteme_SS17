@@ -72,6 +72,8 @@ void changeMovement(char* pin_1, char* pin_2, int direction){
 }
 
 void engineDrive(int left, int right){
+	//TODO: skip writing if the actual state matches the requested state
+
     changeMovement(PIN_1, PIN_2, left);
     changeMovement(PIN_3, PIN_4, right);
 }
