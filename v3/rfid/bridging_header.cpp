@@ -5,12 +5,15 @@
 
 MFRC522 mfrc;
 
-void init_RFID_library() {
+void rfid_wrapper_setup() {
     mfrc.PCD_Init();
 }
 
+void rfid_wrapper_setdown() {
 
-int hasDetected_RFID() {
+}
+
+int rfid_wrapper_hasDetected() {
     bool hasDetected = (bool) mfrc.PICC_IsNewCardPresent();
     if (hasDetected) {
         return 1;

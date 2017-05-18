@@ -15,7 +15,7 @@
 
 
 
-void infrared_Setup() {
+void infraredSetup() {
 	GPIO_export(PIN_IR_IN1);
 	GPIO_setDirection(PIN_IR_IN1, PIN_IN);
 
@@ -30,7 +30,7 @@ void infrared_Setup() {
 }
 
 
-void infrared_Setdown() {
+void infraredSetdown() {
 	GPIO_unexport(PIN_IR_IN1);
 	GPIO_unexport(PIN_IR_IN2);
 	GPIO_unexport(PIN_IR_IN3);

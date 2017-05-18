@@ -15,7 +15,7 @@
 
 
 
-void ultrasonic_Setup() {
+void ultrasonicSetup() {
 	GPIO_export(PIN_TRIGGER);
 	GPIO_setDirection(PIN_TRIGGER, PIN_OUT);
 

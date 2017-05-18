@@ -6,8 +6,8 @@
 #define PIN_IR_IN3 "20"
 #define PIN_IR_IN4 "21"
 
-void infrared_Setup();
-void infrared_Setdown();
+void infraredSetup();
+void infraredSetdown();
 
 //Threads
 void *infrared_read(void *arg);

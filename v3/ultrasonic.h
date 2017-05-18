@@ -8,7 +8,7 @@
 #define WAIT_TO_END_TRIGGER_ys 10
 
 
-void ultrasonic_Setup();
+void ultrasonicSetup();
 void ultrasonicSetdown();
 
 void *measureDistance(void *arg);

@@ -159,7 +159,7 @@ void *exploitMeasurements(void *arg) {
         
         // not finished yet
 		logic_compute();
-		usleep(10 * 1000)
+		usleep(10 * 1000);
     }
 }
 

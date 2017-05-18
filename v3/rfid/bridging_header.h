@@ -4,8 +4,9 @@
 extern "C"
 {
 #endif
-    void init_RFID_library();
-    int hasDetected_RFID();
+    void rfid_wrapper_setup();
+    void rfid_wrapper_setdown();
+    int rfid_wrapper_hasDetected();
 #ifdef __cplusplus
 }
 #endif

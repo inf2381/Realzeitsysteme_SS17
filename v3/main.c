@@ -11,6 +11,7 @@
 #include "infrared.h"
 #include "logic.h"
 #include "piezo.h"
+#include "rfid.h"
 
 
 pthread_t   thread_us, thread_ir, thread_exploit;
@@ -19,33 +20,23 @@ thread_args ir_args, us_args, rfid_args;
 exploiterParams explParam;
 
 
-void sig_handler(int signo)
-{
-    if (signo == SIGINT){
-        engineStop();
-        engineSetdown();
-	ultrasonicSetdown();
-        exit(EXIT_SUCCESS);
-    }
-}
-
-
 void setup() {
 	engineSetup();
-    ultrasonic_Setup();
-	infrared_Setup();
+    ultrasonicSetup();
+	infraredSetup();
     piezoSetup();
+    rfidSetup();
 
 	logic_setup(test_ir);
 }
 
 void shutdown(){
+    logic_shutdown();
+
 	engineSetdown();
 	ultrasonicSetdown();
-	infrared_Setdown();
+	infraredSetdown();
     piezoSetdown();
-
-	logic_shutdown();
 }
 
 
@@ -59,6 +50,15 @@ void initArgsGeneric(thread_args args, pthread_rwlock_t* lock){
 	args.timestamp = 0;
 	args.data = NULL;
 } 
+
+void sig_handler(int signo)
+{
+    if (signo == SIGINT){
+        shutdown();
+        exit(EXIT_SUCCESS);
+    }
+}
+
 
 int main(int argc, char *argv[]) {	  
 	printf("RESY ROBOT - TEAM 4\n");  

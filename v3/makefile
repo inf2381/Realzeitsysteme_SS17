@@ -5,7 +5,7 @@ CC=gcc
 CFLAGS=-Wall -g -std=gnu99 -I. -I./rfid
 
 CPLUS = g++
-CPLUS_FLAGS = -std=c++11
+CPLUS_FLAGS = -std=c++0x
 
 LDFLAGS=-L. -L./$(BCM_PATH) -lpthread -lbcm2835
 
