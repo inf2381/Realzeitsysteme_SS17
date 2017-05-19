@@ -54,7 +54,7 @@ void *infrared_read(void *arg) {
 		int in4 = GPIO_read(PIN_IR_IN4);
 
 		if (VERBOSE_DEF) {
-			printf("infrared_read: in1 %d, in2 %d, in3 %d, in4 %d \n", in1, in2, in3, in4);
+			printf("infrared_read: in1 %d, in2 %d, in3 %d, in4 %d, %p \n", in1, in2, in3, in4, ir_args->lock);
 		}
 		
 		if(!pthread_rwlock_wrlock(ir_args->lock)){
@@ -71,6 +71,12 @@ void *infrared_read(void *arg) {
 		
 		if(!pthread_rwlock_unlock(ir_args->lock)){
 			perror("ir_wrlock failed");
+
+
+		}
+
+if (VERBOSE_DEF) {
+			printf("infrared_read2: in1 %d, in2 %d, in3 %d, in4 %d \n", in1, in2, in3, in4);
 		}
 		
 		sleep(1); //TODO: Reasonable or no sleeptime

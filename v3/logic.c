@@ -118,6 +118,9 @@ void *exploitMeasurements(void *arg) {
     exploiterParams explparam = *(exploiterParams*) arg;
     
     while (true) {
+		usleep(10 * 1000);
+
+
         //TODO: check timestamps, maybe include trylocks
         //infrared
         if(!pthread_rwlock_rdlock(explparam.ir->lock)){
@@ -162,7 +165,6 @@ void *exploitMeasurements(void *arg) {
         
         // not finished yet
 		logic_compute();
-		usleep(10 * 1000);
     }
 }
 

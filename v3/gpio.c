@@ -43,9 +43,12 @@ void writeSafe(char* path, char* value){
 	gpio = open(path, O_WRONLY);
 	if (gpio != -1){
 		if ((writeCount = write(gpio, value, strlen(value))) != strlen(value)){
-			perror("write failed");
-	        printf("cnt %d expected %d\n", readCount, strlen(value));
-			exit(EXIT_FAILURE);
+			//ebusy is occuring on already exported files
+			if (errno != EBUSY) {
+				perror("write failed");
+	        		printf("cnt %d expected %d\n", writeCount, strlen(value));
+				exit(EXIT_FAILURE);
+			}
 		}
 
 		if (close(gpio) != 0) {
