@@ -84,7 +84,7 @@ void logic_shutdown(){
 void logic_compute(){
 	switch(logic_mode){
         case none:
-            break:
+            break;
 
 		case track_path:
 			break;

@@ -41,7 +41,7 @@ void shutdown(){
 
 
 void initArgsGeneric(thread_args args, pthread_rwlock_t* lock){
-	if (!pthread_rwlock_init(lock, NULL)){
+	if (pthread_rwlock_init(lock, NULL)) {
 		perror("genric_lock_init");
         exit(1);
     }

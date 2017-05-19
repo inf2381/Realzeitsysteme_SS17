@@ -1,3 +1,4 @@
+#include "common.h"
 #include "gpio.h"
 #include "helper.h"
 
@@ -14,7 +15,6 @@
 
 
 
-int verbose = 0;
 const int BUFFER_SIZE = 16;
 
 const char* PATH = "/sys/class/gpio/gpio";
@@ -36,7 +36,7 @@ char* GPIO_getPath(char* pin, const char* suffix) {
 }
 
 void writeSafe(char* path, char* value){
-	if (verbose) printf("writeSafe path %s value %s\n", path, value);
+	if (VERBOSE_DEF) printf("writeSafe path %s value %s\n", path, value);
 	
 	int gpio;
 	gpio = open(path, O_WRONLY);
