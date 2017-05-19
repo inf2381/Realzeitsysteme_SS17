@@ -18,9 +18,7 @@ Makefile.in
 /config.h.in
 /config.sub
 /config.log
-/configure
 /configure.scan
 /depcomp
-/install-sh
 /missing
 /stamp-h1
