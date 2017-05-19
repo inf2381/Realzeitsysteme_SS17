@@ -92,10 +92,9 @@ void pwmTest() {
     sleeper.tv_sec = 0;
     sleeper.tv_nsec = 5000;
     
-    ç
     
     int i;
-    for (i=0; i<10000; <#increment#>) {
+    for (i=0; i<10000; i++) {
         GPIO_set(PIN_3, 1);
         nanosleep(&sleeper, &dummy);
         GPIO_set(PIN_3, 0);
