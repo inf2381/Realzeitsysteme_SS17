@@ -78,3 +78,40 @@ void engineDrive(int left, int right){
     changeMovement(PIN_3, PIN_4, right);
 }
 
+void delay (unsigned int howLong) {
+    struct timespec sleeper, dummy ;
+    
+    sleeper.tv_sec  = (time_t)(howLong / 1000) ;
+    sleeper.tv_nsec = (long)(howLong % 1000) * 1000000 ;
+    
+    nanosleep (&sleeper, &dummy) ;
+}
+
+void pwmTest() {
+    struct timespec sleeper, dummy;
+    sleeper.tv_sec = 0;
+    sleeper.tv_nsec = 5000;
+    
+    ç
+    
+    int i;
+    for (i=0; i<10000; <#increment#>) {
+        GPIO_set(PIN_3, 1);
+        nanosleep(&sleeper, &dummy);
+        GPIO_set(PIN_3, 0);
+        nanosleep(&sleeper, &dummy);
+    }
+    GPIO_set(PIN_1, 0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
