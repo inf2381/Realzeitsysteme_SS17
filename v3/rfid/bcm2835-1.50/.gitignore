@@ -20,5 +20,4 @@ Makefile.in
 /config.log
 /configure.scan
 /depcomp
-/missing
 /stamp-h1
