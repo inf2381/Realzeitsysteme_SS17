@@ -15,7 +15,7 @@ BCM_PATH = rfid/bcm2835-1.50/
 BCM_MAKECHAIN = autoscan; autoheader; automake --add-missing; aclocal; autoconf; ./configure
 
 OBJFILES = main.o engine.o gpio.o helper.o ultrasonic.o infrared.o logic.o piezo.o rfid.o rfid/bridging_header.o rfid/MFRC522.o
-TARGET= libbcm2835 rfid_wrapper engine
+TARGET= rfid_wrapper engine | libbcm2835
 
 #Def Targets
 .PHONY: all clean

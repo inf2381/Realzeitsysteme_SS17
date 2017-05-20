@@ -81,16 +81,8 @@ int main(int argc, char *argv[]) {
     explParam.us = &us_args;
     explParam.rfid = &rfid_args;
 
-printf("wtf %p\n", ir_args.lock);
-    if(!pthread_rwlock_wrlock(ir_args.lock)){
-			perror("ir_wrlock failed");
-	}
-
- if(!pthread_rwlock_unlock(&ir_lock)){
-			perror("ir_wrlock failed");
-	}    
     //starting threads
-//    pthread_create(&thread_us, NULL, measureDistance, (void*) &us_args);
+    pthread_create(&thread_us, NULL, measureDistance, (void*) &us_args);
 	pthread_create(&thread_ir, NULL, infrared_read, (void*) &ir_args);
     pthread_create(&thread_exploit, NULL, exploitMeasurements, (void*) &explParam);
     
