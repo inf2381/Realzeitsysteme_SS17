@@ -6,6 +6,8 @@
 #include "common.h"
 #include "engine.h"
 #include "logic.h"
+#include "helper.h"
+#include "piezo.h"
 
 struct timespec sleeptime;
 int logic_mode = -1;

@@ -117,7 +117,7 @@ void activWait(int waitTimeMillis){
     }
 }
 
-void sleepAbsolute(int nanoseconds, struct timespec * sleeptime) {
+void sleepAbsolute(long nanoseconds, struct timespec * sleeptime) {
     clock_gettime( CLOCK_MONOTONIC, sleeptime );
     //preparing
     if (nanoseconds >= NANOSECONDS_PER_SECOND) {

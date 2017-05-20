@@ -1,5 +1,6 @@
 #include "piezo.h"
 #include "gpio.h"
+#include "helper.h"
 
 #include <unistd.h>
 #include <pthread.h>
