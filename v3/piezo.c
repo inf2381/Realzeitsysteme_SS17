@@ -7,6 +7,7 @@
 
 
 pthread_t enerver;
+struct timespec sleeptime;
 volatile bool shouldTerminate = false;
 
 void piezoSetup() {
@@ -23,9 +24,10 @@ void piezoSetdown() {
 void *reverseTone() {
     while (!shouldTerminate) {
         GPIO_set(PIEZO_PIN, 1);
-        usleep(500000);
+        
+        sleepAbsolute(500000, &sleeptime); //0,5ms
         GPIO_set(PIEZO_PIN, 0);
-        usleep(250000);
+        sleepAbsolute(250000, &sleeptime); //0,25ms
     }
     GPIO_set(PIEZO_PIN, 0);
     pthread_exit(0);
@@ -44,6 +46,6 @@ void piezo_stopReverse() {
 
 void playTone() {
     GPIO_set(PIEZO_PIN, 1);
-    sleep(1);
+    sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
     GPIO_set(PIEZO_PIN, 0);
 }

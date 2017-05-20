@@ -35,6 +35,7 @@ void *measureDistance(void *arg) {
 
     long distance, timeDiff;
     struct timeval startTime, endTime;
+    struct timespec sleeptime;
     
     while (true) {
         
@@ -71,7 +72,8 @@ void *measureDistance(void *arg) {
 			perror("us_lock failed");
 		}
 
-        sleep(1); //TODO: Reasonable or no sleeptime
+
+        sleepAbsolute(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime);
         
     }
 }

@@ -7,6 +7,7 @@
 #include "engine.h"
 #include "logic.h"
 
+struct timespec sleeptime;
 int logic_mode = -1;
 
 char ir_state = -1;
@@ -18,28 +19,28 @@ int rfid_state = -1;
 void logic_test_engine(){
 	//left test
 	engineDrive(forward, stop);
-	sleep(1); 
+	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime); 
 	engineDrive(reverse, stop);
-	sleep(1);
+	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
 	//right test
 	engineDrive(stop, forward);
-	sleep(1); 
+	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 	engineDrive(stop, reverse);
-	sleep(1);
+	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
 	//both
 	engineDrive(forward, forward);
-	sleep(1); 
+	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 	engineDrive(reverse, reverse);
-	sleep(1);
+	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
 	engineStop();
-	sleep(1);
+	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
     
-        // PWM test
-        pwmTest();
-        sleep(1);
+    // PWM test
+    pwmTest();
+    sleepAbsolute(3 * NANOSECONDS_PER_SECOND, &sleeptime);
 }
 
 
@@ -76,7 +77,16 @@ void logic_test_us(){
 void logic_test_ir(){
 	//TODO: find a useful testcase
 	
+}
 
+void logic_test_piezo(){
+    playTone();
+    sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+
+    piezo_playReverse();
+    sleepAbsolute(3 * NANOSECONDS_PER_SECOND, &sleeptime);
+    piezo_stopReverse();
+    logic_mode = none;
 }
 
 void logic_setup(int mode){
@@ -109,7 +119,10 @@ void logic_compute(){
 			break;
 
 		case test_engine:
-			logic_test_engine();	
+			logic_test_engine();
+
+        case test_piezo:
+            logic_test_piezo();	
 
 			break;
 	}
@@ -121,7 +134,7 @@ void *exploitMeasurements(void *arg) {
     exploiterParams explparam = *(exploiterParams*) arg;
     
     while (true) {
-		usleep(100 * 1000);
+         sleepAbsolute(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
 
 
         //TODO: check timestamps, maybe include trylocks
@@ -169,9 +182,10 @@ void *exploitMeasurements(void *arg) {
             printf("collectData:: ir_state %d, us_distance %ld, rfid_state %d \n", ir_state, us_distance, rfid_state);
         }
 	        
-	if (ir_state == -1 || us_distance == -1 || rfid_state == -1) {
-		continue;
-	}
+	    if (ir_state == -1 || us_distance == -1 || rfid_state == -1) {
+		    continue;
+	    }
+
 		logic_compute();
     }
 }

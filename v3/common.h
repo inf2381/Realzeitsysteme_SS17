@@ -20,10 +20,14 @@ typedef struct {
     thread_args *rfid;
 } exploiterParams;
 
+//Used in ir_args.data as bitflags
 #define IR_IN1_BIT 0x01
 #define IR_IN2_BIT 0x02
 #define IR_IN3_BIT 0x04
 #define IR_IN4_BIT 0x08
 
+//Timings
+#define INTERVAL_LOGIC 100
+#define INTERVAL_INPUT 50
 
 #endif

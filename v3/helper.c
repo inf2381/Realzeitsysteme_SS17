@@ -120,7 +120,7 @@ void activWait(int waitTimeMillis){
 void sleepAbsolute(int nanoseconds, struct timespec * sleeptime) {
     clock_gettime( CLOCK_MONOTONIC, sleeptime );
     //preparing
-    if (nanoseconds > NANOSECONDS_PER_SECOND) {
+    if (nanoseconds >= NANOSECONDS_PER_SECOND) {
         sleeptime->tv_sec += nanoseconds / NANOSECONDS_PER_SECOND;
         sleeptime->tv_nsec += nanoseconds % NANOSECONDS_PER_SECOND;
     } else {
