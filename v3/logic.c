@@ -117,7 +117,7 @@ void *exploitMeasurements(void *arg) {
     exploiterParams explparam = *(exploiterParams*) arg;
     
     while (true) {
-		usleep(10 * 1000);
+		usleep(100 * 1000);
 
 
         //TODO: check timestamps, maybe include trylocks
@@ -139,7 +139,7 @@ void *exploitMeasurements(void *arg) {
             perror("us_rdlock failed");
         }
         
-        if (explparam.ir->data != NULL) {
+        if (explparam.us->data != NULL) {
             us_distance = *((long*) explparam.us->data);
         }
         
@@ -152,7 +152,7 @@ void *exploitMeasurements(void *arg) {
             perror("rfid_rdlock failed");
         }
         
-        if (explparam.ir->data != NULL) {        
+        if (explparam.rfid->data != NULL) {        
             rfid_state = *((int*) explparam.rfid->data);
         }
         
