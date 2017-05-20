@@ -36,6 +36,9 @@ void logic_test_engine(){
 
 	engineStop();
 	sleep(5);
+    
+    // PWM test
+    pwmTest();
 }
 
 

@@ -10,6 +10,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <librt.h>
 
 /* Common small helper file to reduce redundant code over and over again */
 
@@ -114,6 +115,26 @@ void activWait(int waitTimeMillis){
         if ((t2-t1) > toReach)
             break;
     }
+}
+
+void sleepAbsolute(int nanoseconds, struct timespec * sleeptime) {
+    clock_gettime( CLOCK_MONOTONIC, &sleeptime );
+    //preparing
+    if (nanoseconds > NANOSECONDS_PER_SECOND) {
+        sleeptime->tv_sec += nanoseconds / NANOSECONDS_PER_SECOND;
+        sleeptime->tv_nsec += nanoseconds % NANOSECONDS_PER_SECOND;
+    } else {
+        sleeptime->tv_nsec+= NANOSECONDS_PER_SECOND;
+    }
+    
+    //actual sleep
+    while (clock_nanosleep( CLOCK_MONOTONIC,
+                           TIMER_ABSTIME,
+                           &sleeptime,
+                           NULL) == EINTR ) { };
+    
+    //sleeptime reached
+    return;
 }
 
 //strupr is no part of our libc

@@ -37,4 +37,6 @@ void engineDrive(int left, int right);
 // Stops both wheels immediately
 void engineStop();
 
+void pwmTest();
+
 #endif /* engine_h */

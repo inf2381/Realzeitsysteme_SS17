@@ -3,6 +3,7 @@
 #include <sys/time.h>
 
 #define MICROSECONDS_PER_SECOND 1000000
+#define NANOSECONDS_PER_SECOND 1000000000
 
 void enforceMalloc(void* ptr);
 int validateInt(char* str);
