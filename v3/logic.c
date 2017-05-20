@@ -117,7 +117,7 @@ void *exploitMeasurements(void *arg) {
     exploiterParams explparam = *(exploiterParams*) arg;
     
     while (true) {
-		usleep(1000 * 1000);
+		usleep(100 * 1000);
 
 
         //TODO: check timestamps, maybe include trylocks
