@@ -9,9 +9,9 @@
 
 int logic_mode = -1;
 
-char ir_state;
-long us_distance;
-int rfid_state;
+char ir_state = -1;
+long us_distance = -1;
+int rfid_state = -1;
 
 
 
@@ -35,10 +35,11 @@ void logic_test_engine(){
 	sleep(1);
 
 	engineStop();
-	sleep(5);
+	sleep(1);
     
-    // PWM test
-    pwmTest();
+        // PWM test
+        pwmTest();
+        sleep(1);
 }
 
 
@@ -59,7 +60,7 @@ void logic_test_rfid(){
 
 void logic_test_us(){
 	//simple test: drive until we found a object
-	if (us_distance < 10) {
+	if (us_distance < 15 * 1000) {
 		engineStop();
 		logic_mode = none;
 
@@ -78,7 +79,6 @@ void logic_test_ir(){
 
 }
 
-
 void logic_setup(int mode){
 	logic_mode = mode;
 }
@@ -87,7 +87,7 @@ void logic_shutdown(){
 void logic_compute(){
 	switch(logic_mode){
         case none:
-            break:
+            break;
 
 		case track_path:
 			break;
@@ -121,40 +121,46 @@ void *exploitMeasurements(void *arg) {
     exploiterParams explparam = *(exploiterParams*) arg;
     
     while (true) {
+		usleep(100 * 1000);
+
+
         //TODO: check timestamps, maybe include trylocks
         //infrared
-        if(!pthread_rwlock_rdlock(explparam.ir->lock)){
+        if(pthread_rwlock_rdlock(explparam.ir->lock)){
             perror("ir_rdlock failed");
         }
         
-        ir_state = *((char*) explparam.ir->data);
+        if (explparam.ir->data != NULL) {
+            ir_state = *((char*) explparam.ir->data);
+        }
         
-        
-        if(!pthread_rwlock_unlock(explparam.ir->lock)){
+        if(pthread_rwlock_unlock(explparam.ir->lock)){
             perror("ir_wrlock failed");
         }
         
         //ultrasonic
-        if(!pthread_rwlock_rdlock(explparam.us->lock)){
+        if(pthread_rwlock_rdlock(explparam.us->lock)){
             perror("us_rdlock failed");
         }
         
-        us_distance = *((long*) explparam.us->data);
+        if (explparam.us->data != NULL) {
+            us_distance = *((long*) explparam.us->data);
+        }
         
-        
-        if(!pthread_rwlock_unlock(explparam.us->lock)){
+        if(pthread_rwlock_unlock(explparam.us->lock)){
             perror("us_wrlock failed");
         }
         
         //rifd
-        if(!pthread_rwlock_rdlock(explparam.rfid->lock)){
+        if(pthread_rwlock_rdlock(explparam.rfid->lock)){
             perror("rfid_rdlock failed");
         }
         
-        rfid_state = *((int*) explparam.rfid->data);
+        if (explparam.rfid->data != NULL) {        
+            rfid_state = *((int*) explparam.rfid->data);
+        }
         
-        
-        if(!pthread_rwlock_unlock(explparam.rfid->lock)){
+        if(pthread_rwlock_unlock(explparam.rfid->lock)){
  			perror("rifd_unlock failed");
         }
           
@@ -162,10 +168,11 @@ void *exploitMeasurements(void *arg) {
         if (VERBOSE_DEF){
             printf("collectData:: ir_state %d, us_distance %ld, rfid_state %d \n", ir_state, us_distance, rfid_state);
         }
-        
-        // not finished yet
+	        
+	if (ir_state == -1 || us_distance == -1 || rfid_state == -1) {
+		continue;
+	}
 		logic_compute();
-		usleep(10 * 1000);
     }
 }
 

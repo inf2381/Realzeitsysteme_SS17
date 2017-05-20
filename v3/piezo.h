@@ -1,7 +1,7 @@
 #ifndef piezo_h
 #define piezo_h
 
-#define PIEZO_PIN "22"
+#define PIEZO_PIN "26"
 
 void piezoSetup();
 void piezoSetdown();

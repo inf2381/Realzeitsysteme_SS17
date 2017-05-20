@@ -1,3 +1,4 @@
+#include "common.h"
 #include "gpio.h"
 #include "helper.h"
 
@@ -14,7 +15,6 @@
 
 
 
-int verbose = 0;
 const int BUFFER_SIZE = 16;
 
 const char* PATH = "/sys/class/gpio/gpio";
@@ -36,14 +36,19 @@ char* GPIO_getPath(char* pin, const char* suffix) {
 }
 
 void writeSafe(char* path, char* value){
-	if (verbose) printf("writeSafe path %s value %s\n", path, value);
+	if (VERBOSE_LOG_GPIO_DEF) printf("writeSafe path %s value %s\n", path, value);
 	
 	int gpio;
+    int writeCount; 
 	gpio = open(path, O_WRONLY);
 	if (gpio != -1){
-		if (write(gpio, value, strlen(value)) != strlen(value)){
-			perror("write failed");
-			exit(EXIT_FAILURE);
+		if ((writeCount = write(gpio, value, strlen(value))) != strlen(value)){
+			//ebusy is occuring on already exported files
+			if (errno != EBUSY) {
+				perror("write failed");
+	            printf("cnt %d expected %d\n", writeCount, (int) strlen(value));
+				exit(EXIT_FAILURE);
+			}
 		}
 
 		if (close(gpio) != 0) {

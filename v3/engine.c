@@ -90,11 +90,12 @@ void delay (unsigned int howLong) {
 void pwmTest() {
     struct timespec sleeper, dummy;
     sleeper.tv_sec = 0;
-    sleeper.tv_nsec = 5000;
-    
+    sleeper.tv_nsec = 10000000;
+
+    GPIO_set(PIN_1, 1);
     
     int i;
-    for (i=0; i<10000; i++) {
+    for (i=0; i<100; i++) {
         GPIO_set(PIN_3, 1);
         nanosleep(&sleeper, &dummy);
         GPIO_set(PIN_3, 0);

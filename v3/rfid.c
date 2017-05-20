@@ -21,7 +21,7 @@ void *detectRFID(void *arg) {
 
     while (true) {
 
-		if(!pthread_rwlock_wrlock(t_args->lock)){
+		if(pthread_rwlock_wrlock(t_args->lock)){
 			perror("rfid_wrlock failed");
 		}
 
@@ -29,7 +29,7 @@ void *detectRFID(void *arg) {
 		t_args->timestamp = get_time_us();
 		t_args->data = &cardPresent;
 
-		if(!pthread_rwlock_unlock(t_args->lock)){
+		if(pthread_rwlock_unlock(t_args->lock)){
 			perror("rfid_unlock failed");
 		}
 
