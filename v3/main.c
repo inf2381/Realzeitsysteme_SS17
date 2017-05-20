@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
     pthread_create(&thread_exploit, NULL, exploitMeasurements, (void*) &explParam);
     
     //wait for exploiting thread to finish
-    pthread_join(&thread_exploit, NULL);
+    pthread_join(thread_exploit, NULL);
 
 	shutdown();
 	return EXIT_SUCCESS;
