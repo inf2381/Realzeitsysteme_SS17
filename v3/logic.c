@@ -9,9 +9,9 @@
 
 int logic_mode = -1;
 
-char ir_state = NULL;
-long us_distance = NULL;
-int rfid_state = NULL;
+char ir_state = -1;
+long us_distance = -1;
+int rfid_state = -1;
 
 
 
@@ -164,8 +164,10 @@ void *exploitMeasurements(void *arg) {
         if (VERBOSE_DEF){
             printf("collectData:: ir_state %d, us_distance %ld, rfid_state %d \n", ir_state, us_distance, rfid_state);
         }
-        
-
+	        
+	if (ir_state == -1 || us_distance == -1 || rfid_state == -1) {
+		continue;
+	}
 		logic_compute();
     }
 }
