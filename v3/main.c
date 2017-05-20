@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <pthread.h>
+#include <getopt.h>
+#include <string.h>
 
 #include "common.h"
 #include "engine.h"
@@ -12,9 +14,9 @@
 #include "logic.h"
 #include "piezo.h"
 #include "rfid.h"
+#include "helper.h"
 
-
-pthread_t   thread_us, thread_ir, thread_exploit;
+pthread_t   thread_us, thread_ir, thread_rfid, thread_exploit;
 pthread_rwlock_t ir_lock, us_lock, rfid_lock;
 thread_args ir_args, us_args, rfid_args;
 exploiterParams explParam;
@@ -68,32 +70,32 @@ void readCommandLine(int argc, char *argv[]){
             {NULL, 0, 0, 0}
         };
         int option_index = 0;
-        option = getopt_long_only(argc, argv, "m:", long_options, &option_index);
+        int option = getopt_long_only(argc, argv, "m:", long_options, &option_index);
 
         if (option == -1)
             break;
 
         switch(option){
         case 'm':
-            if (strcmp(optarg, "rfid")) == 0) {
+            if (strcmp(optarg, "rfid") == 0) {
                 logicmode = test_rfid;
 
-            } else if (strcmp(optarg, "ir")) == 0) {
+            } else if (strcmp(optarg, "ir") == 0) {
                 logicmode = test_ir;
 
-            } else if (strcmp(optarg, "us")) == 0) {
+            } else if (strcmp(optarg, "us") == 0) {
                 logicmode = test_us;
 
-            } else if (strcmp(optarg, "piezo")) == 0) {
+            } else if (strcmp(optarg, "piezo") == 0) {
                 logicmode = test_piezo;
 
-            } else if (strcmp(optarg, "engine")) == 0) {
+            } else if (strcmp(optarg, "engine") == 0) {
                 logicmode = test_engine;
 
-            } else if (strcmp(optarg, "path")) == 0) {
+            } else if (strcmp(optarg, "path") == 0) {
                 logicmode = track_path;
 
-            } else if (strcmp(optarg, "search")) == 0) {
+            } else if (strcmp(optarg, "search") == 0) {
                 logicmode = track_rfid_search;
             }
             break;
@@ -134,6 +136,7 @@ int main(int argc, char *argv[]) {
     //starting threads
     pthread_create(&thread_us, NULL, measureDistance, (void*) &us_args);
 	pthread_create(&thread_ir, NULL, infrared_read, (void*) &ir_args);
+    pthread_create(&thread_rfid, NULL, detectRFID, (void*) &rfid_args);
     pthread_create(&thread_exploit, NULL, exploitMeasurements, (void*) &explParam);
     
     //wait for exploiting thread to finish

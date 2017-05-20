@@ -35,10 +35,11 @@ void logic_test_engine(){
 	sleep(1);
 
 	engineStop();
-	sleep(5);
+	sleep(1);
     
-    // PWM test
-    pwmTest();
+        // PWM test
+        pwmTest();
+        sleep(1);
 }
 
 
