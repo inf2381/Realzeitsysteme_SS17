@@ -13,7 +13,9 @@ enum logic_mode {
 	test_ir = 3,
 	test_us = 4,
 	test_rfid = 5,
-	test_engine = 6
+	test_engine = 6,
+    test_piezo = 7,
+    count
 
 };
 

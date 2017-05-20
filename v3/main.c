@@ -19,6 +19,8 @@ pthread_rwlock_t ir_lock, us_lock, rfid_lock;
 thread_args ir_args, us_args, rfid_args;
 exploiterParams explParam;
 
+int logicmode = track_path;
+
 
 void setup() {
 	engineSetup();
@@ -27,7 +29,7 @@ void setup() {
     piezoSetup();
     rfidSetup();
 
-	logic_setup(test_us);
+	logic_setup(logicmode);
 }
 
 void shutdown(){
@@ -59,6 +61,56 @@ void sig_handler(int signo)
     }
 }
 
+void readCommandLine(int argc, char *argv[]){
+     while (42) {
+        static struct option long_options[] = {
+            {"mode", required_argument, 0, 'm'},
+            {NULL, 0, 0, 0}
+        };
+        int option_index = 0;
+        option = getopt_long_only(argc, argv, "m:", long_options, &option_index);
+
+        if (option == -1)
+            break;
+
+        switch(option){
+        case 'm':
+            if (strcmp(optarg, "rfid")) == 0) {
+                logicmode = test_rfid;
+
+            } else if (strcmp(optarg, "ir")) == 0) {
+                logicmode = test_ir;
+
+            } else if (strcmp(optarg, "us")) == 0) {
+                logicmode = test_us;
+
+            } else if (strcmp(optarg, "piezo")) == 0) {
+                logicmode = test_piezo;
+
+            } else if (strcmp(optarg, "engine")) == 0) {
+                logicmode = test_engine;
+
+            } else if (strcmp(optarg, "path")) == 0) {
+                logicmode = track_path;
+
+            } else if (strcmp(optarg, "search")) == 0) {
+                logicmode = track_rfid_search;
+            }
+            break;
+ 
+        case ':':
+            if(optopt == 'e' || optopt == 'E')
+                break;
+            printArgumentMissing(optopt);
+            break;
+        case '?':
+            break;
+         default:
+            break;
+        }
+    }
+}
+
 
 int main(int argc, char *argv[]) {	  
 	printf("RESY ROBOT - TEAM 4\n");  
@@ -66,6 +118,7 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
+    readCommandLine(argc, argv);
     setup();
 
     //preparing structs
