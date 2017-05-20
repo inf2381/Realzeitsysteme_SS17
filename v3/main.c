@@ -40,19 +40,15 @@ void shutdown(){
 }
 
 
-void initArgsGeneric(thread_args *args, pthread_rwlock_t* lock){
+void initArgsGeneric(thread_args args, pthread_rwlock_t* lock){
 	if (pthread_rwlock_init(lock, NULL)) {
 		perror("genric_lock_init");
         exit(1);
     }
 
-printf("args.lock %p, lock %p\n", args->lock, lock);
-	args->lock = lock;
-	args->timestamp = 0;
-	args->data = NULL;
-
-printf("args.lock %p, lock %p\n", args->lock, lock);
-
+	args.lock = lock;
+	args.timestamp = 0;
+	args.data = NULL;
 } 
 
 void sig_handler(int signo)
@@ -73,21 +69,22 @@ int main(int argc, char *argv[]) {
     setup();
 
     //preparing structs
-	initArgsGeneric(&ir_args, &ir_lock);
-	initArgsGeneric(&us_args, &us_lock);
-	initArgsGeneric(&rfid_args, &rfid_lock);
+	initArgsGeneric(ir_args, &ir_lock);
+	initArgsGeneric(us_args, &us_lock);
+	initArgsGeneric(rfid_args, &rfid_lock);
     
     explParam.ir = &ir_args;
     explParam.us = &us_args;
     explParam.rfid = &rfid_args;
 
+    
     //starting threads
     pthread_create(&thread_us, NULL, measureDistance, (void*) &us_args);
 	pthread_create(&thread_ir, NULL, infrared_read, (void*) &ir_args);
     pthread_create(&thread_exploit, NULL, exploitMeasurements, (void*) &explParam);
     
     //wait for exploiting thread to finish
-    pthread_join(thread_exploit, NULL);
+    pthread_join(&thread_exploit, NULL);
 
 	shutdown();
 	return EXIT_SUCCESS;

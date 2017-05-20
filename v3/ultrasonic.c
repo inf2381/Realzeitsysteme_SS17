@@ -60,14 +60,14 @@ void *measureDistance(void *arg) {
        
         
 		//ipc to main
-		if(!pthread_rwlock_wrlock(ir_args->lock)){
+		if(pthread_rwlock_wrlock(ir_args->lock)){
 			perror("us_lock failed");
 		}
 
 		ir_args->timestamp = get_time_us();
 		ir_args->data = &distance;
 		
-		if(!pthread_rwlock_unlock(ir_args->lock)){
+		if(pthread_rwlock_unlock(ir_args->lock)){
 			perror("us_lock failed");
 		}
 

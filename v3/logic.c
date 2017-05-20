@@ -9,9 +9,9 @@
 
 int logic_mode = -1;
 
-char ir_state;
-long us_distance;
-int rfid_state;
+char ir_state = NULL;
+long us_distance = NULL;
+int rfid_state = NULL;
 
 
 
@@ -75,7 +75,6 @@ void logic_test_ir(){
 
 }
 
-
 void logic_setup(int mode){
 	logic_mode = mode;
 }
@@ -123,38 +122,41 @@ void *exploitMeasurements(void *arg) {
 
         //TODO: check timestamps, maybe include trylocks
         //infrared
-        if(!pthread_rwlock_rdlock(explparam.ir->lock)){
+        if(pthread_rwlock_rdlock(explparam.ir->lock)){
             perror("ir_rdlock failed");
         }
         
-        ir_state = *((char*) explparam.ir->data);
+        if (explparam.ir->data != NULL) {
+            ir_state = *((char*) explparam.ir->data);
+        }
         
-        
-        if(!pthread_rwlock_unlock(explparam.ir->lock)){
+        if(pthread_rwlock_unlock(explparam.ir->lock)){
             perror("ir_wrlock failed");
         }
         
         //ultrasonic
-        if(!pthread_rwlock_rdlock(explparam.us->lock)){
+        if(pthread_rwlock_rdlock(explparam.us->lock)){
             perror("us_rdlock failed");
         }
         
-        us_distance = *((long*) explparam.us->data);
+        if (explparam.ir->data != NULL) {
+            us_distance = *((long*) explparam.us->data);
+        }
         
-        
-        if(!pthread_rwlock_unlock(explparam.us->lock)){
+        if(pthread_rwlock_unlock(explparam.us->lock)){
             perror("us_wrlock failed");
         }
         
         //rifd
-        if(!pthread_rwlock_rdlock(explparam.rfid->lock)){
+        if(pthread_rwlock_rdlock(explparam.rfid->lock)){
             perror("rfid_rdlock failed");
         }
         
-        rfid_state = *((int*) explparam.rfid->data);
+        if (explparam.ir->data != NULL) {        
+            rfid_state = *((int*) explparam.rfid->data);
+        }
         
-        
-        if(!pthread_rwlock_unlock(explparam.rfid->lock)){
+        if(pthread_rwlock_unlock(explparam.rfid->lock)){
  			perror("rifd_unlock failed");
         }
           
@@ -163,7 +165,7 @@ void *exploitMeasurements(void *arg) {
             printf("collectData:: ir_state %d, us_distance %ld, rfid_state %d \n", ir_state, us_distance, rfid_state);
         }
         
-        // not finished yet
+
 		logic_compute();
     }
 }

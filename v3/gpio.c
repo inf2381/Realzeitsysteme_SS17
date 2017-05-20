@@ -46,7 +46,7 @@ void writeSafe(char* path, char* value){
 			//ebusy is occuring on already exported files
 			if (errno != EBUSY) {
 				perror("write failed");
-	        		printf("cnt %d expected %d\n", writeCount, strlen(value));
+	            printf("cnt %d expected %d\n", writeCount, (int) strlen(value));
 				exit(EXIT_FAILURE);
 			}
 		}
