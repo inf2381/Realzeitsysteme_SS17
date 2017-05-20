@@ -56,7 +56,7 @@ void logic_test_rfid(){
 
 void logic_test_us(){
 	//simple test: drive until we found a object
-	if (us_distance < 10) {
+	if (us_distance < 15 * 1000) {
 		engineStop();
 		logic_mode = none;
 

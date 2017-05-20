@@ -36,7 +36,7 @@ char* GPIO_getPath(char* pin, const char* suffix) {
 }
 
 void writeSafe(char* path, char* value){
-	if (VERBOSE_DEF) printf("writeSafe path %s value %s\n", path, value);
+	if (VERBOSE_LOG_GPIO_DEF) printf("writeSafe path %s value %s\n", path, value);
 	
 	int gpio;
     int writeCount; 

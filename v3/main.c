@@ -27,7 +27,7 @@ void setup() {
     piezoSetup();
     rfidSetup();
 
-	logic_setup(test_engine);
+	logic_setup(test_us);
 }
 
 void shutdown(){
