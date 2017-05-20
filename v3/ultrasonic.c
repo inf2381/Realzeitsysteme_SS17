@@ -41,8 +41,8 @@ void *measureDistance(void *arg) {
         
         //measure distance  
         GPIO_set(PIN_TRIGGER, GPIO_HIGH);
-        
-        usleep(WAIT_TO_END_TRIGGER_ys);
+        sleepAbsolute(WAIT_TO_END_TRIGGER_ys * NANOSECONDS_PER_MICROSECOND, &sleeptime);
+
         GPIO_set(PIN_TRIGGER, GPIO_LOW);
         
         gettimeofday(&startTime, NULL);

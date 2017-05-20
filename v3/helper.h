@@ -5,6 +5,7 @@
 #define MICROSECONDS_PER_SECOND 1000000
 #define NANOSECONDS_PER_SECOND 1000000000
 #define NANOSECONDS_PER_MILLISECOND 1000000
+#define NANOSECONDS_PER_MICROSECOND 1000
 
 void enforceMalloc(void* ptr);
 int validateInt(char* str);
