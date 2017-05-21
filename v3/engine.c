@@ -5,8 +5,10 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #include "engine.h"
+#include "common.h"
 #include "helper.h"
 #include "gpio.h"
 
@@ -45,7 +47,15 @@ void engineStop(){
     GPIO_set(PIN_4, 0);
 }
 
-void changeMovement(char* pin_1, char* pin_2, int direction){
+/* if the car isn't moving, the short reverse phase from engine stop would make the car move */
+void allPinsToZero() {
+    GPIO_set(PIN_1, 0);
+    GPIO_set(PIN_2, 0);
+    GPIO_set(PIN_3, 0);
+    GPIO_set(PIN_4, 0);
+}
+
+void changeMovement(char* pin_1, char* pin_2, int direction) {
     switch (direction) {
         case forward:
             GPIO_set(pin_1, 1);
@@ -71,27 +81,21 @@ void changeMovement(char* pin_1, char* pin_2, int direction){
     
 }
 
-void engineDrive(int left, int right){
+void engineDrive(int left, int right) {
 	//TODO: skip writing if the actual state matches the requested state
 
     changeMovement(PIN_1, PIN_2, left);
     changeMovement(PIN_3, PIN_4, right);
 }
 
-void delay (unsigned int howLong) {
-    struct timespec sleeper, dummy ;
-    
-    sleeper.tv_sec  = (time_t)(howLong / 1000) ;
-    sleeper.tv_nsec = (long)(howLong % 1000) * 1000000 ;
-    
-    nanosleep (&sleeper, &dummy) ;
-}
+
+// PWM functions
 
 void pwmTest() {
     struct timespec sleeper, dummy;
     sleeper.tv_sec = 0;
-    sleeper.tv_nsec = 10000000;
-
+    sleeper.tv_nsec = PWM_LOW_TIME_NS;
+    
     GPIO_set(PIN_1, 1);
     
     int i;
@@ -103,6 +107,32 @@ void pwmTest() {
     }
     GPIO_set(PIN_1, 0);
 }
+
+void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct timespec *downtime) {
+    int i;
+    
+    for (i = 0; i < PWM_CYCLES; i++) {
+        GPIO_set(leftPin, 1);
+        GPIO_set(rightPin, 1);
+        // TODO: absolute sleep
+        GPIO_set(leftPin, 0);
+        GPIO_set(rightPin, 0);
+        // TODO: absolute sleep
+    }
+}
+
+void *engineControl(void *arg) {
+    byte *engineMode = ((byte *) arg); //pointer to volatile variable where the direction is stored
+    
+    while (true) {
+        // TODO: Call the pwmDrive method with the right params
+    
+    }
+    
+}
+
+
+
 
 
 
