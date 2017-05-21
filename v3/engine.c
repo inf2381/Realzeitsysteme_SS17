@@ -108,25 +108,72 @@ void pwmTest() {
     GPIO_set(PIN_1, 0);
 }
 
-void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct timespec *downtime) {
+void pwmDrive(char *leftPin, char *rightPin, long hightime, long downtime, struct timespec *sleeper) {
     int i;
     
     for (i = 0; i < PWM_CYCLES; i++) {
         GPIO_set(leftPin, 1);
         GPIO_set(rightPin, 1);
-        // TODO: absolute sleep
+        sleepAbsolute(hightime, sleeper);
         GPIO_set(leftPin, 0);
         GPIO_set(rightPin, 0);
-        // TODO: absolute sleep
+        sleepAbsolute(downtime, sleeper);
     }
 }
 
 void *engineControl(void *arg) {
-    byte *engineMode = ((byte *) arg); //pointer to volatile variable where the direction is stored
+    engineMode *mode = ((engineMode *) arg); //pointer to volatile variable where the direction is stored
+    struct timespec sleep; //needed for sleeping absolutely within pwm
+    
     
     while (true) {
-        // TODO: Call the pwmDrive method with the right params
-    
+        switch (*mode) {
+            case STAY:
+                allPinsToZero();
+            case STOP:
+                engineStop();
+                break;
+            case FULL_THROTTLE:
+                GPIO_set(PIN_1, 1);
+                GPIO_set(PIN_2, 0);
+                GPIO_set(PIN_3, 1);
+                GPIO_set(PIN_4, 0);
+                break;
+            case PWM_25:
+                pwmDrive(PIN_1, PIN_3, HIGH_25_NS, LOW_25_NS, &sleep);
+                GPIO_set(PIN_2, 0);
+                GPIO_set(PIN_4, 0);
+                break;
+            case PWM_50:
+                pwmDrive(PIN_1, PIN_3, HIGH_50_NS, LOW_50_NS, &sleep);
+                GPIO_set(PIN_2, 0);
+                GPIO_set(PIN_4, 0);
+                break;
+            case PWM_75:
+                pwmDrive(PIN_1, PIN_3, HIGH_75_NS, LOW_75_NS, &sleep);
+                GPIO_set(PIN_2, 0);
+                GPIO_set(PIN_4, 0);
+                break;
+            case REVERSE:
+                GPIO_set(PIN_1, 0);
+                GPIO_set(PIN_2, 1);
+                GPIO_set(PIN_3, 0);
+                GPIO_set(PIN_4, 1);
+                break;
+            case ONLY_LEFT:
+                GPIO_set(PIN_1, 1);
+                GPIO_set(PIN_2, 0);
+                GPIO_set(PIN_3, 0);
+                GPIO_set(PIN_4, 0);
+                break;
+            case ONLY_RIGHT:
+                GPIO_set(PIN_1, 0);
+                GPIO_set(PIN_2, 0);
+                GPIO_set(PIN_3, 1);
+                GPIO_set(PIN_4, 0);
+                break;
+            default:
+        }
     }
     
 }

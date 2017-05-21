@@ -20,6 +20,18 @@ typedef struct {
     thread_args *rfid;
 } exploiterParams;
 
+typedef enum {
+    STAY,
+    STOP,
+    FULL_THROTTLE,
+    PWM_25,
+    PWM_50,
+    PWM_75,
+    REVERSE,
+    ONLY_LEFT,
+    ONLY_RIGHT
+} engineMode;
+
 //Used in ir_args.data as bitflags
 #define IR_IN1_BIT 0x01
 #define IR_IN2_BIT 0x02

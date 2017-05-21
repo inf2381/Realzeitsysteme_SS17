@@ -11,6 +11,18 @@
 #define PIN_4 "19"
 
 #define PWM_CYCLES 100
+#define SLEEPTIME_NS 250000000  //0.25 s
+#define PWM_LOW_TIME_NS 10000000 // only for the pwm test; will be deleted soon
+
+//TODO: Reasonable times
+
+// PWM times so that the program doesn't have to calculate the time during runtime
+#define HIGH_25_NS 5000000
+#define LOW_25_NS 15000000
+#define HIGH_50_NS 10000000
+#define LOW_50_NS 10000000
+#define HIGH_75_NS 15000000
+#define LOW_75_NS 5000000
 
 enum direction {
     stop = 0,
@@ -43,7 +55,8 @@ void engineStop();
 void allPinsToZero();
 
 /** Thread function to control the engine by a seperated 
- * @param arg is pointer to a byte where the controling thread writes the command (see common.h)
+ * @param arg is pointer to a variable of type engineMode,
+ *  where the controling thread writes the command (see common.h)
  */
 void *engineControl(void *arg)
 
