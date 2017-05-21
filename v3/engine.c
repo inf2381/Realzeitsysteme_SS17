@@ -140,19 +140,19 @@ void *engineControl(void *arg) {
                 GPIO_set(PIN_4, 0);
                 break;
             case PWM_25:
-                pwmDrive(PIN_1, PIN_3, HIGH_25_NS, LOW_25_NS, &sleep);
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_4, 0);
+                pwmDrive(PIN_1, PIN_3, HIGH_25_NS, LOW_25_NS, &sleep);
                 break;
             case PWM_50:
-                pwmDrive(PIN_1, PIN_3, HIGH_50_NS, LOW_50_NS, &sleep);
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_4, 0);
+                pwmDrive(PIN_1, PIN_3, HIGH_50_NS, LOW_50_NS, &sleep);
                 break;
             case PWM_75:
-                pwmDrive(PIN_1, PIN_3, HIGH_75_NS, LOW_75_NS, &sleep);
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_4, 0);
+                pwmDrive(PIN_1, PIN_3, HIGH_75_NS, LOW_75_NS, &sleep);
                 break;
             case REVERSE:
                 GPIO_set(PIN_1, 0);
@@ -174,6 +174,8 @@ void *engineControl(void *arg) {
                 break;
             default:
         }
+        
+        sleepAbsolute(SLEEPTIME_NS, &sleep);
     }
     
 }
