@@ -58,7 +58,7 @@ void allPinsToZero();
  * @param arg is pointer to a variable of type engineMode,
  *  where the controling thread writes the command (see common.h)
  */
-void *engineControl(void *arg)
+void *engineController(void *arg)
 
 void pwmTest();
 

@@ -6,6 +6,17 @@
 #define VERBOSE_LOG_GPIO_DEF 0 
 #define MOVE_ENABLED 0
 
+typedef enum {
+    STAY,
+    STOP,
+    FULL_THROTTLE,
+    PWM_25,
+    PWM_50,
+    PWM_75,
+    REVERSE,
+    ONLY_LEFT,
+    ONLY_RIGHT
+} engineMode;
 
 typedef struct {
     pthread_rwlock_t* lock;
@@ -18,19 +29,9 @@ typedef struct {
     thread_args *ir;
     thread_args *us;
     thread_args *rfid;
+    engineMode *engineControl;
 } exploiterParams;
 
-typedef enum {
-    STAY,
-    STOP,
-    FULL_THROTTLE,
-    PWM_25,
-    PWM_50,
-    PWM_75,
-    REVERSE,
-    ONLY_LEFT,
-    ONLY_RIGHT
-} engineMode;
 
 //Used in ir_args.data as bitflags
 #define IR_IN1_BIT 0x01

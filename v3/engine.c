@@ -121,7 +121,7 @@ void pwmDrive(char *leftPin, char *rightPin, long hightime, long downtime, struc
     }
 }
 
-void *engineControl(void *arg) {
+void *engineController(void *arg) {
     engineMode *mode = ((engineMode *) arg); //pointer to volatile variable where the direction is stored
     struct timespec sleep; //needed for sleeping absolutely within pwm
     

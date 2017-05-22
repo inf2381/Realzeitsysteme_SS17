@@ -95,6 +95,7 @@ void logic_setup(int mode){
 	logic_mode = mode;
 }
 void logic_shutdown(){
+    
 }
 void logic_compute(){
 	switch(logic_mode){

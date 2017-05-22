@@ -16,10 +16,11 @@
 #include "rfid.h"
 #include "helper.h"
 
-pthread_t   thread_us, thread_ir, thread_rfid, thread_exploit;
+pthread_t   thread_us, thread_ir, thread_rfid, thread_exploit, thread_engine;
 pthread_rwlock_t ir_lock, us_lock, rfid_lock;
 thread_args ir_args, us_args, rfid_args;
 exploiterParams explParam;
+volatile engineMode engineCtrl;  //see common.h
 
 int logicmode = track_path;
 
@@ -32,6 +33,7 @@ void setup() {
     rfidSetup();
 
 	logic_setup(logicmode);
+    engineCtrl = STAY;
 }
 
 void shutdown(){
@@ -131,6 +133,7 @@ int main(int argc, char *argv[]) {
     explParam.ir = &ir_args;
     explParam.us = &us_args;
     explParam.rfid = &rfid_args;
+    explParam.engineControl = &engineCtrl;
 
     
     //starting threads
@@ -138,6 +141,7 @@ int main(int argc, char *argv[]) {
 	pthread_create(&thread_ir, NULL, infrared_read, (void*) &ir_args);
     pthread_create(&thread_rfid, NULL, detectRFID, (void*) &rfid_args);
     pthread_create(&thread_exploit, NULL, exploitMeasurements, (void*) &explParam);
+    // pthread_create(&thread_engine, NULL, engineController, (void*) &engineCtrl);
     
     //wait for exploiting thread to finish
     pthread_join(thread_exploit, NULL);
