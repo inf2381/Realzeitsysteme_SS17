@@ -16,6 +16,7 @@ char ir_state = -1;
 long us_distance = -1;
 int rfid_state = -1;
 
+int ir_test_state = none; 
 
 
 void logic_test_engine(){
@@ -78,6 +79,46 @@ void logic_test_us(){
 
 void logic_test_ir(){
 	//TODO: find a useful testcase
+    //order (right to left): 2, 1, 3, 4)
+    //one line between, drive right, wait for dectintin on right, drive left, wait to detection, loop
+    
+    while(true) {
+        char right_outer = ir_state & IR_IN2_BIT;
+        char right_inner = ir_state & IR_IN1_BIT;
+
+        char left_inner = ir_state & IR_IN3_BIT;
+        char left_outer = ir_state & IR_IN4_BIT;
+
+
+        
+        switch(ir_test_state){
+            case none:
+                ir_test_state = detect_right;
+                engineDrive(stop, forward);
+
+                printf("none --> dr\n");
+                break;
+
+            case detect_right:
+                if (right_inner || right_outer) {
+                    ir_test_state = detect_left;
+                    engineDrive(forward, stop);
+
+                    printf("rihgt --> left\n");
+                }               
+
+                break;
+
+            case detect_left:
+                if (left_inner || left_outer) {
+                    ir_test_state = none;
+                     printf("left --> none\n");
+                }    
+
+                break;
+
+        }
+    }
 	
 }
 

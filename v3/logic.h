@@ -19,4 +19,11 @@ enum logic_mode {
 
 };
 
+
+enum ir_test_states {
+    none,
+    detect_right,
+    detect_left
+
+};
 #endif
