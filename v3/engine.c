@@ -127,6 +127,8 @@ void *engineController(void *arg) {
     
     
     while (true) {
+
+	printf("engine: mode %d \n", *mode);
         switch (*mode) {
             case STAY:
                 allPinsToZero();
@@ -173,6 +175,8 @@ void *engineController(void *arg) {
                 GPIO_set(PIN_4, 0);
                 break;
             default:
+		allPinsToZero();
+		break;
         }
         
         sleepAbsolute(SLEEPTIME_NS, &sleep);

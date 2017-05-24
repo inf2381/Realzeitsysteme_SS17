@@ -2,7 +2,7 @@
 #define common_h
 #include <pthread.h>
 
-#define VERBOSE_DEF 0
+#define VERBOSE_DEF 1
 #define VERBOSE_LOG_GPIO_DEF 0 
 #define MOVE_ENABLED 0
 
@@ -29,7 +29,7 @@ typedef struct {
     thread_args *ir;
     thread_args *us;
     thread_args *rfid;
-    engineMode *engineControl;
+    volatile engineMode *engineControl;
 } exploiterParams;
 
 

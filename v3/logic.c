@@ -17,9 +17,9 @@ long us_distance = -1;
 int rfid_state = -1;
 
 int ir_test_state = none; 
-int path_state = start; 
+//int path_state = start; 
 
-engineMode *engineCtrl; 
+volatile engineMode *engineCtrl; 
 
 void logic_test_engine(){
 	//left test
@@ -57,7 +57,7 @@ void logic_test_engine(){
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
     *engineCtrl = STAY;
-	sleepAbsolute(3 * NANOSECONDS_PER_SECOND, &sleeptime);
+	sleepAbsolute(((long) 3) * NANOSECONDS_PER_SECOND, &sleeptime);
 }
 
 
@@ -105,7 +105,7 @@ void logic_test_ir(){
 
         
         switch(ir_test_state){
-            case none:
+            case ir_none:
                 ir_test_state = detect_right;
                 engineDrive(stop, forward);
 
@@ -204,7 +204,7 @@ void logic_compute(){
 
 void *exploitMeasurements(void *arg) {
     exploiterParams explparam = *(exploiterParams*) arg;
-    engineCtrl = arg->engineControl;
+    engineCtrl = explparam.engineControl;
     
     while (true) {
          sleepAbsolute(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
