@@ -124,6 +124,15 @@ int main(int argc, char *argv[]) {
 
     readCommandLine(argc, argv);
     setup();
+    
+    struct timeval startTime, endTime;
+    struct timespec pogo;
+    gettimeofday(&startTime, NULL);
+    sleepAbsolute(100000, &pogo);
+    gettimeofday(&endTime, NULL);
+    
+    printf("Absolute expected: &ld total %ld\n", 100, diff_time_us(startTime, endTime));
+    
 
     //preparing structs
 	initArgsGeneric(&ir_args, &ir_lock);
