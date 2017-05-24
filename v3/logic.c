@@ -57,7 +57,7 @@ void logic_test_engine(){
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
     *engineCtrl = STAY;
-	sleepAbsolute(((long) 3) * NANOSECONDS_PER_SECOND, &sleeptime);
+	sleepAbsolute(3 * NANOSECONDS_PER_SECOND, &sleeptime);
 }
 
 
