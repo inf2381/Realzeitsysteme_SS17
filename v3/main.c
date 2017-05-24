@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
 	pthread_create(&thread_ir, NULL, infrared_read, (void*) &ir_args);
     pthread_create(&thread_rfid, NULL, detectRFID, (void*) &rfid_args);
     pthread_create(&thread_exploit, NULL, exploitMeasurements, (void*) &explParam);
-    // pthread_create(&thread_engine, NULL, engineController, (void*) &engineCtrl);
+    pthread_create(&thread_engine, NULL, engineController, (void*) &engineCtrl);
     
     //wait for exploiting thread to finish
     pthread_join(thread_exploit, NULL);

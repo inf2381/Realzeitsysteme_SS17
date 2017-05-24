@@ -17,33 +17,47 @@ long us_distance = -1;
 int rfid_state = -1;
 
 int ir_test_state = none; 
+int path_state = start; 
 
+engineMode *engineCtrl; 
 
 void logic_test_engine(){
 	//left test
-	engineDrive(forward, stop);
+    *engineCtrl = ONLY_LEFT;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime); 
-	engineDrive(reverse, stop);
-	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+	//engineDrive(reverse, stop);
+	//sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
 	//right test
+    *engineCtrl = ONLY_RIGHT;
 	engineDrive(stop, forward);
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
-	engineDrive(stop, reverse);
-	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+	//engineDrive(stop, reverse);
+	//sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
 	//both
-	engineDrive(forward, forward);
-	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
-	engineDrive(reverse, reverse);
+    *engineCtrl = FULL_THROTTLE;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
-	engineStop();
+	*engineCtrl = REVERSE;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
-    
+
     // PWM test
-    pwmTest();
-    sleepAbsolute(3 * NANOSECONDS_PER_SECOND, &sleeptime);
+    *engineCtrl = PWM_75;
+    sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+
+    *engineCtrl = PWM_50;
+    sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+
+    *engineCtrl = PWM_25;
+    sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+
+    //Stap it
+    *engineCtrl = STOP;
+	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+
+    *engineCtrl = STAY;
+	sleepAbsolute(3 * NANOSECONDS_PER_SECOND, &sleeptime);
 }
 
 
@@ -78,7 +92,6 @@ void logic_test_us(){
 }
 
 void logic_test_ir(){
-	//TODO: find a useful testcase
     //order (right to left): 2, 1, 3, 4)
     //one line between, drive right, wait for dectintin on right, drive left, wait to detection, loop
     
@@ -132,6 +145,20 @@ void logic_test_piezo(){
     logic_mode = none;
 }
 
+
+
+void logic_path(){
+    /* possible strategy:
+    drive fast straight until curve, slow down on first ir detection, 
+    correction: by one motor for x ms (find a angle-time forumla), afterwards drive at 25%
+
+    */
+
+
+
+}
+
+
 void logic_setup(int mode){
 	logic_mode = mode;
 }
@@ -145,6 +172,7 @@ void logic_compute(){
 
 		case track_path:
 			break;
+
 		case track_rfid_search:
 			break;
 
@@ -176,6 +204,7 @@ void logic_compute(){
 
 void *exploitMeasurements(void *arg) {
     exploiterParams explparam = *(exploiterParams*) arg;
+    engineCtrl = arg->engineControl;
     
     while (true) {
          sleepAbsolute(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
