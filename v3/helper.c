@@ -118,6 +118,8 @@ void activWait(int waitTimeMillis){
 }
 
 void sleepAbsolute(long nanoseconds, struct timespec * sleeptime) {
+    int retVal;
+
     clock_gettime( CLOCK_MONOTONIC, sleeptime );
     //preparing
     if (nanoseconds >= NANOSECONDS_PER_SECOND) {
@@ -128,11 +130,14 @@ void sleepAbsolute(long nanoseconds, struct timespec * sleeptime) {
     }
     
     //actual sleep
-    while (clock_nanosleep( CLOCK_MONOTONIC,
+    while ((retVal = clock_nanosleep( CLOCK_MONOTONIC,
                            TIMER_ABSTIME,
                            sleeptime,
-                           NULL) == EINTR ) { };
-    
+                           NULL)) == EINTR ) { };
+    if (retVal != 0) {
+        perror("clock_nanosleep fail");
+    }
+
     //sleeptime reached
     return;
 }
