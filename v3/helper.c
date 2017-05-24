@@ -129,7 +129,7 @@ void sleepAbsolute(long long nanoseconds, struct timespec * sleeptime) {
         sleeptime->tv_sec += nanoseconds / NANOSECONDS_PER_SECOND;
         sleeptime->tv_nsec += nanoseconds % NANOSECONDS_PER_SECOND;
     } else {
-        sleeptime->tv_nsec+= NANOSECONDS_PER_SECOND;
+        sleeptime->tv_nsec += nanoseconds;
     }
     
     //actual sleep
@@ -138,7 +138,8 @@ void sleepAbsolute(long long nanoseconds, struct timespec * sleeptime) {
                            sleeptime,
                            NULL)) == EINTR ) { };
     if (retVal != 0) {
-        perror("clock_nanosleep fail");
+	printf("nanosecs: %lld, sleeptime nsec %ld\n", nanoseconds, sleeptime->tv_nsec);
+        printf("clock_nanosleep fail: %s\n", strerror(retVal));
     }
 
     //sleeptime reached

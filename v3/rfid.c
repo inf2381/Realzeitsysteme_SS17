@@ -17,7 +17,7 @@ void rfidSetup() {
 
 void *detectRFID(void *arg) {
     thread_args* t_args = (thread_args*) arg;
-    struct timespec sleeptime;
+    struct timespec sleeptime = {0};
 	int cardPresent = 0;    
 
     while (true) {

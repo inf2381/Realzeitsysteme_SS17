@@ -19,44 +19,43 @@ int rfid_state = -1;
 int ir_test_state = none; 
 //int path_state = start; 
 
-volatile engineMode *engineCtrl; 
+volatile engineMode *engineCtrl2; 
 
 void logic_test_engine(){
 	//left test
-    *engineCtrl = ONLY_LEFT;
+    *engineCtrl2 = ONLY_LEFT;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime); 
 	//engineDrive(reverse, stop);
 	//sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
 	//right test
-    *engineCtrl = ONLY_RIGHT;
-	engineDrive(stop, forward);
+    *engineCtrl2 = ONLY_RIGHT;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 	//engineDrive(stop, reverse);
 	//sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
 	//both
-    *engineCtrl = FULL_THROTTLE;
+    *engineCtrl2 = FULL_THROTTLE;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
-	*engineCtrl = REVERSE;
+	*engineCtrl2 = REVERSE;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
     // PWM test
-    *engineCtrl = PWM_75;
+    *engineCtrl2 = PWM_75;
     sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
-    *engineCtrl = PWM_50;
+    *engineCtrl2 = PWM_50;
     sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
-    *engineCtrl = PWM_25;
+    *engineCtrl2 = PWM_25;
     sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
     //Stap it
-    *engineCtrl = STOP;
+    *engineCtrl2 = STOP;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
-    *engineCtrl = STAY;
+    *engineCtrl2 = STAY;
 	sleepAbsolute(3 * NANOSECONDS_PER_SECOND, &sleeptime);
 }
 
@@ -204,7 +203,9 @@ void logic_compute(){
 
 void *exploitMeasurements(void *arg) {
     exploiterParams explparam = *(exploiterParams*) arg;
-    engineCtrl = explparam.engineControl;
+    engineCtrl2 = explparam.engineControl;
+   printf("crtl %p, ctrl2 %p\n", &engineCtrl, engineCtrl2);
+
     
     while (true) {
          sleepAbsolute(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);

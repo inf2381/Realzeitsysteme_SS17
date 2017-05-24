@@ -35,7 +35,7 @@ void *measureDistance(void *arg) {
 
     long distance, timeDiff;
     struct timeval startTime, endTime;
-    struct timespec sleeptime;
+    struct timespec sleeptime = {0};
     
     while (true) {
         

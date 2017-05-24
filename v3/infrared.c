@@ -41,7 +41,7 @@ void infraredSetdown() {
 
 void *infrared_read(void *arg) {
 	thread_args* ir_args = (thread_args*) arg;
-    struct timespec sleeptime;
+    struct timespec sleeptime = {0};
 	
 
 	if (VERBOSE_DEF) {
@@ -74,7 +74,6 @@ void *infrared_read(void *arg) {
 			perror("ir_wrlock failed");
 		}
 
-		
         sleepAbsolute(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime);
 	}
 }

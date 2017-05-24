@@ -34,6 +34,7 @@ void setup() {
 
 	logic_setup(logicmode);
     engineCtrl = STAY;
+printf("stay %d, left %d\n", STAY, ONLY_LEFT);
 }
 
 void shutdown(){
@@ -124,7 +125,8 @@ int main(int argc, char *argv[]) {
 
     readCommandLine(argc, argv);
     setup();
-    
+
+/*    
     while (true) {
         struct timeval startTime, endTime;
         struct timespec pogo;
@@ -135,7 +137,7 @@ int main(int argc, char *argv[]) {
         printf("Absolute expected: %d total %ld\n", 100, diff_time_us(startTime, endTime));
         sleep(1);
     }
-
+*/
     //preparing structs
 	initArgsGeneric(&ir_args, &ir_lock);
 	initArgsGeneric(&us_args, &us_lock);
@@ -145,7 +147,7 @@ int main(int argc, char *argv[]) {
     explParam.us = &us_args;
     explParam.rfid = &rfid_args;
     explParam.engineControl = &engineCtrl;
-
+	printf("%p val %d\n", &engineCtrl, engineCtrl);
     
     //starting threads
     pthread_create(&thread_us, NULL, measureDistance, (void*) &us_args);

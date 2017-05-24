@@ -6,6 +6,7 @@
 #define VERBOSE_LOG_GPIO_DEF 0 
 #define MOVE_ENABLED 0
 
+
 typedef enum {
     STAY,
     STOP,
@@ -32,6 +33,7 @@ typedef struct {
     volatile engineMode *engineControl;
 } exploiterParams;
 
+extern volatile engineMode engineCtrl;
 
 //Used in ir_args.data as bitflags
 #define IR_IN1_BIT 0x01
