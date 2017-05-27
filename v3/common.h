@@ -16,7 +16,9 @@ typedef enum {
     PWM_75,
     REVERSE,
     ONLY_LEFT,
-    ONLY_RIGHT
+    ONLY_RIGHT,
+    PWM_LEFT,
+    PWM_RIGHT
 } engineMode;
 
 typedef struct {

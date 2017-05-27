@@ -111,6 +111,27 @@ void pwmTest() {
 void pwmDrive(char *leftPin, char *rightPin, long hightime, long downtime, struct timespec *sleeper) {
     int i;
     
+    if (leftPin == NULL) {
+        for (i = 0; i < PWM_CYCLES; i++) {
+            GPIO_set(rightPin, 1);
+            sleepAbsolute(hightime, sleeper);
+            GPIO_set(rightPin, 0);
+            sleepAbsolute(downtime, sleeper);
+        }
+        return;
+    }
+    
+    if (rightPin == NULL) {
+        for (i = 0; i < PWM_CYCLES; i++) {
+            GPIO_set(leftPin, 1);
+            sleepAbsolute(hightime, sleeper);
+            GPIO_set(leftPin, 0);
+            sleepAbsolute(downtime, sleeper);
+        }
+        return;
+
+    }
+    
     for (i = 0; i < PWM_CYCLES; i++) {
         GPIO_set(leftPin, 1);
         GPIO_set(rightPin, 1);
@@ -171,6 +192,16 @@ void *engineController(void *arg) {
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_3, 1);
                 GPIO_set(PIN_4, 0);
+                break;
+            case PWM_LEFT:
+                GPIO_set(PIN_2, 0);
+                GPIO_set(PIN_4, 0);
+                pwmDrive(PIN_1, NULL, HIGH_50_NS, LOW_50_NS, &sleep);
+                break;
+            case PWM_RIGHT:
+                GPIO_set(PIN_2, 0);
+                GPIO_set(PIN_4, 0);
+                pwmDrive(NULL, PIN_3, HIGH_50_NS, LOW_50_NS, &sleep);
                 break;
             default:
                 allPinsToZero();

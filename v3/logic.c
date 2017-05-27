@@ -103,7 +103,7 @@ void logic_test_ir(){
         switch(ir_test_state){
             case ir_none:
                 ir_test_state = detect_right;
-                engineCtrl = ONLY_RIGHT;
+                engineCtrl = PWM_RIGHT;
 
                 printf("none --> dr\n");
                 break;
@@ -112,7 +112,7 @@ void logic_test_ir(){
 		//printf("Right inner: %d, Right outer %d\n", right_inner, right_outer);
                 if (!right_inner || !right_outer) {
                     ir_test_state = detect_left;
-                    engineCtrl = ONLY_LEFT;
+                    engineCtrl = PWM_LEFT;
 
                     printf("right --> left\n");
                 }               
