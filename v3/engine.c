@@ -126,7 +126,7 @@ void *engineController(void *arg) {
     
     
     while (true) {
-        switch (mode) {
+        switch (engineCtrl) {
             case STAY:
                 allPinsToZero();
             case STOP:

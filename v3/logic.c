@@ -19,8 +19,6 @@ int rfid_state = -1;
 int ir_test_state = none; 
 //int path_state = start; 
 
-volatile engineMode *engineCtrl2; 
-
 void logic_test_engine(){
 	//left test
     engineCtrl = ONLY_LEFT;
@@ -34,7 +32,7 @@ void logic_test_engine(){
     engineCtrl = FULL_THROTTLE;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
-	*engineCtrl2 = REVERSE;
+	engineCtrl = REVERSE;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
     // PWM test
