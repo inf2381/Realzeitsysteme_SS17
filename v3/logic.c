@@ -16,7 +16,8 @@ char ir_state = -1;
 long us_distance = -1;
 int rfid_state = -1;
 
-int ir_test_state = none; 
+int ir_test_state = none;
+bool isRunning = true;
 //int path_state = start; 
 
 void logic_test_engine(){
@@ -59,6 +60,7 @@ void logic_test_rfid(){
 	if (rfid_state == 1) {
         engineCtrl = STAY;
 		logic_mode = none;
+        isRunning = false;
 
 		if (VERBOSE_DEF) {
 			printf("found chip, stopping logic");
@@ -74,6 +76,7 @@ void logic_test_us(){
 	if (us_distance < 15 * 1000) {
         engineCtrl = STAY;
 		logic_mode = none;
+        isRunning = false;
 
 		if (VERBOSE_DEF) {
 			printf("found object, stopping logic");
@@ -136,6 +139,7 @@ void logic_test_piezo(){
     sleepAbsolute(3 * NANOSECONDS_PER_SECOND, &sleeptime);
     piezo_stopReverse();
     logic_mode = none;
+    isRunning = false;
 }
 
 
@@ -198,7 +202,7 @@ void logic_compute(){
 void *exploitMeasurements(void *arg) {
     exploiterParams explparam = *(exploiterParams*) arg;
     
-    while (true) {
+    while (isRunning) {
         sleepAbsolute(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
 
 
@@ -253,6 +257,7 @@ void *exploitMeasurements(void *arg) {
 
 		logic_compute();
     }
+    pthread_exit();
 }
 
 
