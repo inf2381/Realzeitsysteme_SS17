@@ -4,6 +4,7 @@
 
 #ifndef engine_h
 #define engine_h
+#include "common.h"
 
 #define PIN_1 "5"
 #define PIN_2 "6"
@@ -23,6 +24,8 @@
 #define LOW_50_NS 10000000
 #define HIGH_75_NS 15000000
 #define LOW_75_NS 5000000
+
+extern volatile engineMode engineCtrl;
 
 enum direction {
     stop = 0,

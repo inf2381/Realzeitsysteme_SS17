@@ -30,10 +30,7 @@ typedef struct {
     thread_args *ir;
     thread_args *us;
     thread_args *rfid;
-    volatile engineMode *engineControl;
 } exploiterParams;
-
-extern volatile engineMode engineCtrl;
 
 //Used in ir_args.data as bitflags
 #define IR_IN1_BIT 0x01

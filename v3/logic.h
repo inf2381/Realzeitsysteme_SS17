@@ -1,10 +1,12 @@
 #ifndef logic_h
 #define logic_h
+#include "common.h"
 
 void logic_setup(int mode);
 void logic_shutdown();
 void logic_compute();
 void *exploitMeasurements(void *arg);
+extern volatile engineMode engineCtrl;
 
 enum logic_mode {
 	none = 0,

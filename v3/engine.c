@@ -122,14 +122,11 @@ void pwmDrive(char *leftPin, char *rightPin, long hightime, long downtime, struc
 }
 
 void *engineController(void *arg) {
-    engineMode *mode = ((engineMode *) arg); //pointer to volatile variable where the direction is stored
     struct timespec sleep = {0}; //needed for sleeping absolutely within pwm
     
     
     while (true) {
-
-	printf("engine: %p, mode %d \n", mode, *mode);
-        switch (*mode) {
+        switch (mode) {
             case STAY:
                 allPinsToZero();
             case STOP:
@@ -175,8 +172,8 @@ void *engineController(void *arg) {
                 GPIO_set(PIN_4, 0);
                 break;
             default:
-		allPinsToZero();
-		break;
+                allPinsToZero();
+                break;
         }
         
         sleepAbsolute(SLEEPTIME_NS, &sleep);

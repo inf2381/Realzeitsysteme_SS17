@@ -23,39 +23,35 @@ volatile engineMode *engineCtrl2;
 
 void logic_test_engine(){
 	//left test
-    *engineCtrl2 = ONLY_LEFT;
-	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime); 
-	//engineDrive(reverse, stop);
-	//sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+    engineCtrl = ONLY_LEFT;
+	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
 	//right test
-    *engineCtrl2 = ONLY_RIGHT;
+    engineCtrl = ONLY_RIGHT;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
-	//engineDrive(stop, reverse);
-	//sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
 	//both
-    *engineCtrl2 = FULL_THROTTLE;
+    engineCtrl = FULL_THROTTLE;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
 	*engineCtrl2 = REVERSE;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
     // PWM test
-    *engineCtrl2 = PWM_75;
+    engineCtrl = PWM_75;
     sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
-    *engineCtrl2 = PWM_50;
+    engineCtrl = PWM_50;
     sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
-    *engineCtrl2 = PWM_25;
+    engineCtrl = PWM_25;
     sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
     //Stap it
-    *engineCtrl2 = STOP;
+    engineCtrl = STOP;
 	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
 
-    *engineCtrl2 = STAY;
+    engineCtrl = STAY;
 	sleepAbsolute(3 * NANOSECONDS_PER_SECOND, &sleeptime);
 }
 
@@ -63,14 +59,14 @@ void logic_test_engine(){
 void logic_test_rfid(){
 	//simple rfid detectiont est: drive forward and stop if we detect a chip
 	if (rfid_state == 1) {
-		engineStop();
+        engineCtrl = STAY;
 		logic_mode = none;
 
 		if (VERBOSE_DEF) {
 			printf("found chip, stopping logic");
 		}
 	} else {
-		engineDrive(forward, forward);
+        engineCtrl = PWM_50;
 	}
 
 }
@@ -78,21 +74,21 @@ void logic_test_rfid(){
 void logic_test_us(){
 	//simple test: drive until we found a object
 	if (us_distance < 15 * 1000) {
-		engineStop();
+        engineCtrl = STAY;
 		logic_mode = none;
 
 		if (VERBOSE_DEF) {
-			printf("found obejct, stopping logic");
+			printf("found object, stopping logic");
 		}
 	} else {
-		engineDrive(forward, forward);
-	}
+        engineCtrl = FULL_THROTTLE;
+    }
 
 }
 
 void logic_test_ir(){
     //order (right to left): 2, 1, 3, 4)
-    //one line between, drive right, wait for dectintin on right, drive left, wait to detection, loop
+    //one line between, drive right, wait for detection on the right, drive left, wait to detection, loop
     
     while(true) {
         char right_outer = ir_state & IR_IN2_BIT;
@@ -106,7 +102,7 @@ void logic_test_ir(){
         switch(ir_test_state){
             case ir_none:
                 ir_test_state = detect_right;
-                engineDrive(stop, forward);
+                engineCtrl = ONLY_RIGHT;
 
                 printf("none --> dr\n");
                 break;
@@ -114,9 +110,9 @@ void logic_test_ir(){
             case detect_right:
                 if (right_inner || right_outer) {
                     ir_test_state = detect_left;
-                    engineDrive(forward, stop);
+                    engineCtrl = ONLY_LEFT;
 
-                    printf("rihgt --> left\n");
+                    printf("right --> left\n");
                 }               
 
                 break;
@@ -124,7 +120,7 @@ void logic_test_ir(){
             case detect_left:
                 if (left_inner || left_outer) {
                     ir_test_state = none;
-                     printf("left --> none\n");
+                    printf("left --> none\n");
                 }    
 
                 break;
@@ -203,12 +199,9 @@ void logic_compute(){
 
 void *exploitMeasurements(void *arg) {
     exploiterParams explparam = *(exploiterParams*) arg;
-    engineCtrl2 = explparam.engineControl;
-   printf("crtl %p, ctrl2 %p\n", &engineCtrl, engineCtrl2);
-
     
     while (true) {
-         sleepAbsolute(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
+        sleepAbsolute(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
 
 
         //TODO: check timestamps, maybe include trylocks
@@ -238,7 +231,7 @@ void *exploitMeasurements(void *arg) {
             perror("us_wrlock failed");
         }
         
-        //rifd
+        //rfid
         if(pthread_rwlock_rdlock(explparam.rfid->lock)){
             perror("rfid_rdlock failed");
         }

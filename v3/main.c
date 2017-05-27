@@ -34,7 +34,6 @@ void setup() {
 
 	logic_setup(logicmode);
     engineCtrl = STAY;
-printf("stay %d, left %d\n", STAY, ONLY_LEFT);
 }
 
 void shutdown(){
@@ -50,7 +49,7 @@ void shutdown(){
 void initArgsGeneric(thread_args* args, pthread_rwlock_t* lock){
 	if (pthread_rwlock_init(lock, NULL)) {
 		perror("genric_lock_init");
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
 	args->lock = lock;
@@ -146,15 +145,13 @@ int main(int argc, char *argv[]) {
     explParam.ir = &ir_args;
     explParam.us = &us_args;
     explParam.rfid = &rfid_args;
-    explParam.engineControl = &engineCtrl;
-	printf("%p val %d\n", &engineCtrl, engineCtrl);
     
     //starting threads
     pthread_create(&thread_us, NULL, measureDistance, (void*) &us_args);
 	pthread_create(&thread_ir, NULL, infrared_read, (void*) &ir_args);
     pthread_create(&thread_rfid, NULL, detectRFID, (void*) &rfid_args);
     pthread_create(&thread_exploit, NULL, exploitMeasurements, (void*) &explParam);
-    pthread_create(&thread_engine, NULL, engineController, (void*) &engineCtrl);
+    pthread_create(&thread_engine, NULL, engineController, NULL);
     
     //wait for exploiting thread to finish
     pthread_join(thread_exploit, NULL);
