@@ -103,14 +103,14 @@ void logic_test_ir(){
         switch(ir_test_state){
             case ir_none:
                 ir_test_state = detect_right;
-                engineCtrl = STAY; //should be ONLY_RIGHT
+                engineCtrl = ONLY_RIGHT;
 
                 printf("none --> dr\n");
                 break;
 
             case detect_right:
-		printf("Right inner: %d, Right outer %d\n", right_inner, right_outer);
-                if (right_inner || right_outer) {
+		//printf("Right inner: %d, Right outer %d\n", right_inner, right_outer);
+                if (!right_inner || !right_outer) {
                     ir_test_state = detect_left;
                     engineCtrl = ONLY_LEFT;
 
@@ -120,7 +120,7 @@ void logic_test_ir(){
                 break;
 
             case detect_left:
-                if (left_inner || left_outer) {
+                if (!left_inner || !left_outer) {
                     ir_test_state = none;
                     printf("left --> none\n");
                 }    
