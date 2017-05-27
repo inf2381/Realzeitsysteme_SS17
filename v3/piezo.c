@@ -26,9 +26,9 @@ void *reverseTone() {
     while (!shouldTerminate) {
         GPIO_set(PIEZO_PIN, 1);
         
-        sleepAbsolute(500000, &sleeptime); //0,5ms
+        sleepAbsolute(500000000, &sleeptime); //0,5ms
         GPIO_set(PIEZO_PIN, 0);
-        sleepAbsolute(250000, &sleeptime); //0,25ms
+        sleepAbsolute(250000000, &sleeptime); //0,25ms
     }
     GPIO_set(PIEZO_PIN, 0);
     pthread_exit(0);

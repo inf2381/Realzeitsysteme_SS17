@@ -103,12 +103,13 @@ void logic_test_ir(){
         switch(ir_test_state){
             case ir_none:
                 ir_test_state = detect_right;
-                engineCtrl = ONLY_RIGHT;
+                engineCtrl = STAY; //should be ONLY_RIGHT
 
                 printf("none --> dr\n");
                 break;
 
             case detect_right:
+		printf("Right inner: %d, Right outer %d\n", right_inner, right_outer);
                 if (right_inner || right_outer) {
                     ir_test_state = detect_left;
                     engineCtrl = ONLY_LEFT;
@@ -257,7 +258,7 @@ void *exploitMeasurements(void *arg) {
 
 		logic_compute();
     }
-    pthread_exit();
+    pthread_exit(0);
 }
 
 

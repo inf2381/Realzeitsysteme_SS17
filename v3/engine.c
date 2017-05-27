@@ -129,6 +129,7 @@ void *engineController(void *arg) {
         switch (engineCtrl) {
             case STAY:
                 allPinsToZero();
+		break;
             case STOP:
                 engineStop();
                 break;
