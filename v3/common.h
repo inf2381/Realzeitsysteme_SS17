@@ -4,8 +4,11 @@
 
 #define VERBOSE_DEF 1
 #define VERBOSE_LOG_GPIO_DEF 0 
-#define MOVE_ENABLED 0
-
+#ifdef __arm__
+    #define GPIO_ENABLED 1
+#else
+    #define GPIO_ENABLED 0
+#endif
 
 typedef enum {
     STAY,

@@ -12,7 +12,15 @@
 
 
 void rfidSetup() {
-    rfid_wrapper_setup();
+    if (GPIO_ENABLED) {
+        rfid_wrapper_setup();
+    }
+}
+
+void rfidSetdown() {
+    if (GPIO_ENABLED) {
+        rfid_wrapper_setup();
+    }
 }
 
 void *detectRFID(void *arg) {
@@ -26,7 +34,9 @@ void *detectRFID(void *arg) {
 			perror("rfid_wrlock failed");
 		}
 
-        cardPresent = rfid_wrapper_hasDetected();
+        if (GPIO_ENABLED) {
+            cardPresent = rfid_wrapper_hasDetected();
+        }
 		t_args->timestamp = get_time_us();
 		t_args->data = &cardPresent;
 

@@ -2,6 +2,7 @@
 #define rfid_h
 
 void rfidSetup();
+void rfidSetdown();
 
 void *detectRFID(void *arg);
 

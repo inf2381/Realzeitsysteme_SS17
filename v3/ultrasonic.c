@@ -48,11 +48,13 @@ void *measureDistance(void *arg) {
         gettimeofday(&startTime, NULL);
         endTime = startTime;
         
-        while (GPIO_read(PIN_ECHO) == 0) {
-            gettimeofday(&startTime, NULL);
-        }
-        while (GPIO_read(PIN_ECHO) == 1) {
-            gettimeofday(&endTime, NULL);
+        if (GPIO_ENABLED) {
+            while (GPIO_read(PIN_ECHO) == 0) {
+                gettimeofday(&startTime, NULL);
+            }
+            while (GPIO_read(PIN_ECHO) == 1) {
+                gettimeofday(&endTime, NULL);
+            }
         }
         
         timeDiff = diff_time_us(startTime, endTime);

@@ -43,6 +43,7 @@ void shutdown(){
 	ultrasonicSetdown();
 	infraredSetdown();
     piezoSetdown();
+    rfidSetdown();
 }
 
 

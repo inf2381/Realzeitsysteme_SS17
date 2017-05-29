@@ -55,7 +55,7 @@ void *infrared_read(void *arg) {
 		int in4 = GPIO_read(PIN_IR_IN4);
 
 		if (VERBOSE_DEF) {
-			printf("infrared_read: in1 %d, in2 %d, in3 %d, in4 %d, %p \n", in1, in2, in3, in4, ir_args->lock);
+			printf("infrared_read: in1 %d, in2 %d, in3 %d, in4 %d \n", in1, in2, in3, in4);
 		}
 		
 		if(pthread_rwlock_wrlock(ir_args->lock)){

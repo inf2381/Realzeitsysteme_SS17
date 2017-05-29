@@ -37,6 +37,13 @@ char* GPIO_getPath(char* pin, const char* suffix) {
 
 void writeSafe(char* path, char* value){
 	if (VERBOSE_LOG_GPIO_DEF) printf("writeSafe path %s value %s\n", path, value);
+
+    if (!GPIO_ENABLED) {
+        if (VERBOSE_LOG_GPIO_DEF) {     
+            printf("writeSafe skip"); 
+        }
+        return;
+    }
 	
 	int gpio;
     int writeCount; 
@@ -59,6 +66,7 @@ void writeSafe(char* path, char* value){
 		perror("writeSafe: open failed");
 		exit(EXIT_FAILURE);
 	}
+	
 }
 
 
@@ -68,8 +76,15 @@ int GPIO_read(char* pin) {
 	int gpio;
 	char buffer[BUFFER_SIZE];
 	
+
+    if (!GPIO_ENABLED) {
+        if (VERBOSE_LOG_GPIO_DEF) {     
+            printf("GPIO_read skip"); 
+        }
+        return 0;
+    }
+
 	char* path = GPIO_getPath(pin, PATH_SUFFIX_VALUE);
-	
 	gpio = open(path, O_RDONLY);
 	if (gpio != -1){
 		if ((readCount = read(gpio, buffer, BUFFER_SIZE)) != 2) {
@@ -95,7 +110,7 @@ int GPIO_read(char* pin) {
 		exit(EXIT_FAILURE);
 	}
 	
-	
+	free(path);
 	return value;
 }
 
@@ -105,6 +120,8 @@ void GPIO_set(char* pin, char value) {
 	char strValue = value + '0';
 	char buffer[2] = { strValue, 0 };   
 	writeSafe(path, (char*) buffer);
+    
+    free(path);
 }
 
 
@@ -119,5 +136,7 @@ void GPIO_unexport(char* pin) {
 void GPIO_setDirection(char* pin, char* direction){
 	char* path = GPIO_getPath(pin, PATH_SUFFIX_DIR);
 	writeSafe(path, direction);
+	
+	free(path);
 }
 
