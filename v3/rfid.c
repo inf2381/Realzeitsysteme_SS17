@@ -28,7 +28,7 @@ void *detectRFID(void *arg) {
     struct timespec sleeptime = {0};
 	int cardPresent = 0;    
 
-    while (true) {
+    while (shouldRun) {
 
 		if(pthread_rwlock_wrlock(t_args->lock)){
 			perror("rfid_wrlock failed");
@@ -46,4 +46,6 @@ void *detectRFID(void *arg) {
 
 		sleepAbsolute(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime);
     }
+    
+    pthread_exit(0);
 }

@@ -14,7 +14,6 @@
 
 
 
-
 void infraredSetup() {
 	GPIO_export(PIN_IR_IN1);
 	GPIO_setDirection(PIN_IR_IN1, PIN_IN);
@@ -48,7 +47,7 @@ void *infrared_read(void *arg) {
     	printf("infrared_read");
 	}
 
-	while (true) { 
+	while (shouldRun) { 
 		int in1 = GPIO_read(PIN_IR_IN1);
 		int in2 = GPIO_read(PIN_IR_IN2);
 		int in3 = GPIO_read(PIN_IR_IN3);
@@ -76,5 +75,7 @@ void *infrared_read(void *arg) {
 
         sleepAbsolute(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime);
 	}
+	
+	pthread_exit(0);
 }
 

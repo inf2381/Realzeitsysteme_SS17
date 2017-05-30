@@ -16,11 +16,14 @@
 #include "rfid.h"
 #include "helper.h"
 
-pthread_t   thread_us, thread_ir, thread_rfid, thread_exploit, thread_engine;
+pthread_t thread_us, thread_ir, thread_rfid, thread_exploit, thread_engine;
+pthread_t* all_threads[] = {&thread_exploit, &thread_engine, &thread_us, &thread_ir, &thread_rfid, NULL};
+
 pthread_rwlock_t ir_lock, us_lock, rfid_lock;
 thread_args ir_args, us_args, rfid_args;
 exploiterParams explParam;
-volatile engineMode engineCtrl;  //see common.h
+volatile engineMode engineCtrl; //see common.h
+volatile int shouldRun = 1;     //see common.h
 
 int logicmode = track_path;
 
@@ -38,12 +41,35 @@ void setup() {
 
 void shutdown(){
     logic_shutdown();
-
+    
+    shouldRun = 0;
 	engineSetdown();
 	ultrasonicSetdown();
 	infraredSetdown();
     piezoSetdown();
     rfidSetdown();
+    
+    pthread_t* ptr = all_threads[0];
+    /*
+    printf("%p, t %p, e %p \n", ptr, &thread_us, &thread_engine);
+    while (*ptr) {
+        printf("%p, t %p, %d\n", &ptr, ptr, *ptr == 0);
+        pthread_cancel(*ptr);
+        ptr++;
+    }
+    */
+    
+    printf("cancel");
+    ptr = all_threads[0];
+    while (*ptr) { 
+        printf("%p, t %p, %d\n", &ptr, ptr, *ptr == 0);
+        pthread_join(*ptr, NULL);
+        ptr++;
+    }
+   
+    pthread_rwlock_destroy(&ir_lock);
+    pthread_rwlock_destroy(&us_lock);
+    pthread_rwlock_destroy(&rfid_lock);
 }
 
 
@@ -62,6 +88,7 @@ void sig_handler(int signo)
 {
     if (signo == SIGINT){
         shutdown();
+        //pthread_exit(0);
         exit(EXIT_SUCCESS);
     }
 }
@@ -126,18 +153,6 @@ int main(int argc, char *argv[]) {
     readCommandLine(argc, argv);
     setup();
 
-/*    
-    while (true) {
-        struct timeval startTime, endTime;
-        struct timespec pogo;
-        gettimeofday(&startTime, NULL);
-        sleepAbsolute(100000, &pogo);
-        gettimeofday(&endTime, NULL);
-        
-        printf("Absolute expected: %d total %ld\n", 100, diff_time_us(startTime, endTime));
-        sleep(1);
-    }
-*/
     //preparing structs
 	initArgsGeneric(&ir_args, &ir_lock);
 	initArgsGeneric(&us_args, &us_lock);
@@ -155,7 +170,11 @@ int main(int argc, char *argv[]) {
     pthread_create(&thread_engine, NULL, engineController, NULL);
     
     //wait for exploiting thread to finish
-    pthread_join(thread_exploit, NULL);
+    pthread_t* ptr = all_threads[0];
+    while (ptr != NULL) { 
+        pthread_join(*ptr, NULL);
+        ptr++;
+    }
 
 	shutdown();
 	return EXIT_SUCCESS;

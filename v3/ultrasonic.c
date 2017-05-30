@@ -14,7 +14,6 @@
 #include "helper.h"
 
 
-
 void ultrasonicSetup() {
 	GPIO_export(PIN_TRIGGER);
 	GPIO_setDirection(PIN_TRIGGER, PIN_OUT);
@@ -32,12 +31,13 @@ void ultrasonicSetdown() {
 
 void *measureDistance(void *arg) {
     thread_args* ir_args = (thread_args*) arg;
+   
 
     long distance, timeDiff;
     struct timeval startTime, endTime;
     struct timespec sleeptime = {0};
     
-    while (true) {
+    while (shouldRun) {
         
         //measure distance  
         GPIO_set(PIN_TRIGGER, GPIO_HIGH);
@@ -78,5 +78,7 @@ void *measureDistance(void *arg) {
         sleepAbsolute(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime);
         
     }
+    
+    pthread_exit(0);
 }
 
