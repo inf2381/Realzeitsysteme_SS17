@@ -108,15 +108,21 @@ void pwmTest() {
     GPIO_set(PIN_1, 0);
 }
 
-void pwmDrive(char *leftPin, char *rightPin, long hightime, long downtime, struct timespec *sleeper) {
+void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct timespec *downtime) {
     int i;
     
     if (leftPin == NULL) {
         for (i = 0; i < PWM_CYCLES; i++) {
             GPIO_set(rightPin, 1);
-            sleepAbsolute(hightime, sleeper);
+            clock_nanosleep( CLOCK_MONOTONIC,
+                            TIMER_ABSTIME,
+                            hightime,
+                            NULL);
             GPIO_set(rightPin, 0);
-            sleepAbsolute(downtime, sleeper);
+            clock_nanosleep( CLOCK_MONOTONIC,
+                            TIMER_ABSTIME,
+                            downtime,
+                            NULL);
         }
         return;
     }
@@ -143,9 +149,11 @@ void pwmDrive(char *leftPin, char *rightPin, long hightime, long downtime, struc
 }
 
 void *engineController(void *arg) {
-    struct timespec sleep = {0}; //needed for sleeping absolutely within pwm
+    struct timespec sleep_high = {0}; //needed for sleeping absolutely within pwm
+    struct timespec sleep_down = {0};
+    struct timespec sleeptime_engine = {0};
     
-    
+    clock_gettime( CLOCK_MONOTONIC, &sleeptime_engine );
     while (true) {
         switch (engineCtrl) {
             case STAY:
@@ -163,17 +171,23 @@ void *engineController(void *arg) {
             case PWM_25:
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_4, 0);
-                pwmDrive(PIN_1, PIN_3, HIGH_25_NS, LOW_25_NS, &sleep);
+                sleep_high->tv_nsec = HIGH_25_NS;
+                sleep_down->tv_nsec = LOW_25_NS;
+                pwmDrive(PIN_1, PIN_3, &sleep_high, &sleep_down);
                 break;
             case PWM_50:
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_4, 0);
-                pwmDrive(PIN_1, PIN_3, HIGH_50_NS, LOW_50_NS, &sleep);
+                sleep_high->tv_nsec = HIGH_50_NS;
+                sleep_down->tv_nsec = LOW_50_NS;
+                pwmDrive(PIN_1, PIN_3, &sleep_high, &sleep_down);
                 break;
             case PWM_75:
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_4, 0);
-                pwmDrive(PIN_1, PIN_3, HIGH_75_NS, LOW_75_NS, &sleep);
+                sleep_high->tv_nsec = HIGH_75_NS;
+                sleep_down->tv_nsec = LOW_75_NS;
+                pwmDrive(PIN_1, PIN_3, &sleep_high, &sleep_down);
                 break;
             case REVERSE:
                 GPIO_set(PIN_1, 0);
@@ -196,19 +210,24 @@ void *engineController(void *arg) {
             case PWM_LEFT:
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_4, 0);
-                pwmDrive(PIN_1, NULL, HIGH_50_NS, LOW_50_NS, &sleep);
+                sleep_high->tv_nsec = HIGH_50_NS;
+                sleep_down->tv_nsec = LOW_50_NS;
+                pwmDrive(PIN_1, NULL, &sleep_high, &sleep_down);
                 break;
             case PWM_RIGHT:
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_4, 0);
-                pwmDrive(NULL, PIN_3, HIGH_50_NS, LOW_50_NS, &sleep);
+                sleep_high->tv_nsec = HIGH_50_NS;
+                sleep_down->tv_nsec = LOW_50_NS;
+                pwmDrive(NULL, PIN_3, &sleep_high, &sleep_down);
                 break;
             default:
                 allPinsToZero();
                 break;
         }
         
-        sleepAbsolute(SLEEPTIME_NS, &sleep);
+        increaseTimespec(SLEEPTIME_NS * NANOSECONDS_PER_MILLISECOND, &sleeptime_us);
+        sleepAbsolute(&sleeptime_engine);
     }
     
 }

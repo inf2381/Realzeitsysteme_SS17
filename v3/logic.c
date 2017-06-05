@@ -199,9 +199,11 @@ void logic_compute(){
 
 void *exploitMeasurements(void *arg) {
     exploiterParams explparam = *(exploiterParams*) arg;
+    struct timespec sleeptime_logic = ;
     
     while (logic_mode != none) {
-        sleepAbsolute(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
+        increaseTimespec(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
+        sleepAbsolute(&sleeptime);
 
 
         //TODO: check timestamps, maybe include trylocks

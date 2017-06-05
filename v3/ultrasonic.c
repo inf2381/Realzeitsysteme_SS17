@@ -35,13 +35,14 @@ void *measureDistance(void *arg) {
 
     long distance, timeDiff;
     struct timeval startTime, endTime;
-    struct timespec sleeptime = {0};
+    struct timespec sleeptime_us = {0};
     
+    clock_gettime( CLOCK_MONOTONIC, &sleeptime_us );
     while (true) {
         
         //measure distance  
         GPIO_set(PIN_TRIGGER, GPIO_HIGH);
-        sleepAbsolute(WAIT_TO_END_TRIGGER_ys * NANOSECONDS_PER_MICROSECOND, &sleeptime);
+        usleep(WAIT_TO_END_TRIGGER_ys);  // absolute sleep is not necessary here
 
         GPIO_set(PIN_TRIGGER, GPIO_LOW);
         
@@ -75,7 +76,8 @@ void *measureDistance(void *arg) {
 		}
 
 
-        sleepAbsolute(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime);
+        increaseTimespec(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime_us);
+        sleepAbsolute(&sleeptime_us);
         
     }
 }

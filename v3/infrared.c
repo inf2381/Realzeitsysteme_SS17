@@ -41,13 +41,13 @@ void infraredSetdown() {
 
 void *infrared_read(void *arg) {
 	thread_args* ir_args = (thread_args*) arg;
-    struct timespec sleeptime = {0};
+    struct timespec sleeptime_ir = {0};
 	
 
 	if (VERBOSE_DEF) {
     	printf("infrared_read");
 	}
-
+    clock_gettime( CLOCK_MONOTONIC, sleeptime_ir );
 	while (true) { 
 		int in1 = GPIO_read(PIN_IR_IN1);
 		int in2 = GPIO_read(PIN_IR_IN2);
@@ -74,7 +74,8 @@ void *infrared_read(void *arg) {
 			perror("ir_wrlock failed");
 		}
 
-        sleepAbsolute(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime);
-	}
+        increaseTimespec(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime_ir);
+        sleepAbsolute(&sleeptime_ir);
+    }
 }
 
