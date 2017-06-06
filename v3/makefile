@@ -5,9 +5,9 @@ CC=gcc
 CFLAGS=-Wall -g -std=gnu99 -I. -I./rfid
 
 CPLUS = g++
-CPLUS_FLAGS = -std=c++0x
+CPLUS_FLAGS = -std=c++0x -g
 
-LDFLAGS=-L. -L./$(BCM_PATH)src -lrt  -lpthread -lbcm2835 -g
+LDFLAGS=-L. -L./$(BCM_PATH)src -lrt  -lpthread -lbcm2835
 
 ECHO = echo
 
@@ -34,7 +34,7 @@ rfid_wrapper: libbcm2835 rfid/bridging_header.o rfid/MFRC522.o
 	$(CC) $(CFLAGS) -o $@ -c $^
 
 %:%.o
-	$(CPLUS) $^ $(LDFLAGS) -o $@
+	$(CPLUS) $(CPLUS_FLAGS) $^ $(LDFLAGS) -o $@
 
 %.o:%.cpp
 	$(CPLUS) $(CPLUS_FLAGS) -o $@ -c $^

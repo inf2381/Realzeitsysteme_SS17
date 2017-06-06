@@ -175,3 +175,7 @@ void printArgumentMissing(char opt) {
     exit(EXIT_FAILURE);
 }
 
+void thread_enableCancel(){
+
+}
+

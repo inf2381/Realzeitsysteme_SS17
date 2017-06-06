@@ -37,6 +37,9 @@ typedef struct {
     thread_args *rfid;
 } exploiterParams;
 
+//Defined in main.c, used to termine the thread loops
+extern volatile int shouldRun;
+
 //Used in ir_args.data as bitflags
 #define IR_IN1_BIT 0x01
 #define IR_IN2_BIT 0x02

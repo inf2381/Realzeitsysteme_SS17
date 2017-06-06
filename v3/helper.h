@@ -19,5 +19,6 @@ void strupr(char* p);
 int genRandom(int randMin, int randMax);
 void printArgumentMissing(char opt);
 void inputNonsensical(char opt, int value);
+void thread_enableCancel();
 #endif
 

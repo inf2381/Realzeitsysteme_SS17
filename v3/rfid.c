@@ -29,7 +29,9 @@ void *detectRFID(void *arg) {
 	int cardPresent = 0;    
     
     clock_gettime( CLOCK_MONOTONIC, sleeptime_rfid );
-    while (true) {
+
+
+    while (shouldRun) {
 
 		if(pthread_rwlock_wrlock(t_args->lock)){
 			perror("rfid_wrlock failed");
@@ -48,4 +50,6 @@ void *detectRFID(void *arg) {
         increaseTimespec(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime_us);
         sleepAbsolute(&sleeptime_rfid);
     }
+    
+    pthread_exit(0);
 }

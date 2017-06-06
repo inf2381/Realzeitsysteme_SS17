@@ -157,7 +157,7 @@ void logic_setup(int mode){
 	logic_mode = mode;
 }
 void logic_shutdown(){
-    
+    logic_mode = none;    
 }
 void logic_compute(){
 	switch(logic_mode){
@@ -204,7 +204,6 @@ void *exploitMeasurements(void *arg) {
     while (logic_mode != none) {
         increaseTimespec(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
         sleepAbsolute(&sleeptime);
-
 
         //TODO: check timestamps, maybe include trylocks
         //infrared
@@ -256,7 +255,10 @@ void *exploitMeasurements(void *arg) {
 	    }
 
 		logic_compute();
+		
+		sleepAbsolute(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
     }
+    
     pthread_exit(0);
 }
 

@@ -12,6 +12,7 @@
 #include "helper.h"
 #include "gpio.h"
 
+
 void engineSetup(){
     GPIO_export(PIN_1);
     GPIO_setDirection(PIN_1, PIN_OUT);
@@ -27,10 +28,12 @@ void engineSetup(){
 }
 
 void engineSetdown(){
+    shouldRun = 0;
+
     GPIO_unexport(PIN_1);
     GPIO_unexport(PIN_2);
     GPIO_unexport(PIN_3);
-    GPIO_unexport(PIN_4);
+    GPIO_unexport(PIN_4);  
 }
 
 void engineStop(){
@@ -229,6 +232,8 @@ void *engineController(void *arg) {
         increaseTimespec(SLEEPTIME_NS * NANOSECONDS_PER_MILLISECOND, &sleeptime_us);
         sleepAbsolute(&sleeptime_engine);
     }
+    
+    pthread_exit(0);
     
 }
 

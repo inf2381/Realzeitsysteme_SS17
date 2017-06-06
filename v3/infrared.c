@@ -14,7 +14,6 @@
 
 
 
-
 void infraredSetup() {
 	GPIO_export(PIN_IR_IN1);
 	GPIO_setDirection(PIN_IR_IN1, PIN_IN);
@@ -47,8 +46,10 @@ void *infrared_read(void *arg) {
 	if (VERBOSE_DEF) {
     	printf("infrared_read");
 	}
+    
     clock_gettime( CLOCK_MONOTONIC, sleeptime_ir );
-	while (true) { 
+
+	while (shouldRun) {
 		int in1 = GPIO_read(PIN_IR_IN1);
 		int in2 = GPIO_read(PIN_IR_IN2);
 		int in3 = GPIO_read(PIN_IR_IN3);
@@ -74,8 +75,15 @@ void *infrared_read(void *arg) {
 			perror("ir_wrlock failed");
 		}
 
+<<<<<<< HEAD
         increaseTimespec(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime_ir);
         sleepAbsolute(&sleeptime_ir);
     }
+=======
+        sleepAbsolute(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime);
+	}
+	
+	pthread_exit(0);
+>>>>>>> origin/master
 }
 
