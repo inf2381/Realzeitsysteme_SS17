@@ -1,16 +1,15 @@
-#define __GNU_SOURCE
-
-#include "common.h"
-#include "helper.h"
-#include "ultrasonic.h"
-#include "gpio.h"
-
+#define _GNU_SOURCE
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <limits.h>
 #include <stdbool.h>
-#include <stdio.h>
+
+#include "gpio.h"
+#include "helper.h"
+#include "ultrasonic.h"
+#include "common.h"
 
 
 
