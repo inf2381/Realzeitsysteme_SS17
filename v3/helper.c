@@ -119,13 +119,13 @@ void activWait(int waitTimeMillis){
 
 
 void increaseTimespec(long long nanoseconds, struct timespec * sleeptime){
-    nanoseconds += sleeptime->tv_nsec;
+    long long nanos = nanoseconds + sleeptime->tv_nsec;
     sleeptime->tv_nsec = 0;
-    if (nanoseconds >= NANOSECONDS_PER_SECOND) {
-        sleeptime->tv_sec += nanoseconds / NANOSECONDS_PER_SECOND;
-        sleeptime->tv_nsec += nanoseconds % NANOSECONDS_PER_SECOND;
+    if (nanos >= NANOSECONDS_PER_SECOND) {
+        sleeptime->tv_sec += nanos / NANOSECONDS_PER_SECOND;
+        sleeptime->tv_nsec += nanos % NANOSECONDS_PER_SECOND;
     } else {
-        sleeptime->tv_nsec += nanoseconds;
+        sleeptime->tv_nsec += nanos;
     }
 }
 
@@ -138,7 +138,7 @@ void sleepAbsolute(struct timespec * sleeptime) {
                            sleeptime,
                            NULL)) == EINTR ) { };
     if (retVal != 0) {
-	printf("nanosecs: %lld, sleeptime nsec %ld\n", nanoseconds, sleeptime->tv_nsec);
+        printf("clock_nanosleep sec %ld nsec %ld\n", sleeptime->tv_sec, sleeptime->tv_nsec );
         printf("clock_nanosleep fail: %s\n", strerror(retVal));
     }
 

@@ -1,6 +1,8 @@
 #ifndef common_h
 #define common_h
+#define _GNU_SOURCE
 #include <pthread.h>
+#include <sched.h>
 
 #define VERBOSE_DEF 1
 #define VERBOSE_LOG_GPIO_DEF 0 
@@ -37,8 +39,13 @@ typedef struct {
     thread_args *rfid;
 } exploiterParams;
 
-//Defined in main.c, used to termine the thread loops
+//Defined in main.c, used to terminate the thread loops
 extern volatile int shouldRun;
+
+//Also defined in main.c
+extern cpu_set_t cpuset_logic;
+extern cpu_set_t cpuset_sensors;
+extern cpu_set_t cpuset_engine;
 
 //Used in ir_args.data as bitflags
 #define IR_IN1_BIT 0x01
@@ -47,7 +54,13 @@ extern volatile int shouldRun;
 #define IR_IN4_BIT 0x08
 
 //Timings
-#define INTERVAL_LOGIC 100
-#define INTERVAL_INPUT 50
+#define INTERVAL_LOGIC_US 100
+#define INTERVAL_INPUT_US 50
+
+// Scheduling stuff
+// 0 is reserved for IRQs and the rest of the OS
+#define CPU_LOGIC 1
+#define CPU_SENSORS 2
+#define CPU_ENGINE 3
 
 #endif

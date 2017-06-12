@@ -9,6 +9,9 @@
 
 extern int verbose;
 
+void initPathCache();
+void destroyPathCache();
+
 char* GPIO_getPath(char* pin, const char* suffix);
 int GPIO_read(char* pin);
 void GPIO_set(char* pin, char value);

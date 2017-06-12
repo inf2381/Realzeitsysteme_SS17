@@ -16,6 +16,7 @@
 
 
 const int BUFFER_SIZE = 16;
+#define GPIO_COUNT 30
 
 const char* PATH = "/sys/class/gpio/gpio";
 const char* PATH_SUFFIX_VALUE = "/value";
@@ -23,6 +24,22 @@ const char* PATH_SUFFIX_DIR = "/direction";
 
 const char* PATH_EXPORT = "/sys/class/gpio/export";
 const char* PATH_UNEXPORT = "/sys/class/gpio/unexport";
+
+char* PATH_CACHE[GPIO_COUNT];
+
+void initPathCache(){
+    for (int i = 0; i < GPIO_COUNT; i++){
+        char pin[3];
+        sprintf(pin, "%d", i);
+        PATH_CACHE[i] = GPIO_getPath(pin, PATH_SUFFIX_VALUE);
+    }   
+}
+
+void destroyPathCache(){
+    for (int i = 0; i < GPIO_COUNT; i++){
+        free(PATH_CACHE[i]);
+    }
+}
 
 char* GPIO_getPath(char* pin, const char* suffix) {
 	 //preparing for open
@@ -84,7 +101,10 @@ int GPIO_read(char* pin) {
         return 0;
     }
 
-	char* path = GPIO_getPath(pin, PATH_SUFFIX_VALUE);
+    int pin_int = validateInt(pin);	
+    char* path = PATH_CACHE[pin_int];
+	//char* path = GPIO_getPath(pin, PATH_SUFFIX_VALUE);
+	
 	gpio = open(path, O_RDONLY);
 	if (gpio != -1){
 		if ((readCount = read(gpio, buffer, BUFFER_SIZE)) != 2) {
@@ -109,19 +129,18 @@ int GPIO_read(char* pin) {
 		perror("fopen failed");
 		exit(EXIT_FAILURE);
 	}
-	
-	free(path);
 	return value;
 }
 
 void GPIO_set(char* pin, char value) {
-	char* path = GPIO_getPath(pin, PATH_SUFFIX_VALUE);
+    int pin_int = validateInt(pin);	
+    char* path = PATH_CACHE[pin_int];
+	//char* path = GPIO_getPath(pin, PATH_SUFFIX_VALUE);
+
 	
 	char strValue = value + '0';
 	char buffer[2] = { strValue, 0 };   
 	writeSafe(path, (char*) buffer);
-    
-    free(path);
 }
 
 

@@ -1,5 +1,4 @@
-
-
+#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -47,7 +46,7 @@ void *infrared_read(void *arg) {
     	printf("infrared_read");
 	}
     
-    clock_gettime( CLOCK_MONOTONIC, sleeptime_ir );
+    clock_gettime( CLOCK_MONOTONIC, &sleeptime_ir );
 
 	while (shouldRun) {
 		int in1 = GPIO_read(PIN_IR_IN1);
@@ -75,7 +74,7 @@ void *infrared_read(void *arg) {
 			perror("ir_wrlock failed");
 		}
         
-        increaseTimespec(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime_ir);
+        increaseTimespec(INTERVAL_INPUT_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_ir);
         sleepAbsolute(&sleeptime_ir);
     }
 

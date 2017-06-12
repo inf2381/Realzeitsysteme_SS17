@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
@@ -22,35 +23,35 @@ int ir_test_state = none;
 void logic_test_engine(){
 	//left test
     engineCtrl = ONLY_LEFT;
-	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+	sleep(1);
 
 	//right test
     engineCtrl = ONLY_RIGHT;
-	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+	sleep(1);
 
 	//both
     engineCtrl = FULL_THROTTLE;
-	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+	sleep(1);
 
 	engineCtrl = REVERSE;
-	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+	sleep(1);
 
     // PWM test
     engineCtrl = PWM_75;
-    sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+    sleep(1);
 
     engineCtrl = PWM_50;
-    sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+    sleep(1);
 
     engineCtrl = PWM_25;
-    sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+    sleep(1);
 
     //Stap it
     engineCtrl = STOP;
-	sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+	sleep(1);
 
     engineCtrl = STAY;
-	sleepAbsolute(3 * NANOSECONDS_PER_SECOND, &sleeptime);
+    sleep(3);
 }
 
 
@@ -131,10 +132,10 @@ void logic_test_ir(){
 
 void logic_test_piezo(){
     playTone();
-    sleepAbsolute(1 * NANOSECONDS_PER_SECOND, &sleeptime);
+    sleep(1);
 
     piezo_playReverse();
-    sleepAbsolute(3 * NANOSECONDS_PER_SECOND, &sleeptime);
+    sleep(3);
     piezo_stopReverse();
     logic_mode = none;
 }
@@ -198,13 +199,13 @@ void logic_compute(){
 
 
 void *exploitMeasurements(void *arg) {
-    exploiterParams explparam = *(exploiterParams*) arg;
-    struct timespec sleeptime_logic = ;
-    
-    while (logic_mode != none) {
-        increaseTimespec(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
-        sleepAbsolute(&sleeptime);
+    sched_setaffinity(0, sizeof(cpuset_logic),&cpuset_logic);
 
+    exploiterParams explparam = *(exploiterParams*) arg;
+    struct timespec sleeptime_logic = {0};
+    
+    clock_gettime(CLOCK_MONOTONIC, &sleeptime_logic);
+    while (logic_mode != none) {
         //TODO: check timestamps, maybe include trylocks
         //infrared
         if(pthread_rwlock_rdlock(explparam.ir->lock)){
@@ -256,7 +257,8 @@ void *exploitMeasurements(void *arg) {
 
 		logic_compute();
 		
-		sleepAbsolute(INTERVAL_LOGIC * NANOSECONDS_PER_MILLISECOND, &sleeptime);
+		increaseTimespec(INTERVAL_LOGIC_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_logic);
+        sleepAbsolute(&sleeptime_logic);
     }
     
     pthread_exit(0);

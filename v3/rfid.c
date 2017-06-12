@@ -1,4 +1,4 @@
-
+#define _GNU_SOURCE
 #include <pthread.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -28,7 +28,7 @@ void *detectRFID(void *arg) {
     struct timespec sleeptime_rfid = {0};
 	int cardPresent = 0;    
     
-    clock_gettime( CLOCK_MONOTONIC, sleeptime_rfid );
+    clock_gettime(CLOCK_MONOTONIC, &sleeptime_rfid );
 
 
     while (shouldRun) {
@@ -47,7 +47,7 @@ void *detectRFID(void *arg) {
 			perror("rfid_unlock failed");
 		}
 
-        increaseTimespec(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime_us);
+        increaseTimespec(INTERVAL_INPUT_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_rfid);
         sleepAbsolute(&sleeptime_rfid);
     }
     

@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdbool.h>
 #include <signal.h>
@@ -15,6 +16,7 @@
 #include "piezo.h"
 #include "rfid.h"
 #include "helper.h"
+#include "gpio.h"
 
 pthread_t thread_us, thread_ir, thread_rfid, thread_exploit, thread_engine;
 pthread_t* all_threads[] = {&thread_exploit, &thread_engine, &thread_us, &thread_ir, &thread_rfid, NULL};
@@ -25,17 +27,32 @@ exploiterParams explParam;
 volatile engineMode engineCtrl; //see common.h
 volatile int shouldRun = 1;     //see common.h
 
-int logicmode = track_path;
 
+int default_logicmode = track_path;
+
+// Scheduling stuff
+cpu_set_t cpuset_logic;
+cpu_set_t cpuset_sensors;
+cpu_set_t cpuset_engine;
 
 void setup() {
+    CPU_ZERO(&cpuset_logic);
+    CPU_ZERO(&cpuset_sensors);
+    CPU_ZERO(&cpuset_engine);
+    
+    
+    CPU_SET(CPU_LOGIC , &cpuset_logic);
+    CPU_SET(CPU_SENSORS , &cpuset_sensors);
+    CPU_SET(CPU_ENGINE , &cpuset_engine);
+    
+    initPathCache();
 	engineSetup();
     ultrasonicSetup();
 	infraredSetup();
     piezoSetup();
     rfidSetup();
 
-	logic_setup(logicmode);
+	logic_setup(default_logicmode);
     engineCtrl = STAY;
 }
 
@@ -48,6 +65,7 @@ void shutdown(){
 	infraredSetdown();
     piezoSetdown();
     rfidSetdown();
+    destroyPathCache();
     
     pthread_t* ptr = all_threads[0];
     /*
@@ -108,25 +126,25 @@ void readCommandLine(int argc, char *argv[]){
         switch(option){
         case 'm':
             if (strcmp(optarg, "rfid") == 0) {
-                logicmode = test_rfid;
+                default_logicmode = test_rfid;
 
             } else if (strcmp(optarg, "ir") == 0) {
-                logicmode = test_ir;
+                default_logicmode = test_ir;
 
             } else if (strcmp(optarg, "us") == 0) {
-                logicmode = test_us;
+                default_logicmode = test_us;
 
             } else if (strcmp(optarg, "piezo") == 0) {
-                logicmode = test_piezo;
+                default_logicmode = test_piezo;
 
             } else if (strcmp(optarg, "engine") == 0) {
-                logicmode = test_engine;
+                default_logicmode = test_engine;
 
             } else if (strcmp(optarg, "path") == 0) {
-                logicmode = track_path;
+                default_logicmode = track_path;
 
             } else if (strcmp(optarg, "search") == 0) {
-                logicmode = track_rfid_search;
+                default_logicmode = track_rfid_search;
             }
             break;
  

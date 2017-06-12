@@ -1,6 +1,4 @@
-/* https://tutorials-raspberrypi.de/entfernung-messen-mit-ultraschallsensor-hc-sr04/ */
-
-
+#define __GNU_SOURCE
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
@@ -76,7 +74,7 @@ void *measureDistance(void *arg) {
 		}
 
 
-        increaseTimespec(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime_us);
+        increaseTimespec(INTERVAL_INPUT_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_us);
         sleepAbsolute(&sleeptime_us);
         
     }
