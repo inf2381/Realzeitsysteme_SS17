@@ -124,7 +124,7 @@ void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct t
             GPIO_set(rightPin, 0);
             clock_nanosleep(CLOCK_MONOTONIC,
                             0,
-                            hightime,
+                            downtime,
                             NULL);
         }
         return;
@@ -142,7 +142,7 @@ void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct t
             GPIO_set(rightPin, 0);
             clock_nanosleep(CLOCK_MONOTONIC,
                             0,
-                            hightime,
+                            downtime,
                             NULL);
         }
         return;
@@ -158,7 +158,7 @@ void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct t
         GPIO_set(leftPin, 0);
         clock_nanosleep(CLOCK_MONOTONIC,
                         0,
-                        hightime,
+                        downtime,
                         NULL);
     }
 }
