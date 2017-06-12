@@ -74,16 +74,11 @@ void *infrared_read(void *arg) {
 		if(pthread_rwlock_unlock(ir_args->lock)){
 			perror("ir_wrlock failed");
 		}
-
-<<<<<<< HEAD
+        
         increaseTimespec(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime_ir);
         sleepAbsolute(&sleeptime_ir);
     }
-=======
-        sleepAbsolute(INTERVAL_INPUT * NANOSECONDS_PER_MILLISECOND, &sleeptime);
-	}
-	
+
 	pthread_exit(0);
->>>>>>> origin/master
 }
 
