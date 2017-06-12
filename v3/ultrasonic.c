@@ -1,4 +1,10 @@
 #define __GNU_SOURCE
+
+#include "common.h"
+#include "helper.h"
+#include "ultrasonic.h"
+#include "gpio.h"
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <pthread.h>
@@ -6,10 +12,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#include "common.h"
-#include "ultrasonic.h"
-#include "gpio.h"
-#include "helper.h"
+
 
 
 void ultrasonicSetup() {
@@ -28,8 +31,8 @@ void ultrasonicSetdown() {
 
 
 void *measureDistance(void *arg) {
+    sched_setaffinity(0, sizeof(cpuset_sensors), &cpuset_sensors);
     thread_args* ir_args = (thread_args*) arg;
-   
 
     long distance, timeDiff;
     struct timeval startTime, endTime;

@@ -38,6 +38,7 @@ void infraredSetdown() {
 
 
 void *infrared_read(void *arg) {
+    sched_setaffinity(0, sizeof(cpuset_sensors), &cpuset_sensors);
 	thread_args* ir_args = (thread_args*) arg;
     struct timespec sleeptime_ir = {0};
 	

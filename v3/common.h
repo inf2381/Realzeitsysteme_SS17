@@ -1,6 +1,6 @@
 #ifndef common_h
 #define common_h
-#define _GNU_SOURCE
+
 #include <pthread.h>
 #include <sched.h>
 

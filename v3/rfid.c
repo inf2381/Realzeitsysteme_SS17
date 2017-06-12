@@ -24,6 +24,7 @@ void rfidSetdown() {
 }
 
 void *detectRFID(void *arg) {
+    sched_setaffinity(0, sizeof(cpuset_sensors), &cpuset_sensors);
     thread_args* t_args = (thread_args*) arg;
     struct timespec sleeptime_rfid = {0};
 	int cardPresent = 0;    
