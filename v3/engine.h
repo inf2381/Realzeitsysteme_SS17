@@ -11,12 +11,6 @@
 #define PIN_3 "13"
 #define PIN_4 "19"
 
-#define PWM_CYCLES 100
-#define SLEEPTIME_NS 250000000  //0.25 s
-#define PWM_LOW_TIME_NS 10000000 // only for the pwm test; will be deleted soon
-
-//TODO: Reasonable times
-
 // PWM times so that the program doesn't have to calculate the time during runtime
 #define HIGH_25_NS 5000000
 #define LOW_25_NS 15000000
@@ -24,6 +18,18 @@
 #define LOW_50_NS 10000000
 #define HIGH_75_NS 15000000
 #define LOW_75_NS 5000000
+
+
+#define SLEEPTIME_NS 250000000  //0.25 s
+#if (SLEEPTIME_NS%(HIGH_25_NS+LOW_25_NS))
+#error Sleeptime not multiple of one pwm-cycle
+#endif
+#define PWM_CYCLES SLEEPTIME_NS/(HIGH_25_NS+LOW_25_NS)
+
+
+#define PWM_LOW_TIME_NS 10000000 // only for the pwm test; will be deleted soon
+
+//TODO: Reasonable times
 
 extern volatile engineMode engineCtrl;
 
