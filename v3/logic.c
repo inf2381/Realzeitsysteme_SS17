@@ -42,19 +42,19 @@ void logic_test_engine(){
 
     // PWM test
     engineCtrl = PWM_75;
-    sleep(1);
+    sleep(3);
 
     engineCtrl = PWM_50;
-    sleep(1);
+    sleep(3);
 
     engineCtrl = PWM_25;
-    sleep(1);
+    sleep(3);
 
     engineCtrl = PWM_LEFT;
-    sleep(1);
+    sleep(3);
     
     engineCtrl = PWM_RIGHT;
-    sleep(1);
+    sleep(3);
 
     //Stap it
     engineCtrl = STOP;
@@ -75,7 +75,7 @@ void logic_test_rfid(){
 			printf("found chip, stopping logic");
 		}
 	} else {
-        engineCtrl = PWM_50;
+        engineCtrl = PWM_75;
 	}
 
 }
@@ -99,14 +99,13 @@ void logic_test_ir(){
     //order (right to left): 2, 1, 3, 4)
     //one line between, drive right, wait for detection on the right, drive left, wait to detection, loop
     
-    while(true) {
         char right_outer = ir_state & IR_IN2_BIT;
         char right_inner = ir_state & IR_IN1_BIT;
 
         char left_inner = ir_state & IR_IN3_BIT;
         char left_outer = ir_state & IR_IN4_BIT;
 
-
+	//printf("ir_state %d\n", ir_state);
         
         switch(ir_test_state){
             case ir_none:
@@ -118,7 +117,7 @@ void logic_test_ir(){
 
             case detect_right:
 		//printf("Right inner: %d, Right outer %d\n", right_inner, right_outer);
-                if (!right_inner || !right_outer) {
+                if (right_inner || right_outer) {
                     ir_test_state = detect_left;
                     engineCtrl = PWM_LEFT;
 
@@ -128,7 +127,8 @@ void logic_test_ir(){
                 break;
 
             case detect_left:
-                if (!left_inner || !left_outer) {
+		printf("left inner: %d, left outer %d\n", left_inner, left_outer);
+                if (left_inner || left_outer) {
                     ir_test_state = none;
                     printf("left --> none\n");
                 }    
@@ -136,7 +136,6 @@ void logic_test_ir(){
                 break;
 
         }
-    }
 	
 }
 
@@ -185,7 +184,7 @@ int turnCheck(){
 
 void helper_turnComputeDegree(int degree) {
 //TODO: find coorect value
-    long long nanosecs_per_degree = NANOSECONDS_PER_MILLISECOND * 5;
+    long long nanosecs_per_degree = NANOSECONDS_PER_MILLISECOND * 13;
     long long timeDiff = nanosecs_per_degree * degree;
 	printf("timediff %lld ms\n", timeDiff / NANOSECONDS_PER_MILLISECOND);
     clock_gettime(CLOCK_MONOTONIC, &turn_endtime);
