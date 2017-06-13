@@ -19,8 +19,8 @@ int rfid_state = -1;
 int ir_test_state = none;
 //int path_state = start; 
 
-int turnLeft = 0;
-int turnRight = 0;
+int turnLeftEnabled = 0;
+int turnRightEnabled  = 0;
 struct timespec turn_now = {0};
 struct timespec turn_endtime = {0};
 
@@ -146,59 +146,22 @@ void logic_test_piezo(){
 
 
 
-void logic_path(){
-    /* possible strategy:
-    drive fast straight until curve, slow down on first ir detection, 
-    correction: by one motor for x ms (find a angle-time forumla), afterwards drive at 25%
-
-    */
-
-    if (turnLeft || turnRight) {
-        if (!turnCheck()) {
-            sleep(5);
-        }
-    } else {
-        turnLeft(90);
-    }
-}
-
-void turnLeft(int degree){
-    //goal: compute degrees to a time value 
-    
-    //override protection
-    if (turnLeft) {
-        long long nanosecs_per_degree = NANOSECONDS_PER_MILLISECOND * 5;
-        long long timeDiff = nanosecs_per_degree * degree;
-        clock_gettime(CLOCK_MONOTONIC, &turn_endtime);
-        
-        increaseTimespec(timeDiff, &turn_endtime);
-        
-        engineCtrl = PWM_LEFT;
-        turnLeft = 1;
-     } 
-
-}
-
-void turnRight(){
-
-}
-
 //check if robot turns around
 //@return 1 if robot moves
 int turnCheck(){
-     if (turnLeft || turnRight) {
+     if (turnLeftEnabled || turnRightEnabled) {
         clock_gettime(CLOCK_MONOTONIC, &turn_now);
         
         if (turn_now.tv_sec > turn_endtime.tv_sec && turn_now.tv_nsec > turn_endtime.tv_nsec){
             //endstate reached
-            if (turnLeft) {
-                turnLeft = 0;
+            if (turnLeftEnabled) {
+                turnLeftEnabled = 0;
                 engineCtrl = STAY;
                 return 0;
             }
             
-            if (turnRight) {
-                turnRight = 0;
+            if (turnRightEnabled) {
+                turnRightEnabled = 0;
                 engineCtrl = STAY;
                 return 0;
                 
@@ -211,6 +174,53 @@ int turnCheck(){
      }
      
      return 0;
+}
+
+void helper_turnComputeDegree(int degree) {
+    long long nanosecs_per_degree = NANOSECONDS_PER_MILLISECOND * 5;
+    long long timeDiff = nanosecs_per_degree * degree;
+    clock_gettime(CLOCK_MONOTONIC, &turn_endtime);
+    
+    increaseTimespec(timeDiff, &turn_endtime);
+}
+
+void turnLeft(int degree){
+    //goal: compute degrees to a time value 
+    
+    //override protection
+    if (!turnLeftEnabled) {
+        helper_turnComputeDegree(degree);
+        
+        engineCtrl = PWM_LEFT;
+        turnLeftEnabled = 1;
+    } 
+}
+
+void turnRight(int degree){
+    //override protection
+    if (!turnRightEnabled) {
+        helper_turnComputeDegree(degree);
+        
+        engineCtrl = PWM_RIGHT;
+        turnRightEnabled = 1;
+    } 
+}
+
+
+void logic_path(){
+    /* possible strategy:
+    drive fast straight until curve, slow down on first ir detection, 
+    correction: by one motor for x ms (find a angle-time forumla), afterwards drive at 25%
+
+    */
+
+    if (turnLeftEnabled || turnRightEnabled) {
+        if (!turnCheck()) {
+            sleep(5);
+        }
+    } else {
+        turnLeft(90);
+    }
 }
 
 
