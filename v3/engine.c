@@ -133,13 +133,11 @@ void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct t
     if (rightPin == NULL) {
         for (i = 0; i < PWM_CYCLES; i++) {
             GPIO_set(leftPin, 1);
-            GPIO_set(rightPin, 1);
             clock_nanosleep(CLOCK_MONOTONIC,
                             0,
                             hightime,
                             NULL);
             GPIO_set(leftPin, 0);
-            GPIO_set(rightPin, 0);
             clock_nanosleep(CLOCK_MONOTONIC,
                             0,
                             downtime,
@@ -151,11 +149,13 @@ void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct t
     
     for (i = 0; i < PWM_CYCLES; i++) {
         GPIO_set(leftPin, 1);
+        GPIO_set(rightPin, 1);
         clock_nanosleep(CLOCK_MONOTONIC,
                         0,
                         hightime,
                         NULL);
         GPIO_set(leftPin, 0);
+        GPIO_set(rightPin, 0);
         clock_nanosleep(CLOCK_MONOTONIC,
                         0,
                         downtime,

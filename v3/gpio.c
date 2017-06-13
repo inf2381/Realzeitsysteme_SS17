@@ -101,7 +101,7 @@ int GPIO_read(char* pin) {
         return 0;
     }
 
-    int pin_int = validateInt(pin);	
+    int pin_int = atoi(pin);	
     char* path = PATH_CACHE[pin_int];
 	//char* path = GPIO_getPath(pin, PATH_SUFFIX_VALUE);
 	
@@ -133,7 +133,7 @@ int GPIO_read(char* pin) {
 }
 
 void GPIO_set(char* pin, char value) {
-    int pin_int = validateInt(pin);	
+    int pin_int = atoi(pin);	
     char* path = PATH_CACHE[pin_int];
 	//char* path = GPIO_getPath(pin, PATH_SUFFIX_VALUE);
 
