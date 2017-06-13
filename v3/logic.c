@@ -17,7 +17,7 @@ long us_distance = -1;
 int rfid_state = -1;
 
 int ir_test_state = none;
-//int path_state = start; 
+int path_state = path_start; 
 
 int turnLeftEnabled = 0;
 int turnRightEnabled  = 0;
@@ -99,45 +99,43 @@ void logic_test_ir(){
     //order (right to left): 2, 1, 3, 4)
     //one line between, drive right, wait for detection on the right, drive left, wait to detection, loop
     
-    while(true) {
-        char right_outer = ir_state & IR_IN2_BIT;
-        char right_inner = ir_state & IR_IN1_BIT;
 
-        char left_inner = ir_state & IR_IN3_BIT;
-        char left_outer = ir_state & IR_IN4_BIT;
+    char right_outer = ir_state & IR_IN2_BIT;
+    char right_inner = ir_state & IR_IN1_BIT;
+
+    char left_inner = ir_state & IR_IN3_BIT;
+    char left_outer = ir_state & IR_IN4_BIT;
 
 
-        
-        switch(ir_test_state){
-            case ir_none:
-                ir_test_state = detect_right;
-                engineCtrl = PWM_RIGHT;
+    
+    switch(ir_test_state){
+        case ir_none:
+            ir_test_state = detect_right;
+            engineCtrl = PWM_RIGHT;
 
-                printf("none --> dr\n");
-                break;
+            printf("none --> dr\n");
+            break;
 
-            case detect_right:
-		//printf("Right inner: %d, Right outer %d\n", right_inner, right_outer);
-                if (!right_inner || !right_outer) {
-                    ir_test_state = detect_left;
-                    engineCtrl = PWM_LEFT;
+        case detect_right:
+	//printf("Right inner: %d, Right outer %d\n", right_inner, right_outer);
+            if (!right_inner || !right_outer) {
+                ir_test_state = detect_left;
+                engineCtrl = PWM_LEFT;
 
-                    printf("right --> left\n");
-                }               
+                printf("right --> left\n");
+            }               
 
-                break;
+            break;
 
-            case detect_left:
-                if (!left_inner || !left_outer) {
-                    ir_test_state = none;
-                    printf("left --> none\n");
-                }    
+        case detect_left:
+            if (!left_inner || !left_outer) {
+                ir_test_state = none;
+                printf("left --> none\n");
+            }    
 
-                break;
+            break;
 
-        }
     }
-	
 }
 
 void logic_test_piezo(){
@@ -230,6 +228,14 @@ void logic_path(){
         }
     } else {
         turnLeft(90);
+    }
+    
+    
+    if (path_state == path_start) {
+        //ir detection
+        //rfid on --> search mode
+        
+        
     }
 }
 

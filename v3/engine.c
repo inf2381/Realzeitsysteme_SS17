@@ -114,6 +114,7 @@ void pwmTest() {
 void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct timespec *downtime) {
     int i;
     
+    
     if (leftPin == NULL) {
         for (i = 0; i < PWM_CYCLES; i++) {
             GPIO_set(rightPin, 1);

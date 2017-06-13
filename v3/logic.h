@@ -28,4 +28,11 @@ enum ir_test_states {
     detect_left
 
 };
+
+
+enum logic_path_states {
+    path_start,
+    path_slower,
+
+};
 #endif
