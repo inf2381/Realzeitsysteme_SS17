@@ -163,13 +163,11 @@ int turnCheck(){
             //endstate reached
             if (turnLeftEnabled) {
                 turnLeftEnabled = 0;
-                engineCtrl = STAY;
                 return 0;
             }
             
             if (turnRightEnabled) {
                 turnRightEnabled = 0;
-                engineCtrl = STAY;
                 return 0;
                 
             }
@@ -226,6 +224,7 @@ void logic_path(){
     if (turnLeftEnabled || turnRightEnabled) {
         if (!turnCheck()) {
 		    printf("turn end\n");
+                   engineCtrl = STAY;
             sleep(5);
         }
     } else {
@@ -243,7 +242,7 @@ void logic_path(){
 
 void logic_rfid(){
      if (turnLeftEnabled || turnRightEnabled) {
-        if (!turnCheck()) {
+        if (turnCheck() == 0) {
             printf("turn end\n");
             engineCtrl = FULL_THROTTLE;
             
