@@ -31,9 +31,9 @@ volatile int shouldRun = 1;     //see common.h
 int default_logicmode = track_path;
 
 // Scheduling stuff
-cpu_set_t cpuset_logic;
-cpu_set_t cpuset_sensors;
-cpu_set_t cpuset_engine;
+cpu_set_t cpuset_logic;     //see common.h
+cpu_set_t cpuset_sensors;   //see common.h
+cpu_set_t cpuset_engine;    //see common.h
 
 void setup() {
     CPU_ZERO(&cpuset_logic);
