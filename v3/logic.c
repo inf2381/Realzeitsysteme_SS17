@@ -152,7 +152,8 @@ int turnCheck(){
      if (turnLeftEnabled || turnRightEnabled) {
         clock_gettime(CLOCK_MONOTONIC, &turn_now);
         
-        if (turn_now.tv_sec > turn_endtime.tv_sec && turn_now.tv_nsec > turn_endtime.tv_nsec){
+	
+        if (turn_now.tv_sec >= turn_endtime.tv_sec && turn_now.tv_nsec >= turn_endtime.tv_nsec){
             //endstate reached
             if (turnLeftEnabled) {
                 turnLeftEnabled = 0;
@@ -177,8 +178,10 @@ int turnCheck(){
 }
 
 void helper_turnComputeDegree(int degree) {
-    long long nanosecs_per_degree = NANOSECONDS_PER_MILLISECOND * 5;
+//TODO: find coorect value
+    long long nanosecs_per_degree = NANOSECONDS_PER_MILLISECOND * 2;
     long long timeDiff = nanosecs_per_degree * degree;
+	printf("timediff %lld\n", timeDiff);
     clock_gettime(CLOCK_MONOTONIC, &turn_endtime);
     
     increaseTimespec(timeDiff, &turn_endtime);
@@ -216,6 +219,7 @@ void logic_path(){
 
     if (turnLeftEnabled || turnRightEnabled) {
         if (!turnCheck()) {
+		printf("turn end\n");
             sleep(5);
         }
     } else {
