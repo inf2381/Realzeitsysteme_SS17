@@ -226,15 +226,15 @@ void *engineController(void *arg) {
             case PWM_LEFT:
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_4, 0);
-                sleep_high.tv_nsec = HIGH_50_NS;
-                sleep_down.tv_nsec = LOW_50_NS;
+                sleep_high.tv_nsec = HIGH_75_NS;
+                sleep_down.tv_nsec = LOW_75_NS;
                 pwmDrive(PIN_1, NULL, &sleep_high, &sleep_down);
                 break;
             case PWM_RIGHT:
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_4, 0);
-                sleep_high.tv_nsec = HIGH_50_NS;
-                sleep_down.tv_nsec = LOW_50_NS;
+                sleep_high.tv_nsec = HIGH_75_NS;
+                sleep_down.tv_nsec = LOW_75_NS;
                 pwmDrive(NULL, PIN_3, &sleep_high, &sleep_down);
                 break;
             default:

@@ -50,6 +50,12 @@ void logic_test_engine(){
     engineCtrl = PWM_25;
     sleep(1);
 
+    engineCtrl = PWM_LEFT;
+    sleep(1);
+    
+    engineCtrl = PWM_RIGHT;
+    sleep(1);
+
     //Stap it
     engineCtrl = STOP;
 	sleep(1);
@@ -179,9 +185,9 @@ int turnCheck(){
 
 void helper_turnComputeDegree(int degree) {
 //TODO: find coorect value
-    long long nanosecs_per_degree = NANOSECONDS_PER_MILLISECOND * 2;
+    long long nanosecs_per_degree = NANOSECONDS_PER_MILLISECOND * 5;
     long long timeDiff = nanosecs_per_degree * degree;
-	printf("timediff %lld\n", timeDiff);
+	printf("timediff %lld ms\n", timeDiff / NANOSECONDS_PER_MILLISECOND);
     clock_gettime(CLOCK_MONOTONIC, &turn_endtime);
     
     increaseTimespec(timeDiff, &turn_endtime);
@@ -262,6 +268,7 @@ void logic_compute(){
 
 		case test_engine:
 			logic_test_engine();
+			break;
 
         case test_piezo:
             logic_test_piezo();	
