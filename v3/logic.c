@@ -24,6 +24,10 @@ int turnRightEnabled  = 0;
 struct timespec turn_now = {0};
 struct timespec turn_endtime = {0};
 
+
+const int NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 13;
+const int US_TRIGGER_THRESHOLD = 15 * 1000;
+
 void logic_test_engine(){
 	//left test
     engineCtrl = ONLY_LEFT;
@@ -216,7 +220,7 @@ void logic_test_turn(){
             sleep(5);
         }
     } else {
-        turnLeft(90);
+        turnLeft(default_degree);
     }
 }
 

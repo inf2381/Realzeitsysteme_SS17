@@ -2,9 +2,6 @@
 #define logic_h
 #include "common.h"
 
-#define NANOSECONDS_PER_DEGREE (NANOSECONDS_PER_MILLISECOND * 13)
-#define US_TRIGGER_THRESHOLD (15 * 1000)
-
 void logic_setup(int mode);
 void logic_shutdown();
 void logic_compute();

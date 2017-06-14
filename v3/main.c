@@ -29,6 +29,7 @@ volatile int shouldRun = 1;     //see common.h
 
 
 int default_logicmode = track_path;
+int default_degree = 90;
 
 // Scheduling stuff
 cpu_set_t cpuset_logic;     //see common.h
@@ -118,48 +119,51 @@ void readCommandLine(int argc, char *argv[]){
             {NULL, 0, 0, 0}
         };
         int option_index = 0;
-        int option = getopt_long_only(argc, argv, "m:", long_options, &option_index);
+        int option = getopt_long_only(argc, argv, "m:d:", long_options, &option_index);
 
         if (option == -1)
             break;
 
         switch(option){
-        case 'm':
-            if (strcmp(optarg, "rfid") == 0) {
-                default_logicmode = test_rfid;
+            case 'm':
+                if (strcmp(optarg, "rfid") == 0) {
+                    default_logicmode = test_rfid;
 
-            } else if (strcmp(optarg, "ir") == 0) {
-                default_logicmode = test_ir;
+                } else if (strcmp(optarg, "ir") == 0) {
+                    default_logicmode = test_ir;
 
-            } else if (strcmp(optarg, "us") == 0) {
-                default_logicmode = test_us;
+                } else if (strcmp(optarg, "us") == 0) {
+                    default_logicmode = test_us;
 
-            } else if (strcmp(optarg, "piezo") == 0) {
-                default_logicmode = test_piezo;
+                } else if (strcmp(optarg, "piezo") == 0) {
+                    default_logicmode = test_piezo;
 
-            } else if (strcmp(optarg, "engine") == 0) {
-                default_logicmode = test_engine;
+                } else if (strcmp(optarg, "engine") == 0) {
+                    default_logicmode = test_engine;
 
-            } else if (strcmp(optarg, "path") == 0) {
-                default_logicmode = track_path;
+                } else if (strcmp(optarg, "path") == 0) {
+                    default_logicmode = track_path;
 
-            } else if (strcmp(optarg, "search") == 0) {
-                default_logicmode = track_rfid_search;
-                
-            }  else if (strcmp(optarg, "turn") == 0) {
-                default_logicmode = track_test_turn;
-            }
-            break;
- 
-        case ':':
-            if(optopt == 'e' || optopt == 'E')
+                } else if (strcmp(optarg, "search") == 0) {
+                    default_logicmode = track_rfid_search;
+                    
+                }  else if (strcmp(optarg, "turn") == 0) {
+                    default_logicmode = test_turn;
+                }
                 break;
-            printArgumentMissing(optopt);
-            break;
-        case '?':
-            break;
-         default:
-            break;
+     
+            case 'd': 
+                default_degree = validateInt(optarg);
+                break;
+            case ':':
+                if(optopt == 'e' || optopt == 'E')
+                    break;
+                printArgumentMissing(optopt);
+                break;
+            case '?':
+                break;
+             default:
+                break;
         }
     }
 }

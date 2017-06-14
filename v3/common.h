@@ -46,6 +46,7 @@ extern volatile int shouldRun;
 extern cpu_set_t cpuset_logic;
 extern cpu_set_t cpuset_sensors;
 extern cpu_set_t cpuset_engine;
+extern int default_degree;
 
 //Used in ir_args.data as bitflags
 #define IR_IN1_BIT 0x01
