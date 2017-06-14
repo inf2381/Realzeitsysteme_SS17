@@ -25,8 +25,8 @@ struct timespec turn_now = {0};
 struct timespec turn_endtime = {0};
 
 
-const int NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 13;
-const int US_TRIGGER_THRESHOLD = 15 * 1000;
+const long long  NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 13;
+const int US_TRIGGER_THRESHOLD = 20 * 1000;
 
 void logic_test_engine(){
 	//left test
@@ -94,7 +94,7 @@ void logic_test_us(){
 			printf("found object, stopping logic");
 		}
 	} else {
-        engineCtrl = FULL_THROTTLE;
+        engineCtrl = PWM_75;
     }
 
 }
@@ -261,9 +261,13 @@ void logic_path(){
         char left_inner = ir_state & IR_IN3_BIT;
         char left_outer = ir_state & IR_IN4_BIT;
         
+
         
         const int CORRECTION_ANGLE = 30;
-        if (right_inner || right_outer) {
+
+	if (right_inner || right_outer && left_inner || left_outer) {
+	   engineCtrl = STOP; //100msec revert
+	} else if (right_inner || right_outer) {
             turnLeft(CORRECTION_ANGLE);
         } else if (left_inner || left_outer) {
             turnRight(CORRECTION_ANGLE);
@@ -280,7 +284,7 @@ void logic_rfid_search(){
      if (turnLeftEnabled || turnRightEnabled) {
         if (turnCheck() == 0) {
             printf("turn end\n");
-            engineCtrl = FULL_THROTTLE;
+            engineCtrl = PWM_75;
             
          }
          return;
@@ -290,8 +294,8 @@ void logic_rfid_search(){
         turnLeft(90);
 		printf("turn");		
 	} else {
-        engineCtrl = FULL_THROTTLE;
-        printf("full");	
+        engineCtrl = PWM_75;
+       // printf("full");	
     }
 
 }

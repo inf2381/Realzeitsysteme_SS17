@@ -116,6 +116,7 @@ void readCommandLine(int argc, char *argv[]){
      while (42) {
         static struct option long_options[] = {
             {"mode", required_argument, 0, 'm'},
+            {"degree", required_argument, 0, 'd'},
             {NULL, 0, 0, 0}
         };
         int option_index = 0;
