@@ -244,20 +244,25 @@ void logic_path(){
             return;
         }
         
-        //already turning?
-        if (turnLeftEnabled || turnRightEnabled) {
-            if (turnCheck() == 0) {
-                printf("turn end\n");
-            } else {
-                return;
-            }
-        }
-
         //is reverting?
         if (reverseEnabled) {
             if (helper_isTimerFinished()) {
                 reverseEnabled = 0;
+                if (turnRightEnabled) {
+                    turnRight();
+                }else if (turnLeftEnabled) {
+                    turnLeft();
+                }
                 printf("reverse end\n");
+            } else {
+                return;
+            }
+        }
+        
+        //already turning?
+        if (turnLeftEnabled || turnRightEnabled) {
+            if (turnCheck() == 0) {
+                printf("turn end\n");
             } else {
                 return;
             }
@@ -284,10 +289,10 @@ void logic_path(){
            
            return;
 	    } else if (right_inner || right_outer) {
-            turnRight(CORRECTION_ANGLE);
+            turnRightEnabled = 1;
             return;
         } else if (left_inner || left_outer) {
-            turnLeft(CORRECTION_ANGLE);
+            turnLeftEnabled = 1;
             return;
         } 
 
