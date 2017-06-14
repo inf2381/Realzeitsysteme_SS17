@@ -11,6 +11,7 @@
 #include "common.h"
 #include "helper.h"
 #include "gpio.h"
+#include "piezo.h"
 
 
 void engineSetup(){
@@ -170,12 +171,18 @@ void *engineController(void *arg) {
     struct timespec sleep_high = {0}; //needed for sleeping absolutely within pwm
     struct timespec sleep_down = {0};
     struct timespec sleeptime_engine = {0};
+    int fun = 0;
     
     sleep_high.tv_nsec = HIGH_75_NS;
     sleep_down.tv_nsec = LOW_75_NS;
     
     clock_gettime( CLOCK_MONOTONIC, &sleeptime_engine );
     while (true) {
+        if (fun == 1 && engineCtrl != REVERSE) {
+            fun = 0;
+            piezo_stopReverse();
+        }
+    
         switch (engineCtrl) {
             case STAY:
                 allPinsToZero();
@@ -199,6 +206,11 @@ void *engineController(void *arg) {
                 GPIO_set(PIN_2, 1);
                 GPIO_set(PIN_3, 0);
                 GPIO_set(PIN_4, 1);
+                
+                if (FUN_ENABLED_DEF) {
+                    piezo_playReverse();
+                    fun = 1;
+                }
                 break;
             case ONLY_LEFT:
                 GPIO_set(PIN_1, 1);

@@ -21,12 +21,15 @@ int path_state = path_start;
 
 int turnLeftEnabled = 0;
 int turnRightEnabled  = 0;
-struct timespec turn_now = {0};
-struct timespec turn_endtime = {0};
+int reverseEnabled = 0;
+
+struct timespec timer_now = {0};
+struct timespec timer_endtime = {0};
 
 
 const long long  NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 13;
 const int US_TRIGGER_THRESHOLD = 20 * 1000;
+const int REVERT_TIMEOUT_NS = NANOSECONDS_PER_MILLISECOND * 50;
 
 void logic_test_engine(){
 	//left test
@@ -152,15 +155,18 @@ void logic_test_piezo(){
 }
 
 
+int helper_isTimerFinished(){
+    clock_gettime(CLOCK_MONOTONIC, &timer_now);
+    return (timer_now.tv_sec >= timer_endtime.tv_sec && timer_now.tv_nsec >= timer_endtime.tv_nsec);
+}
+
 
 //check if robot turns around
 //@return 1 if robot moves
 int turnCheck(){
      if (turnLeftEnabled || turnRightEnabled) {
-        clock_gettime(CLOCK_MONOTONIC, &turn_now);
-        
-	
-        if (turn_now.tv_sec >= turn_endtime.tv_sec && turn_now.tv_nsec >= turn_endtime.tv_nsec){
+   
+        if (helper_isTimerFinished()){
             //endstate reached
             if (turnLeftEnabled) {
                 turnLeftEnabled = 0;
@@ -185,9 +191,9 @@ int turnCheck(){
 void helper_turnComputeDegree(int degree) {
     long long timeDiff = NANOSECONDS_PER_DEGREE * degree;
 	printf("timediff %lld ms\n", timeDiff / NANOSECONDS_PER_MILLISECOND);
-    clock_gettime(CLOCK_MONOTONIC, &turn_endtime);
+    clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
     
-    increaseTimespec(timeDiff, &turn_endtime);
+    increaseTimespec(timeDiff, &timer_endtime);
 }
 
 void turnLeft(int degree){
@@ -246,12 +252,20 @@ void logic_path(){
         if (turnLeftEnabled || turnRightEnabled) {
             if (turnCheck() == 0) {
                 printf("turn end\n");
-                engineCtrl = FULL_THROTTLE;
-
+            } else {
+                return;
             }
-            return;
         }
 
+        //is reverting?
+        if (reverseEnabled) {
+            if (helper_isTimerFinished()) {
+                reverseEnabled = 0;
+                printf("reverse end\n");
+            } else {
+                return;
+            }
+        }
         
         
         //IR
@@ -262,21 +276,23 @@ void logic_path(){
         char left_outer = ir_state & IR_IN4_BIT;
         
 
-        
+
         const int CORRECTION_ANGLE = 30;
 
-	if (right_inner || right_outer && left_inner || left_outer) {
-	   engineCtrl = STOP; //100msec revert
-	} else if (right_inner || right_outer) {
+	    if (right_inner || right_outer && left_inner || left_outer) {
+	       engineCtrl = STOP; //100msec revert
+	       
+	       reverseEnabled = 1;
+	       clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
+           increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
+           
+	    } else if (right_inner || right_outer) {
             turnLeft(CORRECTION_ANGLE);
         } else if (left_inner || left_outer) {
             turnRight(CORRECTION_ANGLE);
-        } else {
-            //
-            engineCtrl = PWM_75;
-        }
+        } 
 
-        
+        engineCtrl = PWM_75;
     }
 }
 
