@@ -23,6 +23,7 @@ int turnLeftEnabled = 0;
 int turnRightEnabled  = 0;
 int reverseEnabled = 0;
 
+
 struct timespec timer_now = {0};
 struct timespec timer_endtime = {0};
 
@@ -49,12 +50,6 @@ void logic_test_engine(){
 
     // PWM test
     engineCtrl = PWM_75;
-    sleep(3);
-
-    engineCtrl = PWM_50;
-    sleep(3);
-
-    engineCtrl = PWM_25;
     sleep(3);
 
     engineCtrl = PWM_LEFT;
@@ -222,7 +217,7 @@ void logic_test_turn(){
     if (turnLeftEnabled || turnRightEnabled) {
         if (!turnCheck()) {
 		    printf("turn end\n");
-                   engineCtrl = STAY;
+            engineCtrl = STAY;
             sleep(5);
         }
     } else {
@@ -288,9 +283,23 @@ void logic_path(){
            
            return;
 	    } else if (right_inner || right_outer) {
+            engineCtrl = REVERSE;
+            
+            clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
+            increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
+            clock_nanosleep(CLOCK_MONOTONIC,
+                            0,
+                            &timer_endtime,
+                            NULL);
             turnRight(CORRECTION_ANGLE);
             return;
         } else if (left_inner || left_outer) {
+            clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
+            increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
+            clock_nanosleep(CLOCK_MONOTONIC,
+                            0,
+                            &timer_endtime,
+                            NULL);
             turnLeft(CORRECTION_ANGLE);
             return;
         } 

@@ -18,8 +18,6 @@ typedef enum {
     STOP,
     FULL_THROTTLE,
     PWM_25,
-    PWM_50,
-    PWM_75,
     REVERSE,
     ONLY_LEFT,
     ONLY_RIGHT,
