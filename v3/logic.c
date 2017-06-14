@@ -23,6 +23,7 @@ int turnLeftEnabled = 0;
 int turnRightEnabled  = 0;
 int reverseEnabled = 0;
 
+
 struct timespec timer_now = {0};
 struct timespec timer_endtime = {0};
 
@@ -49,12 +50,6 @@ void logic_test_engine(){
 
     // PWM test
     engineCtrl = PWM_75;
-    sleep(3);
-
-    engineCtrl = PWM_50;
-    sleep(3);
-
-    engineCtrl = PWM_25;
     sleep(3);
 
     engineCtrl = PWM_LEFT;
@@ -222,7 +217,7 @@ void logic_test_turn(){
     if (turnLeftEnabled || turnRightEnabled) {
         if (!turnCheck()) {
 		    printf("turn end\n");
-                   engineCtrl = STAY;
+            engineCtrl = STAY;
             sleep(5);
         }
     } else {
@@ -245,6 +240,7 @@ void logic_path(){
             //PATH EXIT
             //TODO: how to ensure that actual rfid is not ending search? inter
             logic_mode = track_rfid_search;
+            printf("Exit path");
             return;
         }
         
