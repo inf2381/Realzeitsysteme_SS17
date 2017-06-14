@@ -28,7 +28,7 @@ struct timespec timer_endtime = {0};
 
 
 const long long  NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 13;
-const int US_TRIGGER_THRESHOLD = 20 * 1000;
+const int US_TRIGGER_THRESHOLD = 30 * 1000;
 const int REVERT_TIMEOUT_NS = NANOSECONDS_PER_MILLISECOND * 50;
 
 void logic_test_engine(){
@@ -279,17 +279,20 @@ void logic_path(){
 
         const int CORRECTION_ANGLE = 30;
 
-	    if (right_inner || right_outer && left_inner || left_outer) {
+        if ((right_inner || right_outer) && (left_inner || left_outer)) {
 	       engineCtrl = STOP; //100msec revert
 	       
 	       reverseEnabled = 1;
 	       clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
            increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
            
+           return;
 	    } else if (right_inner || right_outer) {
-            turnLeft(CORRECTION_ANGLE);
-        } else if (left_inner || left_outer) {
             turnRight(CORRECTION_ANGLE);
+            return;
+        } else if (left_inner || left_outer) {
+            turnLeft(CORRECTION_ANGLE);
+            return;
         } 
 
         engineCtrl = PWM_75;
@@ -297,10 +300,22 @@ void logic_path(){
 }
 
 void logic_rfid_search(){
+	const int speed = FULL_THROTTLE;
+
+       if (rfid_state == 1) {
+            //EXIT
+            //TODO: how to ensure that actual rfid is not ending search? inter
+            logic_mode = none;
+		engineCtrl = STAY;
+            return;
+        }
+
+
+
      if (turnLeftEnabled || turnRightEnabled) {
         if (turnCheck() == 0) {
             printf("turn end\n");
-            engineCtrl = PWM_75;
+            engineCtrl = speed;
             
          }
          return;
@@ -310,7 +325,7 @@ void logic_rfid_search(){
         turnLeft(90);
 		printf("turn");		
 	} else {
-        engineCtrl = PWM_75;
+        engineCtrl = speed;
     }
 
 }

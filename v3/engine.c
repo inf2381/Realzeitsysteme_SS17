@@ -182,6 +182,7 @@ void *engineController(void *arg) {
             fun = 0;
             piezo_stopReverse();
         }
+	printf("%d\n", engineCtrl);
     
         switch (engineCtrl) {
             case STAY:
@@ -226,10 +227,12 @@ void *engineController(void *arg) {
                 break;
             case PWM_LEFT:
                 GPIO_set(PIN_2, 0);
+                GPIO_set(PIN_3, 0);
                 GPIO_set(PIN_4, 0);
                 pwmDrive(PIN_1, NULL, &sleep_high, &sleep_down);
                 break;
             case PWM_RIGHT:
+                GPIO_set(PIN_1, 0);
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_4, 0);
                 pwmDrive(NULL, PIN_3, &sleep_high, &sleep_down);

@@ -58,7 +58,7 @@ void *measureDistance(void *arg) {
                 gettimeofday(&endTime, NULL);
                 
                 //timeout 
-                if diff_time_us(startTime, endTime) > (200 * 1000) {
+                if (diff_time_us(startTime, endTime) > (200 * 1000)) {
                     printf("timeout us");
                     timeout = 1;
                     break;
