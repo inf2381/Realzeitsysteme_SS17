@@ -12,16 +12,12 @@
 #define PIN_4 "19"
 
 // PWM times so that the program doesn't have to calculate the time during runtime
-#define HIGH_25_NS 500000
-#define LOW_25_NS 1500000
-#define HIGH_50_NS 1000000
-#define LOW_50_NS 100000
 #define HIGH_75_NS 1500000
 #define LOW_75_NS 500000
 
 
 #define SLEEPTIME_NS (10 * 1000000)  //100 ms
-#if (SLEEPTIME_NS%(HIGH_25_NS+LOW_25_NS) != 0)
+#if (SLEEPTIME_NS%(HIGH_75_NS+LOW_75_NS) != 0)
 #error Sleeptime not multiple of one pwm-cycle
 #endif
 #define PWM_CYCLES (SLEEPTIME_NS/(HIGH_25_NS+LOW_25_NS))
