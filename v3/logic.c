@@ -32,6 +32,8 @@ const long long  NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 13;
 const int US_TRIGGER_THRESHOLD = 30 * 1000;
 const int REVERT_TIMEOUT_NS = NANOSECONDS_PER_MILLISECOND * 50;
 
+const int CORRECTION_ANGLE = 30;
+
 void logic_test_engine(){
 	//left test
     engineCtrl = ONLY_LEFT;
@@ -276,9 +278,6 @@ void logic_path(){
         char left_inner = ir_state & IR_IN3_BIT;
         char left_outer = ir_state & IR_IN4_BIT;
         
-
-
-        const int CORRECTION_ANGLE = 30;
 
         if ((right_inner || right_outer) && (left_inner || left_outer)) {
 	       engineCtrl = STOP; //100msec revert
