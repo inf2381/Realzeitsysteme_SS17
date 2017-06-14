@@ -284,23 +284,9 @@ void logic_path(){
            
            return;
 	    } else if (right_inner || right_outer) {
-            engineCtrl = REVERSE;
-            
-            clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
-            increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
-            clock_nanosleep(CLOCK_MONOTONIC,
-                            0,
-                            &timer_endtime,
-                            NULL);
             turnRight(CORRECTION_ANGLE);
             return;
         } else if (left_inner || left_outer) {
-            clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
-            increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
-            clock_nanosleep(CLOCK_MONOTONIC,
-                            0,
-                            &timer_endtime,
-                            NULL);
             turnLeft(CORRECTION_ANGLE);
             return;
         } 
