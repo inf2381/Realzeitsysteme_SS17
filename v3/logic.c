@@ -311,7 +311,6 @@ void logic_rfid_search(){
 		printf("turn");		
 	} else {
         engineCtrl = PWM_75;
-       // printf("full");	
     }
 
 }

@@ -33,12 +33,13 @@ void *measureDistance(void *arg) {
     sched_setaffinity(0, sizeof(cpuset_sensors), &cpuset_sensors);
     thread_args* ir_args = (thread_args*) arg;
 
-    long distance, timeDiff;
+    long distance, timeDiff, timeout;
     struct timeval startTime, endTime;
     struct timespec sleeptime_us = {0};
 
     clock_gettime( CLOCK_MONOTONIC, &sleeptime_us );
     while (shouldRun) {
+        timeout = 0;
         
         //measure distance  
         GPIO_set(PIN_TRIGGER, GPIO_HIGH);
@@ -55,11 +56,22 @@ void *measureDistance(void *arg) {
             }
             while (GPIO_read(PIN_ECHO) == 1) {
                 gettimeofday(&endTime, NULL);
+                
+                //timeout 
+                if diff_time_us(startTime, endTime) > (200 * 1000) {
+                    printf("timeout us");
+                    timeout = 1;
+                    break;
+                }
             }
         }
         
-        timeDiff = diff_time_us(startTime, endTime);
-        distance = (timeDiff * SONIC_SPEED) / 2;
+        if (!timeout) {
+            timeDiff = diff_time_us(startTime, endTime);
+            distance = (timeDiff * SONIC_SPEED) / 2;
+        } else {
+            distance = INT_MAX;
+        }
         
        
         
@@ -76,7 +88,7 @@ void *measureDistance(void *arg) {
 		}
 
 
-        increaseTimespec(INTERVAL_INPUT_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_us);
+        increaseTimespec(20 * NANOSECONDS_PER_MILLISECOND, &sleeptime_us);
         sleepAbsolute(&sleeptime_us);
         
     }
