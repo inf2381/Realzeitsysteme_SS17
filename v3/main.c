@@ -145,6 +145,9 @@ void readCommandLine(int argc, char *argv[]){
 
             } else if (strcmp(optarg, "search") == 0) {
                 default_logicmode = track_rfid_search;
+                
+            }  else if (strcmp(optarg, "turn") == 0) {
+                default_logicmode = track_test_turn;
             }
             break;
  

@@ -82,7 +82,7 @@ void logic_test_rfid(){
 
 void logic_test_us(){
 	//simple test: drive until we found a object
-	if (us_distance < 15 * 1000) {
+	if (us_distance < US_TRIGGER_THRESHOLD) {
         engineCtrl = STAY;
 		logic_mode = none;
 
@@ -99,43 +99,40 @@ void logic_test_ir(){
     //order (right to left): 2, 1, 3, 4)
     //one line between, drive right, wait for detection on the right, drive left, wait to detection, loop
     
-        char right_outer = ir_state & IR_IN2_BIT;
-        char right_inner = ir_state & IR_IN1_BIT;
+    char right_outer = ir_state & IR_IN2_BIT;
+    char right_inner = ir_state & IR_IN1_BIT;
 
-        char left_inner = ir_state & IR_IN3_BIT;
-        char left_outer = ir_state & IR_IN4_BIT;
+    char left_inner = ir_state & IR_IN3_BIT;
+    char left_outer = ir_state & IR_IN4_BIT;
 
-	//printf("ir_state %d\n", ir_state);
-        
-        switch(ir_test_state){
-            case ir_none:
-                ir_test_state = detect_right;
-                engineCtrl = PWM_RIGHT;
+    
+    switch(ir_test_state){
+        case ir_none:
+            ir_test_state = detect_right;
+            engineCtrl = PWM_RIGHT;
 
-                printf("none --> dr\n");
-                break;
+            printf("none --> dr\n");
+            break;
 
-            case detect_right:
-		//printf("Right inner: %d, Right outer %d\n", right_inner, right_outer);
-                if (right_inner || right_outer) {
-                    ir_test_state = detect_left;
-                    engineCtrl = PWM_LEFT;
+        case detect_right:
+            if (right_inner || right_outer) {
+                ir_test_state = detect_left;
+                engineCtrl = PWM_LEFT;
 
-                    printf("right --> left\n");
-                }               
+                printf("right --> left\n");
+            }               
 
-                break;
+            break;
 
-            case detect_left:
-		printf("left inner: %d, left outer %d\n", left_inner, left_outer);
-                if (left_inner || left_outer) {
-                    ir_test_state = none;
-                    printf("left --> none\n");
-                }    
+        case detect_left:
+            if (left_inner || left_outer) {
+                ir_test_state = none;
+                printf("left --> none\n");
+            }    
 
-                break;
+            break;
 
-        }
+    }
 	
 }
 
@@ -182,9 +179,7 @@ int turnCheck(){
 }
 
 void helper_turnComputeDegree(int degree) {
-//TODO: find coorect value
-    long long nanosecs_per_degree = NANOSECONDS_PER_MILLISECOND * 13;
-    long long timeDiff = nanosecs_per_degree * degree;
+    long long timeDiff = NANOSECONDS_PER_DEGREE * degree;
 	printf("timediff %lld ms\n", timeDiff / NANOSECONDS_PER_MILLISECOND);
     clock_gettime(CLOCK_MONOTONIC, &turn_endtime);
     
@@ -213,14 +208,7 @@ void turnRight(int degree){
     } 
 }
 
-
-void logic_path(){
-    /* possible strategy:
-    drive fast straight until curve, slow down on first ir detection, 
-    correction: by one motor for x ms (find a angle-time forumla), afterwards drive at 25%
-
-    */
-
+void logic_test_turn(){
     if (turnLeftEnabled || turnRightEnabled) {
         if (!turnCheck()) {
 		    printf("turn end\n");
@@ -230,17 +218,61 @@ void logic_path(){
     } else {
         turnLeft(90);
     }
+}
+
+
+void logic_path(){
+    /* possible strategy:
+    drive fast straight until curve, slow down on first ir detection, 
+    correction: by one motor for x ms (find a angle-time forumla), afterwards drive at 25%
+
+    */
     
-    
-    if (path_state == path_start) {
-        //ir detection
-        //rfid on --> search mode
+    if (path_state == path_start) {        
         
+        //RFID
+        if (rfid_state == 1) {
+            //PATH EXIT
+            //TODO: how to ensure that actual rfid is not ending search? inter
+            logic_mode = track_rfid_search;
+            return;
+        }
+        
+        //already turning?
+        if (turnLeftEnabled || turnRightEnabled) {
+            if (turnCheck() == 0) {
+                printf("turn end\n");
+                engineCtrl = FULL_THROTTLE;
+
+            }
+            return;
+        }
+
+        
+        
+        //IR
+        char right_outer = ir_state & IR_IN2_BIT;
+        char right_inner = ir_state & IR_IN1_BIT;
+
+        char left_inner = ir_state & IR_IN3_BIT;
+        char left_outer = ir_state & IR_IN4_BIT;
+        
+        
+        const int CORRECTION_ANGLE = 30;
+        if (right_inner || right_outer) {
+            turnLeft(CORRECTION_ANGLE);
+        } else if (left_inner || left_outer) {
+            turnRight(CORRECTION_ANGLE);
+        } else {
+            //
+            engineCtrl = PWM_75;
+        }
+
         
     }
 }
 
-void logic_rfid(){
+void logic_rfid_search(){
      if (turnLeftEnabled || turnRightEnabled) {
         if (turnCheck() == 0) {
             printf("turn end\n");
@@ -250,11 +282,12 @@ void logic_rfid(){
          return;
      }
 
-    if (us_distance < 15 * 1000) {
+    if (us_distance < US_TRIGGER_THRESHOLD) {
         turnLeft(90);
 		printf("turn");		
 	} else {
         engineCtrl = FULL_THROTTLE;
+        printf("full");	
     }
 
 }
@@ -275,7 +308,7 @@ void logic_compute(){
 			break;
 
 		case track_rfid_search:
-		    logic_rfid();
+		    logic_rfid_search();
 			break;
 
 
@@ -300,6 +333,10 @@ void logic_compute(){
             logic_test_piezo();	
 
 			break;
+			
+	    case test_turn:
+	        logic_test_turn();	
+	        break;
 	}
 
 }

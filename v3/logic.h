@@ -2,6 +2,9 @@
 #define logic_h
 #include "common.h"
 
+#define NANOSECONDS_PER_DEGREE (NANOSECONDS_PER_MILLISECOND * 13)
+#define US_TRIGGER_THRESHOLD (15 * 1000)
+
 void logic_setup(int mode);
 void logic_shutdown();
 void logic_compute();
@@ -17,6 +20,7 @@ enum logic_mode {
 	test_rfid = 5,
 	test_engine = 6,
     test_piezo = 7,
+    test_turn = 8,
     count
 
 };
