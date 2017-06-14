@@ -249,9 +249,9 @@ void logic_path(){
             if (helper_isTimerFinished()) {
                 reverseEnabled = 0;
                 if (turnRightEnabled) {
-                    turnRight();
+                    turnRight(CORRECTION_ANGLE);
                 }else if (turnLeftEnabled) {
-                    turnLeft();
+                    turnLeft(CORRECTION_ANGLE);
                 }
                 printf("reverse end\n");
             } else {
