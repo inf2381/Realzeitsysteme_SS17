@@ -20,7 +20,7 @@
 #if (SLEEPTIME_NS%(HIGH_75_NS+LOW_75_NS) != 0)
 #error Sleeptime not multiple of one pwm-cycle
 #endif
-#define PWM_CYCLES (SLEEPTIME_NS/(HIGH_25_NS+LOW_25_NS))
+#define PWM_CYCLES (SLEEPTIME_NS/(HIGH_75_NS+LOW_75_NS))
 
 
 #define PWM_LOW_TIME_NS 10000000 // only for the pwm test; will be deleted soon
