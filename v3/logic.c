@@ -89,7 +89,7 @@ void logic_test_rfid(){
 }
 
 void logic_test_us(){
-	//simple test: drive until we found a object
+	//simple test: drive until we found an object
 	if (us_distance < US_TRIGGER_THRESHOLD) {
         engineCtrl = STAY;
 		logic_mode = none;
