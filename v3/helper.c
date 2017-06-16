@@ -86,18 +86,34 @@ long get_time_us() {
     return (seconds + tv.tv_usec);
 }
 
-long diff_time_us( struct timeval before, struct timeval after )
+// maybe pass pointers not copies
+long diff_time_us(struct timeval before, struct timeval after)
 {
     struct timeval result;
     result.tv_sec = after.tv_sec - before.tv_sec;
     result.tv_usec= after.tv_usec- before.tv_usec;
-    if (result.tv_usec<0) {
+    if (result.tv_usec < 0) {
         result.tv_sec--;
         /* result->tv_usec is negative, therefore we use "+" */
         result.tv_usec = MICROSECONDS_PER_SECOND+result.tv_usec;
     }
     return result.tv_sec * MICROSECONDS_PER_SECOND + result.tv_usec;
 }
+
+
+long long diff_time_ns(struct timespec *before, struct timespec *after)
+{
+    struct timespec result;
+    result.tv_sec = after->tv_sec - before->tv_sec;
+    result.tv_nsec= after->tv_nsec - before->tv_nsec;
+    if (result.tv_nsec < 0) {
+        result.tv_sec--;
+        /* result->tv_nsec is negative, therefore we use "+" */
+        result.tv_nsec = MICROSECONDS_PER_SECOND+result.tv_nsec;
+    }
+    return result.tv_sec * MICROSECONDS_PER_SECOND + result.tv_nsec;
+}
+
 
 void activWait(int waitTimeMillis){
     double t1, t2;

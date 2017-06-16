@@ -189,30 +189,23 @@ void helper_turnComputeDegree(int degree) {
     long long timeDiff = NANOSECONDS_PER_DEGREE * degree;
 	printf("timediff %lld ms\n", timeDiff / NANOSECONDS_PER_MILLISECOND);
     clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
-    
     increaseTimespec(timeDiff, &timer_endtime);
 }
 
 void turnLeft(int degree){
     //goal: compute degrees to a time value 
     
-    //override protection
-    if (turnLeftEnabled) {
-        helper_turnComputeDegree(degree);
-        
-        engineCtrl = PWM_LEFT;
-        turnLeftEnabled = 1;
-    } 
+    helper_turnComputeDegree(degree);
+    
+    engineCtrl = PWM_LEFT;
+    turnLeftEnabled = 1;
 }
 
 void turnRight(int degree){
-    //override protection
-    if (turnRightEnabled) {
-        helper_turnComputeDegree(degree);
-        
-        engineCtrl = PWM_RIGHT;
-        turnRightEnabled = 1;
-    } 
+    helper_turnComputeDegree(degree);
+    
+    engineCtrl = PWM_RIGHT;
+    turnRightEnabled = 1;
 }
 
 void logic_test_turn(){
@@ -225,6 +218,14 @@ void logic_test_turn(){
     } else {
         turnLeft(default_degree);
     }
+}
+
+
+void startReverse() {
+    engineCtrl = REVERSE;
+    reverseEnabled = 1;
+    clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
+    increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
 }
 
 
@@ -250,12 +251,13 @@ void logic_path(){
         if (reverseEnabled) {
             if (helper_isTimerFinished()) {
                 reverseEnabled = 0;
+                printf("reverse end\n");
+                
                 if (turnRightEnabled) {
                     turnRight(CORRECTION_ANGLE);
                 }else if (turnLeftEnabled) {
                     turnLeft(CORRECTION_ANGLE);
                 }
-                printf("reverse end\n");
             } else {
                 return;
             }
@@ -280,24 +282,16 @@ void logic_path(){
         
 
         if ((right_inner || right_outer) && (left_inner || left_outer)) {
-	       engineCtrl = STOP; //100msec reverse
-	       reverseEnabled = 1;
-	       clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
-           increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
-           
-           return;
+            engineCtrl = STOP; //100msec reverse
+            startReverse;
+            turnLeftEnabled = 1;
+            return;
 	    } else if (right_inner || right_outer) {
-            engineCtrl = REVERSE;
-            reverseEnabled = 1;
-            clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
-            increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
+            startReverse();
             turnRightEnabled = 1;
             return;
         } else if (left_inner || left_outer) {
-            engineCtrl = REVERSE;
-            reverseEnabled = 1;
-            clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
-            increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
+            startReverse();
             turnLeftEnabled = 1;
             return;
         } 
@@ -309,24 +303,21 @@ void logic_path(){
 void logic_rfid_search(){
 	const int speed = FULL_THROTTLE;
 
-       if (rfid_state == 1) {
-            //EXIT
-            //TODO: how to ensure that actual rfid is not ending search? inter
-            logic_mode = none;
-		engineCtrl = STAY;
-            return;
-        }
+    if (rfid_state == 1) {
+        //EXIT
+        //TODO: how to ensure that actual rfid is not ending search? inter
+        logic_mode = none;
+        engineCtrl = STAY;
+        return;
+    }
 
-
-
-     if (turnLeftEnabled || turnRightEnabled) {
+    if (turnLeftEnabled || turnRightEnabled) {
         if (turnCheck() == 0) {
             printf("turn end\n");
             engineCtrl = speed;
-            
-         }
-         return;
-     }
+        }
+        return;
+    }
 
     if (us_distance < US_TRIGGER_THRESHOLD) {
         turnLeft(90);
@@ -387,21 +378,38 @@ void logic_compute(){
 }
 
 
+/**
+ * Checks, if the timestamp violates a threshold.
+ * Thread exits with returnCode 2 to signal an exception if threshold violated
+ */
+void helper_checkTimestamp(struct timespec *current, struct timespec *toCheck) {
+    // Threshold defined in common.h
+    if (diff_time_ns(current, toCheck) > MEASUREMENT_EXPIRATION) {
+        engineCtrl = STAY;
+        pthread_exit(logic_mode);
+    }
+}
+
+
 void *exploitMeasurements(void *arg) {
     sched_setaffinity(0, sizeof(cpuset_logic),&cpuset_logic);
 
     exploiterParams explparam = *(exploiterParams*) arg;
     struct timespec sleeptime_logic = {0};
+    struct timespec time_now = {0};  // needed to check timestamps from the measuring threads
     
     clock_gettime(CLOCK_MONOTONIC, &sleeptime_logic);
     while (logic_mode != none) {
-        //TODO: check timestamps, maybe include trylocks
+        clock_gettime(CLOCK_MONOTONIC, &time_now);
+        
+        //TODO: maybe include trylocks
         //infrared
         if(pthread_rwlock_rdlock(explparam.ir->lock)){
             perror("ir_rdlock failed");
         }
         
         if (explparam.ir->data != NULL) {
+            helper_checkTimestamp(&time_now, &explparam.ir->timestamp);
             ir_state = *((char*) explparam.ir->data);
         }
         
@@ -415,6 +423,7 @@ void *exploitMeasurements(void *arg) {
         }
         
         if (explparam.us->data != NULL) {
+            helper_checkTimestamp(&time_now, &explparam.us->timestamp);
             us_distance = *((long*) explparam.us->data);
         }
         
@@ -427,7 +436,8 @@ void *exploitMeasurements(void *arg) {
             perror("rfid_rdlock failed");
         }
         
-        if (explparam.rfid->data != NULL) {        
+        if (explparam.rfid->data != NULL) {
+            helper_checkTimestamp(&time_now, &explparam.rfid->timestamp);
             rfid_state = *((int*) explparam.rfid->data);
         }
         

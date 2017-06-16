@@ -170,7 +170,8 @@ void readCommandLine(int argc, char *argv[]){
 }
 
 
-int main(int argc, char *argv[]) {	  
+int main(int argc, char *argv[]) {
+    int exploitThreadRet;
 	printf("RESY ROBOT - TEAM 4\n");  
 	if (signal(SIGINT, sig_handler) == SIG_ERR){
         exit(EXIT_FAILURE);
@@ -196,10 +197,9 @@ int main(int argc, char *argv[]) {
     pthread_create(&thread_engine, NULL, engineController, NULL);
     
     //wait for exploiting thread to finish
-    pthread_t* ptr = all_threads[0];
-    while (ptr != NULL) { 
-        pthread_join(*ptr, NULL);
-        ptr++;
+    pthread_join(&thread_exploit, (void**) &exploitThreadRet);
+    if (exploitThreadRet) {  //exploitThreadRet contains the current logicMode
+        // TODO: Save status, reboot
     }
 
 	shutdown();

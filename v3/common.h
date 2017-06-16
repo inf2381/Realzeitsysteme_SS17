@@ -57,6 +57,9 @@ extern int default_degree;
 #define INTERVAL_LOGIC_US 100
 #define INTERVAL_INPUT_US 50
 
+//Thresholds
+#define MEASUREMENT_EXPIRATION 1000000 * 40  // 40 us
+
 // Scheduling stuff
 // 0 is reserved for IRQs and the rest of the OS
 #define CPU_LOGIC 1
