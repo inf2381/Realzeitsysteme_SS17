@@ -289,10 +289,14 @@ void logic_path(){
            return;
 	    } else if (right_inner || right_outer) {
             reverseEnabled = 1;
+            clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
+            increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
             turnRightEnabled = 1;
             return;
         } else if (left_inner || left_outer) {
             reverseEnabled = 1;
+            clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
+            increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
             turnLeftEnabled = 1;
             return;
         } 
