@@ -95,9 +95,9 @@ long diff_time_us(struct timeval before, struct timeval after)
     if (result.tv_usec < 0) {
         result.tv_sec--;
         /* result->tv_usec is negative, therefore we use "+" */
-        result.tv_usec = MICROSECONDS_PER_SECOND+result.tv_usec;
+        result.tv_usec = NANOSECONDS_PER_SECOND+result.tv_usec;
     }
-    return result.tv_sec * MICROSECONDS_PER_SECOND + result.tv_usec;
+    return result.tv_sec * NANOSECONDS_PER_SECOND + result.tv_usec;
 }
 
 

@@ -23,6 +23,10 @@ int turnLeftEnabled = 0;
 int turnRightEnabled  = 0;
 int reverseEnabled = 0;
 
+int rfidCounter;
+
+// TODO: save all detected tags instead of remembering a state
+int current_rfid_state = 0;  //needed to ensure a tag is not detected multiple times
 
 struct timespec timer_now = {0};
 struct timespec timer_endtime = {0};
@@ -301,16 +305,23 @@ void logic_path(){
 }
 
 void logic_rfid_search(){
+    
 	const int speed = FULL_THROTTLE;
 
-    if (rfid_state == 1) {
-        //EXIT
-        //TODO: how to ensure that actual rfid is not ending search? inter
-        logic_mode = none;
-        engineCtrl = STAY;
+    if (rfid_state == 1 && current_rfid_state == 0) {
+        current_rfid_state = 1;
+        rfidCounter++;
+        
+        if (rfidCounter == 4) {
+            // mission completed
+            engineCtrl = STAY;
+            logic_mode = none;
+        }
         return;
     }
-
+    
+    current_rfid_state = rfid_state; //remembering current state
+    
     if (turnLeftEnabled || turnRightEnabled) {
         if (turnCheck() == 0) {
             printf("turn end\n");
