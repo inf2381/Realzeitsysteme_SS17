@@ -288,9 +288,11 @@ void logic_path(){
            
            return;
 	    } else if (right_inner || right_outer) {
+            reverseEnabled = 1;
             turnRightEnabled = 1;
             return;
         } else if (left_inner || left_outer) {
+            reverseEnabled = 1;
             turnLeftEnabled = 1;
             return;
         } 
