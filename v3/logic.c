@@ -30,7 +30,7 @@ struct timespec timer_endtime = {0};
 
 const long long  NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 13;
 const int US_TRIGGER_THRESHOLD = 30 * 1000;
-const int REVERT_TIMEOUT_NS = NANOSECONDS_PER_MILLISECOND * 50;
+const int REVERT_TIMEOUT_NS = NANOSECONDS_PER_MILLISECOND * 200;
 
 const int CORRECTION_ANGLE = 30;
 
@@ -197,7 +197,7 @@ void turnLeft(int degree){
     //goal: compute degrees to a time value 
     
     //override protection
-    if (!turnLeftEnabled) {
+    if (turnLeftEnabled) {
         helper_turnComputeDegree(degree);
         
         engineCtrl = PWM_LEFT;
@@ -207,7 +207,7 @@ void turnLeft(int degree){
 
 void turnRight(int degree){
     //override protection
-    if (!turnRightEnabled) {
+    if (turnRightEnabled) {
         helper_turnComputeDegree(degree);
         
         engineCtrl = PWM_RIGHT;
@@ -280,20 +280,21 @@ void logic_path(){
         
 
         if ((right_inner || right_outer) && (left_inner || left_outer)) {
-	       engineCtrl = STOP; //100msec revert
-	       
+	       engineCtrl = STOP; //100msec reverse
 	       reverseEnabled = 1;
 	       clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
            increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
            
            return;
 	    } else if (right_inner || right_outer) {
+            engineCtrl = REVERSE;
             reverseEnabled = 1;
             clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
             increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
             turnRightEnabled = 1;
             return;
         } else if (left_inner || left_outer) {
+            engineCtrl = REVERSE;
             reverseEnabled = 1;
             clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
             increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
