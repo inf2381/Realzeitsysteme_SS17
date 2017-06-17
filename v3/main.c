@@ -113,7 +113,7 @@ void setup() {
     int pid = getpid();
     char *mod_params = (char*) malloc(10* sizeof(char));
     sprintf(mod_params, "pid=%d", pid);
-    loadKernelModule("Kernel/killswitch.ko", mod_params);
+    loadKernelModule("Kernel/module_killbutton.ko", mod_params);
     */
 }
 
@@ -139,7 +139,7 @@ void shutdown(){
     */
     
     
-    // unloadKernelModule("killswitch");
+    // unloadKernelModule("module_killbutton");
     
     printf("cancel");
     ptr = all_threads[0];

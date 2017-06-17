@@ -10,7 +10,8 @@ MODULE_AUTHOR("Derek Molloy");
 MODULE_DESCRIPTION("A Button/LED test driver for the BBB");
 MODULE_VERSION("0.1");
 
-static int *pid;
+static int tmp = 0;
+static int *pid = &tmp;
 module_param(pid, int, S_IRUGO);
 MODULE_PARM_DESC(pid, "The PID of the calling userprocess");
 
@@ -94,7 +95,9 @@ static irq_handler_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct 
 	info.si_code = SI_QUEUE;
 	info.si_int = 1234;  
 
-	send_sig_info(SIG_TEST, &info, pid);//send signal to user land 
+    if (pid != 0) {  //make sure that this module is initialized correctly
+        send_sig_info(SIG_TEST, &info, pid);//send signal to user land
+    }
 
     return (irq_handler_t) IRQ_HANDLED;      // Announce that the IRQ has been handled correctly
 }
