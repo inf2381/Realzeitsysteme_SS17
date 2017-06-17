@@ -10,6 +10,10 @@ MODULE_AUTHOR("Derek Molloy");
 MODULE_DESCRIPTION("A Button/LED test driver for the BBB");
 MODULE_VERSION("0.1");
 
+static int *pid;
+module_param(pid, int, S_IRUGO);
+MODULE_PARM_DESC(pid, "The PID of the calling userprocess");
+
 static unsigned int gpioButton = 115;   ///< hard coding the button gpio for this example to P9_27 (GPIO115)
 static unsigned int irqNumber;          ///< Used to share the IRQ number within this file
 
@@ -81,10 +85,7 @@ static void __exit ebbgpio_exit(void){
  *  return returns IRQ_HANDLED if successful -- should return IRQ_NONE otherwise.
  */
 static irq_handler_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs){
-   printk(KERN_INFO "GPIO_TEST: Interrupt! (button state is %d)\n", gpio_get_value(gpioButton));
-
-
-	int pid = 999; //TODO: add fucntion to find the pid of our engine
+    printk(KERN_INFO "GPIO_TEST: Interrupt! (button state is %d)\n", gpio_get_value(gpioButton));
 
 	int ret = 0;
 	struct siginfo info;
@@ -95,7 +96,7 @@ static irq_handler_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct 
 
 	send_sig_info(SIG_TEST, &info, pid);//send signal to user land 
 
-   return (irq_handler_t) IRQ_HANDLED;      // Announce that the IRQ has been handled correctly
+    return (irq_handler_t) IRQ_HANDLED;      // Announce that the IRQ has been handled correctly
 }
 
 /// This next calls are  mandatory -- they identify the initialization function

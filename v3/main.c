@@ -7,6 +7,12 @@
 #include <pthread.h>
 #include <getopt.h>
 #include <string.h>
+#include <assert.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include <errno.h>
 
 #include "common.h"
 #include "engine.h"
@@ -17,6 +23,11 @@
 #include "rfid.h"
 #include "helper.h"
 #include "gpio.h"
+
+// preparation for loadable kernel module
+// glibc does not provide a header entry
+#define init_module(mod, len, opts) syscall(__NR_init_module, mod, len, opts)
+#define delete_module(name, flags) syscall(__NR_delete_module, name, flags)
 
 pthread_t thread_us, thread_ir, thread_rfid, thread_exploit, thread_engine;
 pthread_t* all_threads[] = {&thread_exploit, &thread_engine, &thread_us, &thread_ir, &thread_rfid, NULL};
@@ -35,6 +46,47 @@ int default_degree = 90;
 cpu_set_t cpuset_logic;     //see common.h
 cpu_set_t cpuset_sensors;   //see common.h
 cpu_set_t cpuset_engine;    //see common.h
+
+/**
+ * Generic function to load a kernel module
+ * @param moduleName: Relative path to .ko file
+ * @param params: LKM defined them with module_param()
+ * @return: Ptr to loaded module
+ */
+void *loadKernelModule(const char *moduleName, const char *params) {
+    int fd;
+    if ((fd = open(moduleName, O_RDONLY)) < 0) {
+        perror("Open .ko");
+        exit(EXIT_FAILURE);
+    }
+    
+    struct stat st;
+    fstat(fd, &st);
+    size_t image_size = st.st_size;
+    void *image = malloc(image_size);
+    enforceMalloc(image);  //see helper.h
+    if ((read(fd, image, image_size)) < 0) {
+        perror("Read .ko");
+        exit(EXIT_FAILURE);
+    }
+    close(fd);
+    
+    if (init_module(image, image_size, params) != 0) {
+        perror("Insmod");
+        exit(EXIT_FAILURE);
+    }
+    
+    return image;
+}
+
+
+void unloadKernelModule(void *img, char *name) {
+    free(img);
+    if (delete_module(name, O_NONBLOCK) != 0) {
+        perror("Delete module");
+        exit(EXIT_FAILURE);
+    }
+}
 
 void setup() {
     CPU_ZERO(&cpuset_logic);
@@ -55,6 +107,14 @@ void setup() {
 
 	logic_setup(default_logicmode);
     engineCtrl = STAY;
+    
+    /*
+    // LKM
+    int pid = getpid();
+    char *mod_params = (char*) malloc(10* sizeof(char));
+    sprintf(mod_params, "pid=%d", pid);
+    loadKernelModule("Kernel/killswitch.ko", mod_params);
+    */
 }
 
 void shutdown(){
@@ -77,6 +137,9 @@ void shutdown(){
         ptr++;
     }
     */
+    
+    
+    // unloadKernelModule("killswitch");
     
     printf("cancel");
     ptr = all_threads[0];
@@ -172,6 +235,7 @@ void readCommandLine(int argc, char *argv[]){
 
 int main(int argc, char *argv[]) {
     int exploitThreadRet;
+    
 	printf("RESY ROBOT - TEAM 4\n");  
 	if (signal(SIGINT, sig_handler) == SIG_ERR){
         exit(EXIT_FAILURE);

@@ -391,7 +391,7 @@ void logic_compute(){
 
 /**
  * Checks, if the timestamp violates a threshold.
- * Thread exits with returnCode 2 to signal an exception if threshold violated
+ * Thread exits with current logicmode to pass status to main thread
  */
 void helper_checkTimestamp(struct timespec *current, struct timespec *toCheck) {
     // Threshold defined in common.h
