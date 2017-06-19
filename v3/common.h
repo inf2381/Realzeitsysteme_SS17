@@ -46,6 +46,7 @@ extern cpu_set_t cpuset_logic;
 extern cpu_set_t cpuset_sensors;
 extern cpu_set_t cpuset_engine;
 extern int default_degree;
+extern int default_logicmode;
 
 //Used in ir_args.data as bitflags
 #define IR_IN1_BIT 0x01
@@ -58,7 +59,7 @@ extern int default_degree;
 #define INTERVAL_INPUT_US 50
 
 //Thresholds
-#define MEASUREMENT_EXPIRATION 1000000 * 40  // 40 us
+#define MEASUREMENT_EXPIRATION_US 40  // 40 us
 
 // Scheduling stuff
 // 0 is reserved for IRQs and the rest of the OS

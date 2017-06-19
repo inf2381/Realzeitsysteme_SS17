@@ -23,12 +23,12 @@ void rfid_wrapper_setdown() {
 int rfid_wrapper_getUid_Sum() {
     int ret_sum = 0;
     
-    if (!mfrc522->PICC_ReadCardSerial()) {
+    if (!mfrc->PICC_ReadCardSerial()) {
         return 0;
     }
     
-    for (int i = 0; i < mfrc522.uid.size; i++) {  //
-        ret_sum += mfrc522.uid.uidByte[i];
+    for (int i = 0; i < mfrc->uid.size; i++) {  //
+        ret_sum += mfrc->uid.uidByte[i];
     }
     
 }

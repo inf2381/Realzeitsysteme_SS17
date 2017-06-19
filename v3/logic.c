@@ -27,6 +27,7 @@ int rfidCounter;
 
 // TODO: save all detected tags instead of remembering a state
 int current_rfid_state = 0;  //needed to ensure a tag is not detected multiple times
+int rfidHistory[RFID_FIND_COUNT];
 
 struct timespec timer_now = {0};
 struct timespec timer_endtime = {0};
@@ -36,7 +37,10 @@ const long long  NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 13;
 const int US_TRIGGER_THRESHOLD = 30 * 1000;
 const int REVERT_TIMEOUT_NS = NANOSECONDS_PER_MILLISECOND * 200;
 
+const int RFID_FOUND_TIMEOUT_US = 1000 * 100;
+
 const int CORRECTION_ANGLE = 30;
+
 
 void logic_test_engine(){
 	//left test
@@ -288,7 +292,7 @@ void logic_path(){
 
         if ((right_inner || right_outer) && (left_inner || left_outer)) {
             engineCtrl = STOP; //100msec reverse
-            startReverse;
+            startReverse();
             turnLeftEnabled = 1;
             return;
 	    } else if (right_inner || right_outer) {
@@ -312,6 +316,9 @@ void logic_rfid_search(){
     if (rfid_state && current_rfid_state == 0) {
         current_rfid_state = 1;
         rfidCounter++;
+        
+        engineCtrl = STAY;
+        usleep(RFID_FOUND_TIMEOUT_US);
         
         if (rfidCounter == 4) {
             // mission completed
@@ -394,11 +401,12 @@ void logic_compute(){
  * Checks, if the timestamp violates a threshold.
  * Thread exits with current logicmode to pass status to main thread
  */
-void helper_checkTimestamp(struct timespec *current, struct timespec *toCheck) {
+void helper_checkTimestamp(long *current, long *toCheck) {
     // Threshold defined in common.h
-    if (diff_time_ns(current, toCheck) > MEASUREMENT_EXPIRATION) {
+    if ((current - toCheck) > MEASUREMENT_EXPIRATION_US) {
         engineCtrl = STAY;
-        pthread_exit(logic_mode);
+        default_logicmode = logic_mode;
+        pthread_exit(NULL);
     }
 }
 
@@ -408,11 +416,11 @@ void *exploitMeasurements(void *arg) {
 
     exploiterParams explparam = *(exploiterParams*) arg;
     struct timespec sleeptime_logic = {0};
-    struct timespec time_now = {0};  // needed to check timestamps from the measuring threads
+    long time_now = 0;  // needed to check timestamps from the measuring threads
     
     clock_gettime(CLOCK_MONOTONIC, &sleeptime_logic);
     while (logic_mode != none) {
-        clock_gettime(CLOCK_MONOTONIC, &time_now);
+        time_now = get_time_us();
         
         //TODO: maybe include trylocks
         //infrared

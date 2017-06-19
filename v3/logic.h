@@ -36,4 +36,6 @@ enum logic_path_states {
     path_slower,
 
 };
+
+#define RFID_FIND_COUNT 4
 #endif

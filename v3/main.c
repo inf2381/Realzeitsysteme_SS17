@@ -128,27 +128,9 @@ void shutdown(){
     rfidSetdown();
     destroyPathCache();
     
-    pthread_t* ptr = all_threads[0];
-    /*
-    printf("%p, t %p, e %p \n", ptr, &thread_us, &thread_engine);
-    while (*ptr) {
-        printf("%p, t %p, %d\n", &ptr, ptr, *ptr == 0);
-        pthread_cancel(*ptr);
-        ptr++;
-    }
-    */
-    
-    
+
     // unloadKernelModule("module_killbutton");
     
-    printf("cancel");
-    ptr = all_threads[0];
-    while (*ptr) { 
-        printf("%p, t %p, %d\n", &ptr, ptr, *ptr == 0);
-        pthread_join(*ptr, NULL);
-        ptr++;
-    }
-   
     pthread_rwlock_destroy(&ir_lock);
     pthread_rwlock_destroy(&us_lock);
     pthread_rwlock_destroy(&rfid_lock);
