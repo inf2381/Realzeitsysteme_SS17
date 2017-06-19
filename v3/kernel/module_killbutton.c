@@ -15,7 +15,7 @@ static int *pid = &tmp;
 module_param(pid, int, S_IRUGO);
 MODULE_PARM_DESC(pid, "The PID of the calling userprocess");
 
-static unsigned int gpioButton = 115;   ///< hard coding the button gpio for this example to P9_27 (GPIO115)
+static unsigned int gpioButton = 2;   ///< hard coding the button gpio for this example to P9_27 (GPIO115)
 static unsigned int irqNumber;          ///< Used to share the IRQ number within this file
 
 
