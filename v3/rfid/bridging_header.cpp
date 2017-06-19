@@ -2,6 +2,7 @@
 #include "MFRC522.h"
 
 #include <unistd.h>
+#include <assert.h>
 
 MFRC522* mfrc;
 
@@ -27,7 +28,10 @@ int rfid_wrapper_getUid_Sum() {
         return 0;
     }
     
-    ret_sum = *(mfrc->uid.uidByte);
+    
+    assert( mfrc->uid.size >= 4);
+    ret_sum = mfrc->uid.uidByte[0] + (mfrc->uid.uidByte[1] << 8) + 
+                (mfrc->uid.uidByte[2] << 16) + (mfrc->uid.uidByte[3] << 24);
     /*
     for (int i = 0; i < mfrc->uid.size; i++) {  //
         ret_sum += mfrc->uid.uidByte[i];

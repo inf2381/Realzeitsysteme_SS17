@@ -5,7 +5,7 @@
 #include <sched.h>
 
 #define VERBOSE_DEF 0
-#define VERBOSE_LOG_GPIO_DEF 0 
+#define VERBOSE_LOG_GPIO_DEF 0
 #define FUN_ENABLED_DEF 0 
 #ifdef __arm__
     #define GPIO_ENABLED 1
@@ -59,7 +59,7 @@ extern int default_logicmode;
 #define INTERVAL_INPUT_US 50
 
 //Thresholds
-#define MEASUREMENT_EXPIRATION_US 40  // 40 us
+#define MEASUREMENT_EXPIRATION_US 1000 * 1000  // 1 sec
 
 // Scheduling stuff
 // 0 is reserved for IRQs and the rest of the OS

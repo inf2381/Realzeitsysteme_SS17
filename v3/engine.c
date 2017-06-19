@@ -182,8 +182,9 @@ void *engineController(void *arg) {
             fun = 0;
             piezo_stopReverse();
         }
-	printf("%d\n", engineCtrl);
-    
+    if(VERBOSE_DEF) {
+	    printf("engineCtrl %d\n", engineCtrl);
+    }
         switch (engineCtrl) {
             case STAY:
                 allPinsToZero();

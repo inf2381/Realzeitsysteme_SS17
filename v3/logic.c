@@ -325,6 +325,10 @@ void logic_rfid_search(){
     if (rfid_state > 0 && helper_isRfidChipNew()) {
         rfidHistory[rfidCounter] = rfid_state;
         rfidCounter++;
+
+        if (VERBOSE_DEF) {
+            printf("rfid_search, found chip %d, uid %d\n", rfidCounter, rfid_state);
+        }  
         
         engineCtrl = STAY;
         usleep(RFID_FOUND_TIMEOUT_US);
@@ -410,8 +414,14 @@ void logic_compute(){
  * Thread exits with current logicmode to pass status to main thread
  */
 void helper_checkTimestamp(long *current, long *toCheck) {
+    
+    if (VERBOSE_DEF) {
+        printf("timediff %ld\n", (*current -*toCheck));        
+    }
+
     // Threshold defined in common.h
-    if ((current - toCheck) > MEASUREMENT_EXPIRATION_US && toCheck != 0) {
+    if ((*current - *toCheck) > MEASUREMENT_EXPIRATION_US && toCheck != 0) {
+        printf("threshold - timediff %ld\n", (*current -*toCheck));  
         engineCtrl = STAY;
         default_logicmode = logic_mode;
         pthread_exit(NULL);
