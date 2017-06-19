@@ -403,7 +403,7 @@ void logic_compute(){
  */
 void helper_checkTimestamp(long *current, long *toCheck) {
     // Threshold defined in common.h
-    if ((current - toCheck) > MEASUREMENT_EXPIRATION_US) {
+    if ((current - toCheck) > MEASUREMENT_EXPIRATION_US && toCheck != 0) {
         engineCtrl = STAY;
         default_logicmode = logic_mode;
         pthread_exit(NULL);

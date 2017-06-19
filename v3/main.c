@@ -243,7 +243,7 @@ int main(int argc, char *argv[]) {
     pthread_create(&thread_engine, NULL, engineController, NULL);
     
     //wait for exploiting thread to finish
-    pthread_join(&thread_exploit, (void**) &exploitThreadRet);
+    pthread_join(thread_exploit, (void**) &exploitThreadRet);
     if (exploitThreadRet) {  //exploitThreadRet contains the current logicMode
         // TODO: Save status, reboot
     }
