@@ -77,7 +77,7 @@ void logic_test_engine(){
 
 void logic_test_rfid(){
 	//simple rfid detectiont est: drive forward and stop if we detect a chip
-	if (rfid_state) {  //rfid_state could also be -1 or 42 at the moment
+	if (rfid_state > 0) {  //rfid_state could also be -1 or 42 at the moment
         printf("%d\n", rfid_state);
         engineCtrl = STAY;
 		logic_mode = none;
@@ -246,7 +246,7 @@ void logic_path(){
     if (path_state == path_start) {        
         
         //RFID
-        if (rfid_state) {
+        if (rfid_state > 0) {
             //PATH EXIT
             //TODO: how to ensure that actual rfid is not ending search? inter
             logic_mode = track_rfid_search;
@@ -322,7 +322,7 @@ void logic_rfid_search(){
     
 	const int speed = FULL_THROTTLE;
 
-    if (rfid_state && helper_isRfidChipNew()) {
+    if (rfid_state > 0 && helper_isRfidChipNew()) {
         rfidHistory[rfidCounter] = rfid_state;
         rfidCounter++;
         
