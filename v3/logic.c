@@ -25,8 +25,6 @@ int reverseEnabled = 0;
 
 int rfidCounter;
 
-// TODO: save all detected tags instead of remembering a state
-int current_rfid_state = 0;  //needed to ensure a tag is not detected multiple times
 int rfidHistory[RFID_FIND_COUNT];
 
 struct timespec timer_now = {0};
@@ -309,12 +307,23 @@ void logic_path(){
     }
 }
 
+//@return 1 if new
+int helper_isRfidChipNew(){
+    for (int i = 0; i < rfidCounter; i++) {
+        if (rfidHistory[i] == rfid_state) {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
+
 void logic_rfid_search(){
     
 	const int speed = FULL_THROTTLE;
 
-    if (rfid_state && current_rfid_state == 0) {
-        current_rfid_state = 1;
+    if (rfid_state && helper_isRfidChipNew()) {
+        rfidHistory[rfidCounter] = rfid_state;
         rfidCounter++;
         
         engineCtrl = STAY;
@@ -327,8 +336,7 @@ void logic_rfid_search(){
         }
         return;
     }
-    
-    current_rfid_state = rfid_state; //remembering current state
+   
     
     if (turnLeftEnabled || turnRightEnabled) {
         if (turnCheck() == 0) {

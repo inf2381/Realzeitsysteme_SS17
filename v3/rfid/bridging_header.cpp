@@ -27,9 +27,12 @@ int rfid_wrapper_getUid_Sum() {
         return 0;
     }
     
+    ret_sum = *(mfrc->uid.uidByte);
+    /*
     for (int i = 0; i < mfrc->uid.size; i++) {  //
         ret_sum += mfrc->uid.uidByte[i];
     }
+    */
     
     mfrc->PICC_HaltA(); // Stop reading
     
