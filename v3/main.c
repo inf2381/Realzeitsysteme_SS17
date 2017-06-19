@@ -243,10 +243,8 @@ int main(int argc, char *argv[]) {
     pthread_create(&thread_engine, NULL, engineController, NULL);
     
     //wait for exploiting thread to finish
-    pthread_join(thread_exploit, (void**) &exploitThreadRet);
-    if (exploitThreadRet) {  //exploitThreadRet contains the current logicMode
-        // TODO: Save status, reboot
-    }
+    pthread_join(thread_exploit, NULL);
+    printf("logic exit, logicmode %d\n", default_logicmode);
 
 	shutdown();
 	return EXIT_SUCCESS;
