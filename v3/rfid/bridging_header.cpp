@@ -31,6 +31,8 @@ int rfid_wrapper_getUid_Sum() {
         ret_sum += mfrc522.uid.uidByte[i];
     }
     
+    mfrc522.PICC_HaltA(); // Stop reading
+    
 }
 
 int rfid_wrapper_hasDetected() {
