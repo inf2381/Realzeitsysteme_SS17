@@ -195,6 +195,7 @@ void printArgumentMissing(char opt) {
 
 //@return 1 if successfull
 int thread_setPriority(int priority){
+	return 1;
 	struct sched_param param;
 	int my_pid = getpid();
 	int low_priority, high_priority;

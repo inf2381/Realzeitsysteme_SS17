@@ -37,7 +37,7 @@ const int REVERT_TIMEOUT_NS = NANOSECONDS_PER_MILLISECOND * 200;
 
 const int RFID_FOUND_TIMEOUT_US = 1000 * 100;
 
-const int CORRECTION_ANGLE = 30;
+const int CORRECTION_ANGLE = 40;
 
 
 void logic_test_engine(){
@@ -271,6 +271,10 @@ void logic_path(){
                 printf("Found chip with Uid-sum: %d. Exit path\n", rfid_state);
             }
             return;
+        } else {
+             if (VERBOSE_DEF) {
+                printf("Found non-exit chip with Uid: %d. expectd %d \n", rfid_state, RFID_EXIT_UID);
+            }
         }
         
         //is reverting?
@@ -330,7 +334,7 @@ void logic_path(){
     }
 }
 
-void logic_rfid_search(){11
+void logic_rfid_search(){
 	const int speed = FULL_THROTTLE;
 	const int random_degree_min = 90;
 	const int random_degree_max = 180;
@@ -443,7 +447,7 @@ void logic_compute(){
  * Checks, if the timestamp violates a threshold.
  * Thread exits with current logicmode to pass status to main thread
  */
-void helper_checkTimestamp(long *current, long *toCheck) {
+void helper_checkTimestamp(long *current, long *toCheck, const char* source) {
     
     if (VERBOSE_DEF) {
         printf("timediff %ld\n", (*current -*toCheck));        
@@ -451,7 +455,7 @@ void helper_checkTimestamp(long *current, long *toCheck) {
 
     // Threshold defined in common.h
     if ((*current - *toCheck) > MEASUREMENT_EXPIRATION_US && toCheck != 0) {
-        printf("threshold - timediff %ld\n", (*current -*toCheck));  
+        printf("threshold - timediff %ld, source %s\n", (*current -*toCheck), source);  
         engineCtrl = STAY;
         default_logicmode = logic_mode;
         pthread_exit(NULL);
@@ -478,7 +482,7 @@ void *exploitMeasurements(void *arg) {
         }
         
         if (explparam.ir->data != NULL) {
-            helper_checkTimestamp(&time_now, &explparam.ir->timestamp);
+            helper_checkTimestamp(&time_now, &explparam.ir->timestamp, "ir");
             ir_state = *((char*) explparam.ir->data);
         }
         
@@ -492,7 +496,7 @@ void *exploitMeasurements(void *arg) {
         }
         
         if (explparam.us->data != NULL) {
-            helper_checkTimestamp(&time_now, &explparam.us->timestamp);
+            //helper_checkTimestamp(&time_now, &explparam.us->timestamp, "us");
             us_distance = *((long*) explparam.us->data);
         }
         
@@ -506,7 +510,7 @@ void *exploitMeasurements(void *arg) {
         }
         
         if (explparam.rfid->data != NULL) {
-            helper_checkTimestamp(&time_now, &explparam.rfid->timestamp);
+            helper_checkTimestamp(&time_now, &explparam.rfid->timestamp, "rfid");
             rfid_state = *((int*) explparam.rfid->data);
         }
         

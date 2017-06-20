@@ -5,7 +5,7 @@
 #define PIN_ECHO "24"
 #define SONIC_SPEED 34 
 
-#define WAIT_TO_END_TRIGGER_ys 30
+#define WAIT_TO_END_TRIGGER_US 10
 
 
 void ultrasonicSetup();

@@ -45,7 +45,7 @@ void *measureDistance(void *arg) {
         
         //measure distance  
         GPIO_set(PIN_TRIGGER, GPIO_HIGH);
-        usleep(WAIT_TO_END_TRIGGER_ys);  // absolute sleep is not necessary here
+        usleep(WAIT_TO_END_TRIGGER_US);  // absolute sleep is not necessary here
 
         GPIO_set(PIN_TRIGGER, GPIO_LOW);
         
@@ -90,7 +90,7 @@ void *measureDistance(void *arg) {
 		}
 
 
-        increaseTimespec(20 * NANOSECONDS_PER_MILLISECOND, &sleeptime_us);
+        increaseTimespec(40 * NANOSECONDS_PER_MILLISECOND, &sleeptime_us);
         sleepAbsolute(&sleeptime_us);
         
     }

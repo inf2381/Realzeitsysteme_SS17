@@ -47,6 +47,9 @@ cpu_set_t cpuset_logic;     //see common.h
 cpu_set_t cpuset_sensors;   //see common.h
 cpu_set_t cpuset_engine;    //see common.h
 
+
+void* kill_mod_img;
+
 /**
  * Generic function to load a kernel module
  * @param moduleName: Relative path to .ko file
@@ -113,7 +116,7 @@ void setup() {
         int pid = getpid();
         char *mod_params = (char*) malloc(10* sizeof(char));
         sprintf(mod_params, "pid=%d", pid);
-        loadKernelModule("Kernel/module_killbutton.ko", mod_params);
+        kill_mod_img = loadKernelModule("Kernel/module_killbutton.ko", mod_params);
     }
 }
 
@@ -128,9 +131,9 @@ void shutdown(){
     rfidSetdown();
     destroyPathCache();
     
-
-    // unloadKernelModule("module_killbutton");
-    
+    if (LOAD_KERNELMODULE_DEF) {
+        unloadKernelModule(kill_mod_img, "module_killbutton");
+    }    
     pthread_rwlock_destroy(&ir_lock);
     pthread_rwlock_destroy(&us_lock);
     pthread_rwlock_destroy(&rfid_lock);

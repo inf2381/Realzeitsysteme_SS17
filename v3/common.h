@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <sched.h>
 
-#define VERBOSE_DEF 0
+#define VERBOSE_DEF 1
 #define VERBOSE_LOG_GPIO_DEF 0 
 #define FUN_ENABLED_DEF 0 
 #ifdef __arm__
@@ -12,7 +12,7 @@
 #else
     #define GPIO_ENABLED 0
 #endif
-#define LOAD_KERNELMODULE_DEF 1
+#define LOAD_KERNELMODULE_DEF 0
 
 typedef enum {
     STAY,
@@ -60,7 +60,7 @@ extern int default_logicmode;
 #define INTERVAL_INPUT_US 50
 
 //Thresholds
-#define MEASUREMENT_EXPIRATION_US 100  // us
+#define MEASUREMENT_EXPIRATION_US 1000 * 1000  // us
 
 // Scheduling stuff
 // 0 is reserved for IRQs and the rest of the OS
