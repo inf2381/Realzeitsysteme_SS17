@@ -237,6 +237,21 @@ void startReverse() {
     increaseTimespec(REVERT_TIMEOUT_NS , &timer_endtime);
 }
 
+void helper_addRfidChipToHistory(){
+    rfidHistory[rfidCounter] = rfid_state;
+    rfidCounter++;
+}
+
+//@return 1 if new
+int helper_isRfidChipNew(){
+    for (int i = 0; i < rfidCounter; i++) {
+        if (rfidHistory[i] == rfid_state) {
+            return 0;
+        }
+    }
+    
+    return 1;
+}
 
 void logic_path(){
     /* possible strategy:
@@ -248,11 +263,13 @@ void logic_path(){
     if (path_state == path_start) {        
         
         //RFID
-        if (rfid_state > 0) {
+        if (rfid_state  == RFID_EXIT_UID) {
             //PATH EXIT
-            //TODO: how to ensure that actual rfid is not ending search? inter
+            helper_addRfidChipToHistory();
             logic_mode = track_rfid_search;
-            printf("Found chip with Uid-sum: %d. Exit path\n", rfid_state);
+            if (VERBOSE_DEF) {
+                printf("Found chip with Uid-sum: %d. Exit path\n", rfid_state);
+            }
             return;
         }
         
@@ -260,7 +277,9 @@ void logic_path(){
         if (reverseEnabled) {
             if (helper_isTimerFinished()) {
                 reverseEnabled = 0;
-                printf("reverse end\n");
+                if (VERBOSE_DEF) {
+                    printf("reverse end\n");
+                }
                 
                 if (turnRightEnabled) {
                     turnRight(CORRECTION_ANGLE);
@@ -275,7 +294,9 @@ void logic_path(){
         //already turning?
         if (turnLeftEnabled || turnRightEnabled) {
             if (turnCheck() == 0) {
-                printf("turn end\n");
+                if (VERBOSE_DEF) {
+                    printf("turn end\n");
+                }
             } else {
                 return;
             }
@@ -309,19 +330,7 @@ void logic_path(){
     }
 }
 
-//@return 1 if new
-int helper_isRfidChipNew(){
-    for (int i = 0; i < rfidCounter; i++) {
-        if (rfidHistory[i] == rfid_state) {
-            return 0;
-        }
-    }
-    
-    return 1;
-}
-
-void logic_rfid_search(){
-    
+void logic_rfid_search(){11
 	const int speed = FULL_THROTTLE;
 	const int random_degree_min = 90;
 	const int random_degree_max = 180;
@@ -329,8 +338,7 @@ void logic_rfid_search(){
 	
 
     if (rfid_state > 0 && helper_isRfidChipNew()) {
-        rfidHistory[rfidCounter] = rfid_state;
-        rfidCounter++;
+        helper_addRfidChipToHistory();
 
         if (VERBOSE_DEF) {
             printf("rfid_search, found chip %d, uid %d\n", rfidCounter, rfid_state);
@@ -350,7 +358,9 @@ void logic_rfid_search(){
     
     if (turnLeftEnabled || turnRightEnabled) {
         if (turnCheck() == 0) {
-            printf("turn end\n");
+            if (VERBOSE_DEF) {
+                printf("turn end\n");
+            }
             engineCtrl = speed;
         }
         return;

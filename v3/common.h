@@ -12,6 +12,7 @@
 #else
     #define GPIO_ENABLED 0
 #endif
+#define LOAD_KERNELMODULE_DEF 1
 
 typedef enum {
     STAY,

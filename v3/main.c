@@ -108,13 +108,13 @@ void setup() {
 	logic_setup(default_logicmode);
     engineCtrl = STAY;
     
-    /*
-    // LKM
-    int pid = getpid();
-    char *mod_params = (char*) malloc(10* sizeof(char));
-    sprintf(mod_params, "pid=%d", pid);
-    loadKernelModule("Kernel/module_killbutton.ko", mod_params);
-    */
+    if (LOAD_KERNELMODULE_DEF) {
+        // LKM
+        int pid = getpid();
+        char *mod_params = (char*) malloc(10* sizeof(char));
+        sprintf(mod_params, "pid=%d", pid);
+        loadKernelModule("Kernel/module_killbutton.ko", mod_params);
+    }
 }
 
 void shutdown(){
