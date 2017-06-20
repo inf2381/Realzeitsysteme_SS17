@@ -220,11 +220,11 @@ void *engineController(void *arg) {
                 GPIO_set(PIN_1, 1);
                 GPIO_set(PIN_2, 0);
                 GPIO_set(PIN_3, 0);
-                GPIO_set(PIN_4, 0);
+                GPIO_set(PIN_4, 1);
                 break;
             case ONLY_RIGHT:
                 GPIO_set(PIN_1, 0);
-                GPIO_set(PIN_2, 0);
+                GPIO_set(PIN_2, 1);
                 GPIO_set(PIN_3, 1);
                 GPIO_set(PIN_4, 0);
                 break;
