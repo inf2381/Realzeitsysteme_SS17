@@ -31,6 +31,8 @@ void ultrasonicSetdown() {
 
 void *measureDistance(void *arg) {
     sched_setaffinity(0, sizeof(cpuset_sensors), &cpuset_sensors);
+    thread_setPriority(PRIO_SENSORS);
+    
     thread_args* ir_args = (thread_args*) arg;
 
     long distance, timeDiff, timeout;

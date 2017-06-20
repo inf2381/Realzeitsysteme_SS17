@@ -168,6 +168,8 @@ void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct t
 
 void *engineController(void *arg) {
     sched_setaffinity(0, sizeof(cpuset_engine),&cpuset_engine);
+    thread_setPriority(PRIO_ENGINE);
+    
     struct timespec sleep_high = {0}; //needed for sleeping absolutely within pwm
     struct timespec sleep_down = {0};
     struct timespec sleeptime_engine = {0};
