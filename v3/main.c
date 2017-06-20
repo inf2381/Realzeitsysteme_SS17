@@ -215,9 +215,7 @@ void readCommandLine(int argc, char *argv[]){
 }
 
 
-int main(int argc, char *argv[]) {
-    int exploitThreadRet;
-    
+int main(int argc, char *argv[]) {    
 	printf("RESY ROBOT - TEAM 4\n");  
 	if (signal(SIGINT, sig_handler) == SIG_ERR){
         exit(EXIT_FAILURE);
@@ -244,7 +242,9 @@ int main(int argc, char *argv[]) {
     
     //wait for exploiting thread to finish
     pthread_join(thread_exploit, NULL);
-    printf("logic exit, logicmode %d\n", default_logicmode);
+    if (VERBOSE_DEF) {
+        printf("logic exit, logicmode %d\n", default_logicmode);
+    }
 
 	shutdown();
 	return EXIT_SUCCESS;

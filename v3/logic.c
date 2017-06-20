@@ -78,7 +78,9 @@ void logic_test_engine(){
 void logic_test_rfid(){
 	//simple rfid detectiont est: drive forward and stop if we detect a chip
 	if (rfid_state > 0) {  //rfid_state could also be -1 or 42 at the moment
-        printf("%d\n", rfid_state);
+	    if (VERBOSE_DEF) {
+            printf("%d\n", rfid_state);
+        }
         engineCtrl = STAY;
 		logic_mode = none;
 
@@ -321,6 +323,10 @@ int helper_isRfidChipNew(){
 void logic_rfid_search(){
     
 	const int speed = FULL_THROTTLE;
+	const int random_degree_min = 90;
+	const int random_degree_max = 180;
+	
+	
 
     if (rfid_state > 0 && helper_isRfidChipNew()) {
         rfidHistory[rfidCounter] = rfid_state;
@@ -351,8 +357,22 @@ void logic_rfid_search(){
     }
 
     if (us_distance < US_TRIGGER_THRESHOLD) {
-        turnLeft(90);
-		printf("turn");		
+        int leftOrRight = genRandom(0, 1);
+        int degree = genRandom(random_degree_min, random_degree_max);
+        
+        if (leftOrRight == 0) {
+            //left
+            turnLeft(degree);
+            
+        } else {
+            //right
+            turnRight(degree);
+        }
+    
+        if (VERBOSE_DEF) {
+        	printf("turn leftOrRight %d, degree %d \n", leftOrRight, degree);	
+        }
+		
 	} else {
         engineCtrl = speed;
     }
@@ -431,6 +451,7 @@ void helper_checkTimestamp(long *current, long *toCheck) {
 
 void *exploitMeasurements(void *arg) {
     sched_setaffinity(0, sizeof(cpuset_logic),&cpuset_logic);
+    thread_setPriority(PRIO_LOGIC);
 
     exploiterParams explparam = *(exploiterParams*) arg;
     struct timespec sleeptime_logic = {0};

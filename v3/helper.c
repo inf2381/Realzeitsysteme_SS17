@@ -11,6 +11,7 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sched.h>
 
 /* Common small helper file to reduce redundant code over and over again */
 
@@ -191,7 +192,33 @@ void printArgumentMissing(char opt) {
     exit(EXIT_FAILURE);
 }
 
-void thread_enableCancel(){
 
+//@return 1 if successfull
+int thread_setPriority(int priority){
+	struct sched_param param;
+	int my_pid = getpid();
+	int low_priority, high_priority;
+
+	high_priority = sched_get_priority_max(SCHED_FIFO);
+	low_priority = sched_get_priority_min(SCHED_FIFO);
+	
+	if (high_priority < priority && priority > low_priority) {  
+	    return 0;
+	}
+
+	if (sched_getparam(my_pid, &param) != 0){
+		perror("sched_getparam failed");
+		return 0;
+	}
+
+	param.sched_priority = priority;
+	if (sched_setscheduler(my_pid, SCHED_FIFO, &param) == -1){
+		perror("sched_setscheduler failed");
+		return 0;
+	}	
+	
+	return 1;	
 }
+
+
 
