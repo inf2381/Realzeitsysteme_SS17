@@ -31,11 +31,11 @@ struct timespec timer_now = {0};
 struct timespec timer_endtime = {0};
 
 
-const long long  NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 13;
+const long long  NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 4;
 const int US_TRIGGER_THRESHOLD = 30 * 1000;
 const int REVERT_TIMEOUT_NS = NANOSECONDS_PER_MILLISECOND * 200;
 
-const int RFID_FOUND_TIMEOUT_US = 1000 * 100;
+const int RFID_FOUND_TIMEOUT_US = 1000 * 500;
 
 const int CORRECTION_ANGLE = 40;
 
@@ -206,14 +206,14 @@ void turnLeft(int degree){
     
     helper_turnComputeDegree(degree);
     
-    engineCtrl = PWM_LEFT;
+    engineCtrl = ONLY_LEFT;
     turnLeftEnabled = 1;
 }
 
 void turnRight(int degree){
     helper_turnComputeDegree(degree);
     
-    engineCtrl = PWM_RIGHT;
+    engineCtrl = ONLY_RIGHT;
     turnRightEnabled = 1;
 }
 
@@ -344,7 +344,7 @@ void logic_rfid_search(){
     if (rfid_state > 0 && helper_isRfidChipNew()) {
         helper_addRfidChipToHistory();
 
-        if (VERBOSE_DEF) {
+        if (1) {
             printf("rfid_search, found chip %d, uid %d\n", rfidCounter, rfid_state);
         }  
         
