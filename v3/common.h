@@ -56,6 +56,7 @@ extern int default_logicmode;
 #define IR_IN4_BIT 0x08
 
 //Timings
+#define INTERVAL_INPUT_KILL_US 1000
 #define INTERVAL_LOGIC_US 100
 #define INTERVAL_INPUT_US 50
 #define INTERVAL_ULTRASONIC_US (40 * NANOSECONDS_PER_MILLISECOND)
@@ -70,6 +71,7 @@ extern int default_logicmode;
 #define CPU_ENGINE 3
 
 //prio
+#define PRIO_KILL -11
 #define PRIO_LOGIC -10
 #define PRIO_SENSORS -8
 #define PRIO_ENGINE -9
