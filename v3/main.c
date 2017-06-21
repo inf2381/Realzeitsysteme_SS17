@@ -199,6 +199,9 @@ void readCommandLine(int argc, char *argv[]){
                 }  else if (strcmp(optarg, "turn") == 0) {
                     default_logicmode = test_turn;
                 }
+                 }  else if (strcmp(optarg, "none") == 0) {
+                    default_logicmode = none;
+                }
                 break;
      
             case 'd': 
