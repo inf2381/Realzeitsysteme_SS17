@@ -58,6 +58,7 @@ extern int default_logicmode;
 //Timings
 #define INTERVAL_LOGIC_US 100
 #define INTERVAL_INPUT_US 50
+#define INTERVAL_ULTRASONIC_US (40 * NANOSECONDS_PER_MILLISECOND)
 
 //Thresholds
 #define MEASUREMENT_EXPIRATION_US 1000 * 1000  // us

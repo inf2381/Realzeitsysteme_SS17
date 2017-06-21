@@ -59,9 +59,11 @@ void *measureDistance(void *arg) {
             while (GPIO_read(PIN_ECHO) == 1) {
                 gettimeofday(&endTime, NULL);
                 
-                //timeout 
+                //timeout 200ms
                 if (diff_time_us(startTime, endTime) > (200 * 1000)) {
-                    printf("timeout us");
+                    if (VERBOSE_DEF) {
+                        printf("timeout us");
+                    }    
                     timeout = 1;
                     break;
                 }
@@ -90,7 +92,7 @@ void *measureDistance(void *arg) {
 		}
 
 
-        increaseTimespec(40 * NANOSECONDS_PER_MILLISECOND, &sleeptime_us);
+        increaseTimespec(INTERVAL_ULTRASONIC_US, &sleeptime_us);
         sleepAbsolute(&sleeptime_us);
         
     }

@@ -37,6 +37,5 @@ enum logic_path_states {
 
 };
 
-#define RFID_FIND_COUNT 4
-#define RFID_EXIT_UID 723389358
+
 #endif

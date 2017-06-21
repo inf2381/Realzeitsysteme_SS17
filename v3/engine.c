@@ -15,7 +15,9 @@
 
 
 void engineSetup(){
-	printf("%d\n", PWM_CYCLES);
+    if (VERBOSE_DEF) {
+	    printf("Engine::PWM_CYCLES %d\n", PWM_CYCLES);
+	}
     GPIO_export(PIN_1);
     GPIO_setDirection(PIN_1, PIN_OUT);
     

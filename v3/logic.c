@@ -10,6 +10,16 @@
 #include "helper.h"
 #include "piezo.h"
 
+const long long  NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 4;
+const int US_TRIGGER_THRESHOLD = 30 * 1000;
+const int REVERT_TIMEOUT_NS = NANOSECONDS_PER_MILLISECOND * 200;
+
+const int RFID_FOUND_TIMEOUT_US = 1000 * 500;
+#define RFID_FIND_COUNT 4
+const int RFID_EXIT_UID = 723389358;
+
+const int CORRECTION_ANGLE = 40;
+
 int logic_mode = -1;
 
 char ir_state = -1;
@@ -24,20 +34,10 @@ int turnRightEnabled  = 0;
 int reverseEnabled = 0;
 
 int rfidCounter;
-
 int rfidHistory[RFID_FIND_COUNT];
 
 struct timespec timer_now = {0};
 struct timespec timer_endtime = {0};
-
-
-const long long  NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 4;
-const int US_TRIGGER_THRESHOLD = 30 * 1000;
-const int REVERT_TIMEOUT_NS = NANOSECONDS_PER_MILLISECOND * 200;
-
-const int RFID_FOUND_TIMEOUT_US = 1000 * 500;
-
-const int CORRECTION_ANGLE = 40;
 
 
 void logic_test_engine(){
@@ -196,7 +196,9 @@ int turnCheck(){
 
 void helper_turnComputeDegree(int degree) {
     long long timeDiff = NANOSECONDS_PER_DEGREE * degree;
-	printf("timediff %lld ms\n", timeDiff / NANOSECONDS_PER_MILLISECOND);
+    if (VERBOSE_DEF) {
+	    printf("timediff %lld ms\n", timeDiff / NANOSECONDS_PER_MILLISECOND);
+	}
     clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
     increaseTimespec(timeDiff, &timer_endtime);
 }
@@ -220,7 +222,9 @@ void turnRight(int degree){
 void logic_test_turn(){
     if (turnLeftEnabled || turnRightEnabled) {
         if (!turnCheck()) {
-		    printf("turn end\n");
+            if (VERBOSE_DEF) {
+		        printf("turn end\n");
+		    }
             engineCtrl = STAY;
             sleep(5);
         }
@@ -344,14 +348,14 @@ void logic_rfid_search(){
     if (rfid_state > 0 && helper_isRfidChipNew()) {
         helper_addRfidChipToHistory();
 
-        if (1) {
+        if (VERBOSE_DEF) {
             printf("rfid_search, found chip %d, uid %d\n", rfidCounter, rfid_state);
         }  
         
         engineCtrl = STAY;
         usleep(RFID_FOUND_TIMEOUT_US);
         
-        if (rfidCounter == 4) {
+        if (rfidCounter == RFID_FIND_COUNT) {
             // mission completed
             engineCtrl = STAY;
             logic_mode = none;
