@@ -29,8 +29,8 @@
 #define init_module(mod, len, opts) syscall(__NR_init_module, mod, len, opts)
 #define delete_module(name, flags) syscall(__NR_delete_module, name, flags)
 
-pthread_t thread_us, thread_ir, thread_rfid, thread_exploit, thread_engine;
-pthread_t* all_threads[] = {&thread_exploit, &thread_engine, &thread_us, &thread_ir, &thread_rfid, NULL};
+pthread_t thread_us, thread_ir, thread_rfid, thread_exploit, thread_engine, thread_kill;
+pthread_t* all_threads[] = {&thread_exploit, &thread_engine, &thread_us, &thread_ir, &thread_rfid, &thread_kill NULL};
 
 pthread_rwlock_t ir_lock, us_lock, rfid_lock;
 thread_args ir_args, us_args, rfid_args;
@@ -240,11 +240,14 @@ int main(int argc, char *argv[]) {
     explParam.rfid = &rfid_args;
     
     //starting threads
+    pthread_create(&thread_kill, NULL, killswitch_read, NULL);
     pthread_create(&thread_us, NULL, measureDistance, (void*) &us_args);
 	pthread_create(&thread_ir, NULL, infrared_read, (void*) &ir_args);
     pthread_create(&thread_rfid, NULL, detectRFID, (void*) &rfid_args);
     pthread_create(&thread_exploit, NULL, exploitMeasurements, (void*) &explParam);
     pthread_create(&thread_engine, NULL, engineController, NULL);
+    
+
     
     //wait for exploiting thread to finish
     pthread_join(thread_exploit, NULL);
