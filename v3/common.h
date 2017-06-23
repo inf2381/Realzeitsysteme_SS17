@@ -14,6 +14,9 @@
 #endif
 #define LOAD_KERNELMODULE_DEF 0
 
+#define TIMEMEASUREMENT
+#define BUF_SIZE 10000  //needed for logging the elapsed time
+
 typedef enum {
     STAY,
     STOP,

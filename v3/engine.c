@@ -169,6 +169,12 @@ void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct t
 }
 
 void *engineController(void *arg) {
+#ifdef TIMEMEASUREMENT:  //see common.h
+    struct timespec start_time = {0};
+    struct timespec end_time = {0};
+    long long *buffer = getTimeBuffer(BUF_SIZE);  // getBuf in helper.h; BUF_SIZE in common.h
+#endif
+    
     sched_setaffinity(0, sizeof(cpuset_engine),&cpuset_engine);
     thread_setPriority(PRIO_ENGINE);
     
@@ -181,14 +187,17 @@ void *engineController(void *arg) {
     sleep_down.tv_nsec = LOW_75_NS;
     
     clock_gettime( CLOCK_MONOTONIC, &sleeptime_engine );
-    while (true) {
+    while (shouldRun) {
+#ifdef TIMEMEASUREMENT:
+        clock_gettime(CLOCK_MONOTONIC, &start_time);
+#endif
         if (fun == 1 && engineCtrl != REVERSE) {
             fun = 0;
             piezo_stopReverse();
         }
-    if(VERBOSE_DEF) {
-	    printf("engineCtrl %d\n", engineCtrl);
-    }
+        if(VERBOSE_DEF) {
+            printf("engineCtrl %d\n", engineCtrl);
+        }
         switch (engineCtrl) {
             case STAY:
                 allPinsToZero();
@@ -249,8 +258,16 @@ void *engineController(void *arg) {
         
         increaseTimespec(SLEEPTIME_NS, &sleeptime_engine);
         sleepAbsolute(&sleeptime_engine);
+        
+#ifdef TIMEMEASUREMENT:
+        clock_gettime(CLOCK_MONOTONIC, &end_time);
+        appendToBuf(buffer, diff_time_ns(&start_time, &end_time));
+#endif
     }
     
+#ifdef TIMEMEASUREMENT
+    logToCSV("log_engine.csv", buffer);
+#endif
     pthread_exit(0);
     
 }

@@ -116,6 +116,32 @@ long long diff_time_ns(struct timespec *before, struct timespec *after)
 }
 
 
+long long *getTimeBuffer(int size) {
+    void * buf = (void*) malloc(size * sizeof(struct timespec));
+    enforceMalloc(buf);
+    return buf;
+}
+
+void appendToBuf(long long* target, long long timediff_ns) {
+    static int count = 0;
+    if (count <= BUF_SIZE) {  //defined in common.h
+        target[count] = timediff_ns;
+        count++;
+    }
+}
+
+void logToCSV(const char* filename, long long* buffer) {
+    FILE *fp = fopen("filename", "a+");
+    if (fp == NULL) {
+        perror("Open file");
+    }
+    for (int i = 0; i<BUF_SIZE; i++) {
+        fprintf("%d, ", buffer[i]);
+    }
+    fclose(fp);
+}
+
+
 void activWait(int waitTimeMillis){
     double t1, t2;
     double toReach = (double)waitTimeMillis;

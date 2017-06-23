@@ -38,6 +38,12 @@ void infraredSetdown() {
 
 
 void *infrared_read(void *arg) {
+#ifdef TIMEMEASUREMENT:  //see common.h
+    struct timespec start_time = {0};
+    struct timespec end_time = {0};
+    long long *buffer = getTimeBuffer(BUF_SIZE);  // getBuf in helper.h; BUF_SIZE in common.h
+#endif
+
     sched_setaffinity(0, sizeof(cpuset_sensors), &cpuset_sensors);
     thread_setPriority(PRIO_SENSORS);
     
@@ -52,6 +58,9 @@ void *infrared_read(void *arg) {
     clock_gettime( CLOCK_MONOTONIC, &sleeptime_ir );
 
 	while (shouldRun) {
+#ifdef TIMEMEASUREMENT:
+        clock_gettime(CLOCK_MONOTONIC, &start_time);
+#endif
 		int in1 = GPIO_read(PIN_IR_IN1);
 		int in2 = GPIO_read(PIN_IR_IN2);
 		int in3 = GPIO_read(PIN_IR_IN3);
@@ -79,7 +88,15 @@ void *infrared_read(void *arg) {
         
         increaseTimespec(INTERVAL_INPUT_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_ir);
         sleepAbsolute(&sleeptime_ir);
+#ifdef TIMEMEASUREMENT:
+        clock_gettime(CLOCK_MONOTONIC, &end_time);
+        appendToBuf(buffer, diff_time_ns(&start_time, &end_time));
+#endif
     }
+    
+#ifdef TIMEMEASUREMENT
+    logToCSV("log_infrared.csv", buffer);
+#endif
 
 	pthread_exit(0);
 }
