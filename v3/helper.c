@@ -132,12 +132,16 @@ void appendToBuf(long long* target, long long timediff_ns) {
 }
 
 void logToCSV(const char* filename, long long* buffer) {
-    FILE *fp = fopen("filename", "a+");
+    printf("Logging into file: %s\n", filename);
+    FILE *fp = fopen("filename", "w+");
     if (fp == NULL) {
         perror("Open file");
     }
     for (int i = 0; i<BUF_SIZE; i++) {
-        fprintf(fp, "%lld, ", buffer[i]);
+        int ret = fprintf(fp, "%lld, ", buffer[i]);
+        if (ret < 0) {
+            perror("fprintf fail");
+        }
     }
     fclose(fp);
 }
