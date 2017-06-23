@@ -173,6 +173,7 @@ void *engineController(void *arg) {
     struct timespec start_time = {0};
     struct timespec end_time = {0};
     long long *buffer = getTimeBuffer(BUF_SIZE);  // getBuf in helper.h; BUF_SIZE in common.h
+    int current_index = 0;
 #endif
     
     sched_setaffinity(0, sizeof(cpuset_engine),&cpuset_engine);
@@ -261,7 +262,7 @@ void *engineController(void *arg) {
         
 #ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &end_time);
-        appendToBuf(buffer, diff_time_ns(&start_time, &end_time));
+        appendToBuf(buffer, &current_index, diff_time_ns(&start_time, &end_time));
 #endif
     }
     

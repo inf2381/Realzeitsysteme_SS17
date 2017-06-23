@@ -123,17 +123,16 @@ long long *getTimeBuffer(int size) {
     return buf;
 }
 
-void appendToBuf(long long* target, long long timediff_ns) {
-    static int count = 0;
-    if (count <= BUF_SIZE) {  //defined in common.h
-        target[count] = timediff_ns;
-        count++;
+void appendToBuf(long long* target, int *index, long long timediff_ns) {
+    if (*index < BUF_SIZE) {  //defined in common.h
+        target[*index] = timediff_ns;
+        (*index)++;
     }
 }
 
 void logToCSV(const char* filename, long long* buffer) {
     printf("Logging into file: %s\n", filename);
-    FILE *fp = fopen("filename", "w+");
+    FILE *fp = fopen(filename, "w+");
     if (fp == NULL) {
         perror("Open file");
     }

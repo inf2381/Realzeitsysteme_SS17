@@ -108,7 +108,7 @@ void setup() {
 	infraredSetup();
     piezoSetup();
     rfidSetup();
-
+    killswitchSetup();
 	logic_setup(default_logicmode);
     engineCtrl = STAY;
     
@@ -123,15 +123,15 @@ void setup() {
 
 void shutdown(){
     logic_shutdown();
-    
+
     shouldRun = 0;
 	engineSetdown();
 	ultrasonicSetdown();
 	infraredSetdown();
     piezoSetdown();
     rfidSetdown();
+    killswitchSetdown();
     destroyPathCache();
-    
     if (LOAD_KERNELMODULE_DEF) {
         unloadKernelModule(kill_mod_img, "module_killbutton");
     }    

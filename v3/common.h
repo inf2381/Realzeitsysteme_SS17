@@ -5,8 +5,8 @@
 #include <sched.h>
 
 #define VERBOSE_DEF 0
-#define VERBOSE_LOG_GPIO_DEF 1 
-#define FUN_ENABLED_DEF 1
+#define VERBOSE_LOG_GPIO_DEF 0
+#define FUN_ENABLED_DEF 0
 #ifdef __arm__
     #define GPIO_ENABLED 1
 #else
