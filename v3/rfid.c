@@ -24,7 +24,7 @@ void rfidSetdown() {
 }
 
 void *detectRFID(void *arg) {
-#ifdef TIMEMEASUREMENT:  //see common.h
+#ifdef TIMEMEASUREMENT  //see common.h
     struct timespec start_time = {0};
     struct timespec end_time = {0};
     long long *buffer = getTimeBuffer(BUF_SIZE);  // getBuf in helper.h; BUF_SIZE in common.h
@@ -40,7 +40,7 @@ void *detectRFID(void *arg) {
 
 
     while (shouldRun) {
-#ifdef TIMEMEASUREMENT:
+#ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &start_time);
 #endif
 		if(pthread_rwlock_wrlock(t_args->lock)){
@@ -59,7 +59,7 @@ void *detectRFID(void *arg) {
 
         increaseTimespec(INTERVAL_INPUT_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_rfid);
         sleepAbsolute(&sleeptime_rfid);
-#ifdef TIMEMEASUREMENT:
+#ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         appendToBuf(buffer, diff_time_ns(&start_time, &end_time));
 #endif

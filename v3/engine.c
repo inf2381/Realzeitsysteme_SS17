@@ -169,7 +169,7 @@ void pwmDrive(char *leftPin, char *rightPin, struct timespec *hightime, struct t
 }
 
 void *engineController(void *arg) {
-#ifdef TIMEMEASUREMENT:  //see common.h
+#ifdef TIMEMEASUREMENT  //see common.h
     struct timespec start_time = {0};
     struct timespec end_time = {0};
     long long *buffer = getTimeBuffer(BUF_SIZE);  // getBuf in helper.h; BUF_SIZE in common.h
@@ -188,7 +188,7 @@ void *engineController(void *arg) {
     
     clock_gettime( CLOCK_MONOTONIC, &sleeptime_engine );
     while (shouldRun) {
-#ifdef TIMEMEASUREMENT:
+#ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &start_time);
 #endif
         if (fun == 1 && engineCtrl != REVERSE) {
@@ -259,7 +259,7 @@ void *engineController(void *arg) {
         increaseTimespec(SLEEPTIME_NS, &sleeptime_engine);
         sleepAbsolute(&sleeptime_engine);
         
-#ifdef TIMEMEASUREMENT:
+#ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         appendToBuf(buffer, diff_time_ns(&start_time, &end_time));
 #endif

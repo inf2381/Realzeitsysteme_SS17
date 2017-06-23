@@ -23,6 +23,7 @@
 #include "rfid.h"
 #include "helper.h"
 #include "gpio.h"
+#include "killswitch.h"
 
 // preparation for loadable kernel module
 // glibc does not provide a header entry
@@ -30,7 +31,7 @@
 #define delete_module(name, flags) syscall(__NR_delete_module, name, flags)
 
 pthread_t thread_us, thread_ir, thread_rfid, thread_exploit, thread_engine, thread_kill;
-pthread_t* all_threads[] = {&thread_exploit, &thread_engine, &thread_us, &thread_ir, &thread_rfid, &thread_kill NULL};
+pthread_t* all_threads[] = {&thread_exploit, &thread_engine, &thread_us, &thread_ir, &thread_rfid, &thread_kill, NULL};
 
 pthread_rwlock_t ir_lock, us_lock, rfid_lock;
 thread_args ir_args, us_args, rfid_args;
@@ -198,9 +199,6 @@ void readCommandLine(int argc, char *argv[]){
                     
                 }  else if (strcmp(optarg, "turn") == 0) {
                     default_logicmode = test_turn;
-                }
-                 }  else if (strcmp(optarg, "none") == 0) {
-                    default_logicmode = none;
                 }
                 break;
      

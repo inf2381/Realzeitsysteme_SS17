@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sched.h>
+#include "common.h"
 
 /* Common small helper file to reduce redundant code over and over again */
 
@@ -136,7 +137,7 @@ void logToCSV(const char* filename, long long* buffer) {
         perror("Open file");
     }
     for (int i = 0; i<BUF_SIZE; i++) {
-        fprintf("%d, ", buffer[i]);
+        fprintf(fp, "%lld, ", buffer[i]);
     }
     fclose(fp);
 }

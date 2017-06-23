@@ -1,7 +1,7 @@
 #ifndef killswitch_h
 #define killswitch_h
 
-#define PIN_KILLSWITCH "2"
+#define PIN_KILLSWITCH "3"
 
 void killswitchSetup();
 void killswitchSetdown();

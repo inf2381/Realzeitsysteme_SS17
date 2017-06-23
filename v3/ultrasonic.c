@@ -30,7 +30,7 @@ void ultrasonicSetdown() {
 
 
 void *measureDistance(void *arg) {
-#ifdef TIMEMEASUREMENT:  //see common.h
+#ifdef TIMEMEASUREMENT  //see common.h
     struct timespec start_time = {0};
     struct timespec end_time = {0};
     long long *buffer = getTimeBuffer(BUF_SIZE);  // getBuf in helper.h; BUF_SIZE in common.h
@@ -47,7 +47,7 @@ void *measureDistance(void *arg) {
 
     clock_gettime( CLOCK_MONOTONIC, &sleeptime_us );
     while (shouldRun) {
-#ifdef TIMEMEASUREMENT:
+#ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &start_time);
 #endif
         timeout = 0;
@@ -104,7 +104,7 @@ void *measureDistance(void *arg) {
         increaseTimespec(INTERVAL_ULTRASONIC_US, &sleeptime_us);
         sleepAbsolute(&sleeptime_us);
         
-#ifdef TIMEMEASUREMENT:
+#ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         appendToBuf(buffer, diff_time_ns(&start_time, &end_time));
 #endif

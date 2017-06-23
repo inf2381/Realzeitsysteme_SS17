@@ -5,8 +5,8 @@
 #include <sched.h>
 
 #define VERBOSE_DEF 0
-#define VERBOSE_LOG_GPIO_DEF 0 
-#define FUN_ENABLED_DEF 0 
+#define VERBOSE_LOG_GPIO_DEF 1 
+#define FUN_ENABLED_DEF 1
 #ifdef __arm__
     #define GPIO_ENABLED 1
 #else
@@ -62,7 +62,7 @@ extern int default_logicmode;
 #define INTERVAL_INPUT_KILL_US 1000
 #define INTERVAL_LOGIC_US 100
 #define INTERVAL_INPUT_US 50
-#define INTERVAL_ULTRASONIC_US (40 * NANOSECONDS_PER_MILLISECOND)
+#define INTERVAL_ULTRASONIC_US (50 * NANOSECONDS_PER_MILLISECOND)
 
 //Thresholds
 #define MEASUREMENT_EXPIRATION_US 1000 * 1000  // us

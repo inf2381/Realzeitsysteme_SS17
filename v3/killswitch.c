@@ -27,7 +27,7 @@ void killswitchSetdown() {
 
 
 void *killswitch_read(void *arg) {
-    sched_setaffinity(0, sizeof(cpuset_sensors), &cpuset_sensors);
+    sched_setaffinity(0, sizeof(cpuset_logic), &cpuset_logic);
     thread_setPriority(PRIO_KILL);
     
     struct timespec sleeptime_kill = {0};
@@ -46,8 +46,10 @@ void *killswitch_read(void *arg) {
 			//printf("kill: on %d\n", killOn);
 		}
 		
-		if (killOn == 1) {
-            kill( getppid(), SIGINT );            		
+		if (killOn == 0) {
+			printf("killswitch!\n");
+            kill( getppid(), SIGINT );
+			break;            		
 		}
 
         increaseTimespec(INTERVAL_INPUT_KILL_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_kill);

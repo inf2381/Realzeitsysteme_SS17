@@ -468,7 +468,7 @@ void helper_checkTimestamp(long *current, long *toCheck, const char* source) {
 
 
 void *exploitMeasurements(void *arg) {
-#ifdef TIMEMEASUREMENT:  //see common.h
+#ifdef TIMEMEASUREMENT  //see common.h
     struct timespec start_time = {0};
     struct timespec end_time = {0};
     long long *buffer = getTimeBuffer(BUF_SIZE);  // getBuf in helper.h; BUF_SIZE in common.h
@@ -483,7 +483,7 @@ void *exploitMeasurements(void *arg) {
     
     clock_gettime(CLOCK_MONOTONIC, &sleeptime_logic);
     while (logic_mode != none) {
-#ifdef TIMEMEASUREMENT:
+#ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &start_time);
 #endif
         time_now = get_time_us();
@@ -544,7 +544,7 @@ void *exploitMeasurements(void *arg) {
 		
 		increaseTimespec(INTERVAL_LOGIC_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_logic);
         sleepAbsolute(&sleeptime_logic);
-#ifdef TIMEMEASUREMENT:
+#ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         appendToBuf(buffer, diff_time_ns(&start_time, &end_time));
 #endif
