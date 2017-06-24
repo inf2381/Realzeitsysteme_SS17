@@ -60,8 +60,8 @@ extern int default_logicmode;
 
 //Timings
 #define INTERVAL_INPUT_KILL_US 1000
-#define INTERVAL_LOGIC_US 100
-#define INTERVAL_INPUT_US 50
+#define INTERVAL_LOGIC_US 25000
+#define INTERVAL_INPUT_US 30000
 #define INTERVAL_ULTRASONIC_US (50 * NANOSECONDS_PER_MILLISECOND)
 
 //Thresholds

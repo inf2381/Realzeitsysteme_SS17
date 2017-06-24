@@ -19,7 +19,7 @@ void rfidSetup() {
 
 void rfidSetdown() {
     if (GPIO_ENABLED) {
-        rfid_wrapper_setup();
+        rfid_wrapper_setdown();
     }
 }
 

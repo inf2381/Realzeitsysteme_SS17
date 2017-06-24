@@ -125,9 +125,12 @@ void shutdown(){
     logic_shutdown();
 
     shouldRun = 0;
-	engineSetdown();
-	ultrasonicSetdown();
-	infraredSetdown();
+#ifdef TIMEMEASUREMENT
+    sleep(5); //time to log timemeasurements into files
+#endif
+    engineSetdown();
+    ultrasonicSetdown();
+    infraredSetdown();
     piezoSetdown();
     rfidSetdown();
     killswitchSetdown();
