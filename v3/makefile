@@ -2,13 +2,14 @@
 ###                                              ####
 ### .......generic Makefile .....................####
 CC=gcc
-CFLAGS=-Wall -g -std=gnu99 -I. -I./rfid
+CFLAGS=-g -Wall -std=gnu99 -I. -I./rfid
 
 CPLUS = g++
 CPLUS_FLAGS = -std=c++0x -g
 
 LDFLAGS=-L. -L./$(BCM_PATH)src -lrt  -lpthread -lbcm2835
 
+STATIC_LIB = ar
 ECHO = echo
 
 BCM_PATH = rfid/bcm2835-1.50/
@@ -36,6 +37,9 @@ stop: stop.o $(OBJFILES)
 %:%.o
 	$(CPLUS) $(CPLUS_FLAGS) $^ $(LDFLAGS) -o $@
 
+%.a:%.o
+	$(STATIC_LIB) -rs $@ $^
+
 %.o:%.cpp
 	$(CPLUS) $(CPLUS_FLAGS) -o $@ -c $^
 
@@ -44,7 +48,13 @@ libbcm2835 : $(BCM_PATH)src/libbcm2835.a
 	#$(ECHO) looking into $(BCM_PATH) : $(MAKE) $(MFLAGS)
 	#cd $(BCM_PATH); $(BCM_MAKECHAIN);  $(MAKE) $(MFLAGS)
 
-$(BCM_PATH)src/libbcm2835.a : $(BCM_PATH)src/bcm2835.o
+$(BCM_PATH)src/libbcm2835.a : $(BCM_PATH)src/bcm2835.o	
+	$(STATIC_LIB) -rs $@ $^
+
+$(BCM_PATH)src/bcm2835.o : $(BCM_PATH)src/bcm2835.c
+	$(CC) $(CFLAGS) -w -o $@ -c $^
+
+
 
 force_look :
 	true
