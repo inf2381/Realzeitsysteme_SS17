@@ -118,7 +118,7 @@ long long diff_time_ns(struct timespec *before, struct timespec *after)
 
 
 long long *getTimeBuffer(int size) {
-    void * buf = (void*) calloc(size, size * sizeof(long long));
+    void * buf = (void*) calloc(size, sizeof(long long));
     enforceMalloc(buf);
     return buf;
 }
