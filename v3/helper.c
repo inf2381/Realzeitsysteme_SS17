@@ -118,7 +118,7 @@ long long diff_time_ns(struct timespec *before, struct timespec *after)
 
 
 long long *getTimeBuffer(int size) {
-    void * buf = (void*) malloc(size * sizeof(struct timespec));
+    void * buf = (void*) calloc(size, size * sizeof(long long));
     enforceMalloc(buf);
     return buf;
 }
@@ -146,6 +146,10 @@ void logToCSV(const char* filename, long long* buffer) {
         perror("Open file");
     }
     for (int i = 0; i<BUF_SIZE; i++) {
+        if (buffer[i] == 0) {
+            continue;
+        }
+        
         int ret = fprintf(fp, "%lld, ", buffer[i]);
         if (ret < 0) {
             perror("fprintf fail");
