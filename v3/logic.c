@@ -556,11 +556,14 @@ void *exploitMeasurements(void *arg) {
 		logic_compute();
 		
 		increaseTimespec(INTERVAL_LOGIC_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_logic);
-        sleepAbsolute(&sleeptime_logic);
 #ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         appendToBuf(buffer, &current_index, diff_time_ns(&start_time, &end_time));
 #endif
+
+
+        sleepAbsolute(&sleeptime_logic);
+
     }
     
 #ifdef TIMEMEASUREMENT

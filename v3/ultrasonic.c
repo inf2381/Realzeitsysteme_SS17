@@ -47,6 +47,8 @@ void *measureDistance(void *arg) {
     struct timespec sleeptime_us = {0};
 
     clock_gettime( CLOCK_MONOTONIC, &sleeptime_us );
+   
+	
     while (shouldRun) {
 #ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &start_time);
@@ -65,10 +67,17 @@ void *measureDistance(void *arg) {
         if (GPIO_ENABLED) {
             while (GPIO_read(PIN_ECHO) == 0) {
                 gettimeofday(&startTime, NULL);
-            }
+            
+                if (shouldRun == 0)
+                        goto end;
+
+
+		}
             while (GPIO_read(PIN_ECHO) == 1) {
                 gettimeofday(&endTime, NULL);
-                
+                if (shouldRun == 0)
+			goto end;
+			
                 //timeout 200ms
                 if (diff_time_us(startTime, endTime) > (200 * 1000)) {
                     if (VERBOSE_DEF) {
@@ -112,6 +121,7 @@ void *measureDistance(void *arg) {
         sleepAbsolute(&sleeptime_us);
     }
     
+end:
 #ifdef TIMEMEASUREMENT
     logToCSV("log_ultrasonic.csv", buffer);
 #endif
