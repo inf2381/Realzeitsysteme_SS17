@@ -32,6 +32,7 @@ int path_state = path_start;
 int turnLeftEnabled = 0;
 int turnRightEnabled  = 0;
 int reverseEnabled = 0;
+int rfidBreakEnabled = 0;
 
 int rfidCounter;
 int rfidHistory[RFID_FIND_COUNT];
@@ -343,7 +344,20 @@ void logic_rfid_search(){
 	const int random_degree_min = 90;
 	const int random_degree_max = 180;
 	
-	
+	if (rfidBreakEnabled) {
+	    if (helper_isTimerFinished()) {
+	        //rfid stay end
+	        rfidBreakEnabled = 0;    
+	    
+	        if (rfidCounter == RFID_FIND_COUNT) {
+                // mission completed
+                engineCtrl = STAY;
+                logic_mode = none;
+            }
+	    } else {
+	        return; 
+        }	    
+	}
 
     if (rfid_state > 0 && helper_isRfidChipNew()) {
         helper_addRfidChipToHistory();
@@ -353,13 +367,11 @@ void logic_rfid_search(){
         }  
         
         engineCtrl = STAY;
-        usleep(RFID_FOUND_TIMEOUT_US);
         
-        if (rfidCounter == RFID_FIND_COUNT) {
-            // mission completed
-            engineCtrl = STAY;
-            logic_mode = none;
-        }
+        //rfid stay, async break
+        clock_gettime(CLOCK_MONOTONIC, &timer_endtime);
+        increaseTimespec(RFID_FOUND_TIMEOUT_US * NANOSECONDS_PER_MICROSECOND, &timer_endtime);
+        rfidBreakEnabled = 1;
         return;
     }
    
