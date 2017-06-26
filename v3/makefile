@@ -2,10 +2,10 @@
 ###                                              ####
 ### .......generic Makefile .....................####
 CC=gcc
-CFLAGS=-g -Wall -std=gnu99 -I. -I./rfid
+CFLAGS=-O1 -Wall -std=gnu99 -I. -I./rfid
 
 CPLUS = g++
-CPLUS_FLAGS = -std=c++0x -g
+CPLUS_FLAGS = -std=c++0x -O1
 
 LDFLAGS=-L. -L./$(BCM_PATH)src -lrt  -lpthread -lbcm2835
 
