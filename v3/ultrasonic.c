@@ -103,12 +103,13 @@ void *measureDistance(void *arg) {
 
 
         increaseTimespec(INTERVAL_ULTRASONIC_US, &sleeptime_us);
-        sleepAbsolute(&sleeptime_us);
         
 #ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         appendToBuf(buffer, &current_index, diff_time_ns(&start_time, &end_time));
 #endif
+        
+        sleepAbsolute(&sleeptime_us);
     }
     
 #ifdef TIMEMEASUREMENT

@@ -27,6 +27,14 @@ void killswitchSetdown() {
 
 
 void *killswitch_read(void *arg) {
+#ifdef TIMEMEASUREMENT  //see common.h
+    struct timespec start_time = {0};
+    struct timespec end_time = {0};
+    long long *buffer = getTimeBuffer(BUF_SIZE);  // getBuf in helper.h; BUF_SIZE in common.h
+    int current_index = 0;
+#endif
+
+
     sched_setaffinity(0, sizeof(cpuset_logic), &cpuset_logic);
     thread_setPriority(PRIO_KILL);
     
@@ -40,6 +48,10 @@ void *killswitch_read(void *arg) {
     clock_gettime( CLOCK_MONOTONIC, &sleeptime_kill );
 
 	while (shouldRun) {
+#ifdef TIMEMEASUREMENT
+        clock_gettime(CLOCK_MONOTONIC, &start_time);
+#endif
+	
 		int killOn = GPIO_read(PIN_KILLSWITCH);
 		
 		if (VERBOSE_DEF) {
@@ -53,8 +65,20 @@ void *killswitch_read(void *arg) {
 		}
 
         increaseTimespec(INTERVAL_INPUT_KILL_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_kill);
+        
+        
+#ifdef TIMEMEASUREMENT
+        clock_gettime(CLOCK_MONOTONIC, &end_time);
+        appendToBuf(buffer, &current_index, diff_time_ns(&start_time, &end_time));
+#endif
+        
         sleepAbsolute(&sleeptime_kill);
+
     }
+    
+#ifdef TIMEMEASUREMENT
+    logToCSV("log_killswitch.csv", buffer);
+#endif
 
 	pthread_exit(0);
 }

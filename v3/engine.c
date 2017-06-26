@@ -258,12 +258,13 @@ void *engineController(void *arg) {
         }
         
         increaseTimespec(SLEEPTIME_NS, &sleeptime_engine);
-        sleepAbsolute(&sleeptime_engine);
         
 #ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         appendToBuf(buffer, &current_index, diff_time_ns(&start_time, &end_time));
 #endif
+        
+        sleepAbsolute(&sleeptime_engine);
     }
     
 #ifdef TIMEMEASUREMENT

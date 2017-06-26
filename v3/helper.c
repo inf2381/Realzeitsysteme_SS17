@@ -131,8 +131,17 @@ void appendToBuf(long long* target, int *index, long long timediff_ns) {
 }
 
 void logToCSV(const char* filename, long long* buffer) {
-    printf("Logging into file: %s\n", filename);
-    FILE *fp = fopen(filename, "w+");
+    char* prefix = "doc/";
+    char* path = (char*) calloc(strlen(prefix) + strlen(filename) + 1, sizeof(char));
+    enforceMalloc(path);
+    
+    strcat(path, prefix);
+    strcat(path, filename);
+
+    printf("Logging into file: %s\n", path);
+    
+   
+    FILE *fp = fopen(path, "w+");
     if (fp == NULL) {
         perror("Open file");
     }

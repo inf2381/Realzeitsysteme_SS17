@@ -88,11 +88,14 @@ void *infrared_read(void *arg) {
 		}
         
         increaseTimespec(INTERVAL_INPUT_US * NANOSECONDS_PER_MICROSECOND, &sleeptime_ir);
-        sleepAbsolute(&sleeptime_ir);
+        
+        
 #ifdef TIMEMEASUREMENT
         clock_gettime(CLOCK_MONOTONIC, &end_time);
         appendToBuf(buffer, &current_index, diff_time_ns(&start_time, &end_time));
 #endif
+        
+        sleepAbsolute(&sleeptime_ir);
     }
     
 #ifdef TIMEMEASUREMENT
