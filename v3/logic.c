@@ -550,7 +550,7 @@ void *exploitMeasurements(void *arg) {
         }
 	        
 	    if (ir_state == -1 || us_distance == -1 || rfid_state == -1) {
-		    continue;
+		    //continue;
 	    }
 
 		logic_compute();

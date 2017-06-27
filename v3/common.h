@@ -74,9 +74,9 @@ extern int default_logicmode;
 #define CPU_ENGINE 3
 
 //prio
-#define PRIO_KILL -11
-#define PRIO_LOGIC -10
-#define PRIO_SENSORS -8
-#define PRIO_ENGINE -9
+#define PRIO_KILL -19
+#define PRIO_LOGIC -18
+#define PRIO_SENSORS -19
+#define PRIO_ENGINE -19
 
 #endif

@@ -241,9 +241,9 @@ int main(int argc, char *argv[]) {
     explParam.rfid = &rfid_args;
     
     //starting threads
-    pthread_create(&thread_kill, NULL, killswitch_read, NULL);
+    //pthread_create(&thread_kill, NULL, killswitch_read, NULL);
     pthread_create(&thread_us, NULL, measureDistance, (void*) &us_args);
-	pthread_create(&thread_ir, NULL, infrared_read, (void*) &ir_args);
+    pthread_create(&thread_ir, NULL, infrared_read, (void*) &ir_args);
     pthread_create(&thread_rfid, NULL, detectRFID, (void*) &rfid_args);
     pthread_create(&thread_exploit, NULL, exploitMeasurements, (void*) &explParam);
     pthread_create(&thread_engine, NULL, engineController, NULL);
