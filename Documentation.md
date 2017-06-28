@@ -23,7 +23,7 @@ We have chosen C as the main programming language of this project due to our con
 
 ### Sensor-specific
 **Ultrasonic**
-The ultrasonic sensor was the most problematic in the system. It had two major shortcomings: the small detection angle and the strange firmware. We read in some forums that there are manufacturing faults that cause occasional breakdowns of the sensor. This leads to problems because sometimes, the sensor doesn't return anything and sometimes it detects always an obstacle. The former could be saved by introducing timestamps to the measurements. We heard from other groups that another soultion would be to use the Linux `poll` function instead of actively polling. 
+The ultrasonic sensor was the most problematic in the system. It had two major shortcomings: the small detection angle and the strange firmware. We read in some forums that there are manufacturing faults that cause occasional breakdowns of the sensor. This leads to problems because sometimes, the sensor doesn't return anything and sometimes, it detects always an obstacle. The former could be solved by introducing timestamps to the measurements. We heard from other groups that another soultion would be to use the Linux `poll` function instead of actively polling. 
 
 **RFID**
 Due to his complicated binary protocol we had to use a external library that did the low-level work for us. The problem was to get this C++ libary into a C project. So our solution was to write a custom bridging header and the usage of `g++` for compiling the library and the linking of the program. 
