@@ -25,8 +25,6 @@
 
 #define PWM_LOW_TIME_NS 10000000 // only for the pwm test; will be deleted soon
 
-//TODO: Reasonable times
-
 extern volatile engineMode engineCtrl;
 
 enum direction {

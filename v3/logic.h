@@ -8,6 +8,7 @@ void logic_compute();
 void *exploitMeasurements(void *arg);
 extern volatile engineMode engineCtrl;
 
+// "AI"-thread uses this mode to control the engine and to decide what to exploit
 enum logic_mode {
 	none = 0,
 	track_path = 1,

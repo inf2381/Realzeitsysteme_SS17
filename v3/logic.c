@@ -10,12 +10,20 @@
 #include "helper.h"
 #include "piezo.h"
 
+/** Stucture of this thread:
+ * exploitMeasurements() has a loop that repeats until the logic mode is none and
+ * that collects the data from the sensors. Afterwards, logicCompute() is invoked.
+ * This function checks the logic mode (test_infrared, rfid_search, etc.) and calls the
+ * appropriate function within this file.
+ */
+
+
 const long long  NANOSECONDS_PER_DEGREE = NANOSECONDS_PER_MILLISECOND * 4;
 const int US_TRIGGER_THRESHOLD = 30 * 1000;
 const int REVERT_TIMEOUT_NS = NANOSECONDS_PER_MILLISECOND * 200;
 
 const int RFID_FOUND_TIMEOUT_US = 1000 * 500;
-#define RFID_FIND_COUNT 4
+#define RFID_FIND_COUNT 4  // exercise finished after 4 found tags
 const int RFID_EXIT_UID = 723389358;
 
 const int CORRECTION_ANGLE = 40;
@@ -77,7 +85,7 @@ void logic_test_engine(){
 
 
 void logic_test_rfid(){
-	//simple rfid detectiont est: drive forward and stop if we detect a chip
+	//simple rfid detection test: drive forward and stop if we detect a chip
 	if (rfid_state > 0) {  //rfid_state could also be -1 or 42 at the moment
 	    if (VERBOSE_DEF) {
             printf("%d\n", rfid_state);
@@ -259,11 +267,6 @@ int helper_isRfidChipNew(){
 }
 
 void logic_path(){
-    /* possible strategy:
-    drive fast straight until curve, slow down on first ir detection, 
-    correction: by one motor for x ms (find a angle-time forumla), afterwards drive at 25%
-
-    */
     
     if (path_state == path_start) {        
         

@@ -144,6 +144,8 @@ void shutdown(){
 }
 
 
+// function that is called before starting a new sensing thread.
+// Initializes the parameters for the new thread
 void initArgsGeneric(thread_args* args, pthread_rwlock_t* lock){
 	if (pthread_rwlock_init(lock, NULL)) {
 		perror("genric_lock_init");
@@ -164,6 +166,11 @@ void sig_handler(int signo)
     }
 }
 
+/** In order to allow multiple test cases without having to touch code.
+ * -m --mode + e.g. engine: Start test program for the given entity
+ *                          Path is the whole exercise and search only searches for rfid tags
+ * -d --degree 40           Sets the correction angle
+*/
 void readCommandLine(int argc, char *argv[]){
      while (42) {
         static struct option long_options[] = {

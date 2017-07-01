@@ -9,7 +9,7 @@
 
 extern int verbose;
 
-void initPathCache();
+void initPathCache();  // allocate heap for strings once at setup phase
 void destroyPathCache();
 
 char* GPIO_getPath(char* pin, const char* suffix);
