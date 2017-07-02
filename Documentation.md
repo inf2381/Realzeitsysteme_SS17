@@ -151,7 +151,7 @@ After ~2000 measurements, the robot left the labyrinth and went on to look for r
 The logic thread controls the engine thread based on the measured values from the sensing thread. The execution time is pretty constant. Lower execution times orginate from turns. While the robot turns, this thread skips the unnecessary calculations. 
 <img src="https://github.com/GoneUp/resy-ss17-grp4/raw/master/v3/media/log_ultrasonic_only.png"> 
 
-We don't know how this sensor works. The behavior will remain inexplicable to us. 
+We don't know how the ultrasonic sensor works. The behavior will remain inexplicable to us. 
 <img src="https://github.com/GoneUp/resy-ss17-grp4/raw/master/v3/media/log_infrared_only.png">
 <img src="https://github.com/GoneUp/resy-ss17-grp4/raw/master/v3/media/log_killswitch.png"> 
 
@@ -162,7 +162,7 @@ Everytime, the robot detects a rfid tag, such a peak appears. Because it takes s
 
 To measure the execution time when the system is stressed, we used the stress script from [CPU burn arm](https://github.com/ssvb/cpuburn-arm/blob/master/cpuburn-a53.S). 
 
-Since we isolated the cores where our program runs, the exection times increase not that much: 
+Since we did not manage to use the EDF-scheduler properly, the following plot shows that the exection time in a stressed system is much higher than without stress.
 <img src="https://github.com/GoneUp/resy-ss17-grp4/blob/master/v3/media/log_rfid_stress.png">
 
 
