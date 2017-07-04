@@ -38,60 +38,63 @@ Solid, simple sensors. Straight 10/10.
 The Kernel is based on the Linux kernel 4.4.9. The kernel was patched with the "RT Preempt" patch from 
 https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/patch-4.4.9-rt17.patch.gz. In order to document the current status of the kernel please find the debug-outputs below.
 
+The full kernel features can be read here https://lwn.net/Articles/146861/. We don't use any of this features at our project.
+The reason we use the patch is that the most of deamons are disabled.
+
 Output of `command service --status-all`:
 
-| Enable          |Name of deamon|
-|:-------------:|:-----------:|
-| [ + ] | alsa-utils |
-| [ + ] | avahi-daemon |
-| [ + ] | bluetooth |
-| [ - ] | bootlogs |
-| [ - ] | bootmisc.sh |
-| [ - ] | checkfs.sh |
-| [ - ] | checkroot-bootclean.sh |
-| [ - ] | checkroot.sh |
-| [ + ] | console-setup |
-| [ + ] | cron |
-| [ + ] | dbus |
-| [ + ] | dhcpcd |
-| [ + ] | dphys-swapfile |
-| [ + ] | fake-hwclock |
-| [ - ] | hostname.sh |
-| [ - ] | hwclock.sh |
-| [ + ] | kbd |
-| [ + ] | keyboard-setup |
-| [ - ] | killprocs |
-| [ + ] | kmod |
-| [ - ] | motd |
-| [ - ] | mountall-bootclean.sh |
-| [ - ] | mountall.sh |
-| [ - ] | mountdevsubfs.sh  |
-| [ - ] | mountkernfs.sh |
-| [ - ] | mountnfs-bootclean.sh |
-| [ - ] | mountnfs.sh |
-| [ + ] | networking |
-| [ - ] | nfs-common |
-| [ + ] | ntp |
-| [ - ] | plymouth |
-| [ - ] | plymouth-log |
-| [ + ] | procps |
-| [ + ] | raspi-config |
-| [ + ] | rc.local |
-| [ - ] | rmnologin |
-| [ - ] | rpcbind |
-| [ - ] | rsync |
-| [ + ] | rsyslog |
-| [ - ] | sendsigs |
-| [ + ] | ssh |
-| [ - ] | sudo |
-| [ + ] | triggerhappy |
-| [ + ] | udev |
-| [ + ] | udev-finish |
-| [ - ] | umountfs |
-| [ - ] | umountnfs.sh |
-| [ - ] | umountroot |
-| [ + ] | urandom |
-| [ - ] | x11-common |
+| Enable          |Name of deamon| Why the deamon is used |
+|:-------------:|:-----------:|:---------------------:|
+| [ + ] | alsa-utils | used for our easter egg the "piep" at driving backward |
+| [ + ] | avahi-daemon | need for network |
+| [ + ] | bluetooth | could be disabled |
+| [ - ] | bootlogs | |
+| [ - ] | bootmisc.sh | |
+| [ - ] | checkfs.sh | |
+| [ - ] | checkroot-bootclean.sh ||
+| [ - ] | checkroot.sh | |
+| [ + ] | console-setup | need for console input |
+| [ + ] | cron | never used, can be disabled |
+| [ + ] | dbus | never used, can be disabled |
+| [ + ] | dhcpcd | never used, can be disabled |
+| [ + ] | dphys-swapfile | used at interupts to swap files |
+| [ + ] | fake-hwclock  |never used, can be disabled |
+| [ - ] | hostname.sh | |
+| [ - ] | hwclock.sh | |
+| [ + ] | kbd | need for keyboard input |
+| [ + ] | keyboard-setup | need for keyboard input |
+| [ - ] | killprocs | |
+| [ + ] | kmod | used to load modules |
+| [ - ] | motd | |
+| [ - ] | mountall-bootclean.sh | |
+| [ - ] | mountall.sh | |
+| [ - ] | mountdevsubfs.sh  | |
+| [ - ] | mountkernfs.sh | |
+| [ - ] | mountnfs-bootclean.sh | |
+| [ - ] | mountnfs.sh | |
+| [ + ] | networking | needed for network |
+| [ - ] | nfs-common | |
+| [ + ] | ntp | need for syncronisation with network |
+| [ - ] | plymouth | |
+| [ - ] | plymouth-log | |
+| [ + ] | procps |has a bunch of small useful utilities that give information about processes |
+| [ + ] | raspi-config | used to configurate the raspberry. e.g. to enable the whole space of the sd.card |
+| [ + ] | rc.local | never used, can be disabled |
+| [ - ] | rmnologin | |
+| [ - ] | rpcbind | |
+| [ - ] | rsync | |
+| [ + ] | rsyslog | used for getting system logs |
+| [ - ] | sendsigs | |
+| [ + ] | ssh | need to start with ssh the programm |
+| [ - ] | sudo | |
+| [ + ] | triggerhappy | never used, can be disabled |
+| [ + ] | udev | menage I/O for devices | 
+| [ + ] | udev-finish | never used, can be disabled |
+| [ - ] | umountfs | |
+| [ - ] | umountnfs.sh | |
+| [ - ] | umountroot | |
+| [ + ] | urandom | need  to get random numbers |
+| [ - ] | x11-common | |
 
 As we can see not all unused daemons, like *bluetooth* or *cron* are disabled. 
 
