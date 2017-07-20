@@ -1,0 +1,9 @@
+set title "Nanosleep delays on Linux 3.6 Kernels"
+set terminal postscript
+set xlabel "Period to sleep [microseconds]"
+set ylabel "Measured delay [microseconds]"
+set output 'idle2.eps'
+set grid
+set autoscale
+set style data lines
+plot 'idle2' using ($1):($2) title "idle2 no RT" lw 6
