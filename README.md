@@ -8,8 +8,8 @@ Picture of the final robot:
 <img src="http://i.imgur.com/o6h1Qxb.jpg" height="600" width="500">
 
 ## Software
-Control/Dataflow of the software: [(larger)](https://github.com/GoneUp/resy-ss17-grp4/raw/master/v3/media/Resy%20Diagram.png)
-<img src="https://github.com/GoneUp/resy-ss17-grp4/raw/master/v3/media/Resy%20Diagram.png">
+Control/Dataflow of the software: [(larger)](https://github.com/inf2381/Realzeitsysteme_SS17/raw/master/Code/media/Resy%20Diagram.png)
+<img src="https://github.com/inf2381/Realzeitsysteme_SS17/raw/master/Code/media/Resy%20Diagram.png">
 
 ### General
 The software itself is divided into several logical modules. Mainly we have the "input" side, the processing side and the executing side. To connect the input part with the logic part we have chosen a simple system based on shared data structures. The data is of course protected with a rw-lock to prevent multi-threaded race-conditions. Furthermore, the structure includes an event timestamp to prevent reading of outdated data. 
@@ -22,15 +22,15 @@ The required kill-switch functionality was implemented over a thread that is con
 We have chosen C as the main programming language of this project due to our confidence in C and our lack of knowledge in writing C++ or Rust. Also we could use and extend our good old [**helper.c**](https://github.com/GoneUp/resy-ss17-grp4/blob/master/v3/helper.h) utility that we wrote during BSYS course.
 
 ### Sensor-specific
-[**Ultrasonic**](https://github.com/GoneUp/resy-ss17-grp4/blob/master/v3/ultrasonic.c) 
+[**Ultrasonic**](https://github.com/inf2381/Realzeitsysteme_SS17/blob/master/Code/ultrasonic.c) 
 
 The ultrasonic sensor was the most problematic in the system. It had two major shortcomings: the small detection angle and the strange firmware. We read in some forums that there are manufacturing faults that cause occasional breakdowns of the sensor. This leads to problems because sometimes, the sensor doesn't return anything and sometimes, it detects always an obstacle. The former could be solved by introducing timestamps to the measurements. We heard from other groups that another soultion would be to use the Linux `poll` function instead of actively polling. 
 
-[**RFID**](https://github.com/GoneUp/resy-ss17-grp4/blob/master/v3/rfid.c) 
+[**RFID**](https://github.com/inf2381/Realzeitsysteme_SS17/blob/master/Code/rfid.c) 
 
 Due to his complicated binary protocol we had to use a external library that did the low-level work for us. The problem was to get this C++ libary into a C project. So our solution was to write a custom [bridging header](https://github.com/GoneUp/resy-ss17-grp4/blob/master/v3/rfid/bridging_header.cpp) and the usage of `g++` for compiling the library and the linking of the program. 
 
-[**Infrared**](https://github.com/GoneUp/resy-ss17-grp4/blob/master/v3/infrared.c) 
+[**Infrared**](https://github.com/inf2381/Realzeitsysteme_SS17/blob/master/Code/infrared.c) 
 
 Solid, simple sensors. Straight 10/10.
 
@@ -146,27 +146,27 @@ During this project, we spent a lot of time in configuring a new kernel from scr
 
 ## Diagrams
 On the y-axis is given the time in nanoseconds. Since we did not manage to configure our own kernel and the due date was coming, we decided to eliminate the peaks (values > 90%). Those peaks can be attributed to unintended interrupts from services we don't need. To measure the execution time, all other threads on the core weren't started. When time measuring is enabled, the threads write the measurements to a pre-allocated buffer. When everything is finished, the buffers are written to files.
-<img src="https://github.com/GoneUp/resy-ss17-grp4/raw/master/v3/media/log_engine.png"> 
+<img src="https://github.com/inf2381/Realzeitsysteme_SS17/raw/master/Code/media/log_engine.png"> 
 
 After ~2000 measurements, the robot left the labyrinth and went on to look for rfid tags. Within the labyrinth, we are using pwm to control the engines whereas the rfid search only sets the gpios once per loop. 
-<img src="https://github.com/GoneUp/resy-ss17-grp4/raw/master/v3/media/log_logic_only.png"> 
+<img src="https://github.com/inf2381/Realzeitsysteme_SS17/raw/master/Code/media/log_logic_only.png"> 
 
 The logic thread controls the engine thread based on the measured values from the sensing thread. The execution time is pretty constant. Lower execution times orginate from turns. While the robot turns, this thread skips the unnecessary calculations. 
-<img src="https://github.com/GoneUp/resy-ss17-grp4/raw/master/v3/media/log_ultrasonic_only.png"> 
+<img src="https://github.com/inf2381/Realzeitsysteme_SS17/raw/master/Code/media/log_ultrasonic_only.png"> 
 
 We don't know how the ultrasonic sensor works. The behavior will remain inexplicable to us. 
-<img src="https://github.com/GoneUp/resy-ss17-grp4/raw/master/v3/media/log_infrared_only.png">
-<img src="https://github.com/GoneUp/resy-ss17-grp4/raw/master/v3/media/log_killswitch.png"> 
+<img src="https://github.com/inf2381/Realzeitsysteme_SS17/raw/master/Code/media/log_infrared_only.png">
+<img src="https://github.com/inf2381/Realzeitsysteme_SS17/raw/master/Code/media/log_killswitch.png"> 
 
 Polling is a constant process. :) 
-<img src="https://github.com/GoneUp/resy-ss17-grp4/raw/master/v3/media/log_rfid_only.png"> 
+<img src="https://github.com/inf2381/Realzeitsysteme_SS17/raw/master/Code/media/log_rfid_only.png"> 
 
 Everytime, the robot detects a rfid tag, such a peak appears. Because it takes some time to leave from the tag, the library is optimized to skip calculations when the tag is known. 
 
 To measure the execution time when the system is stressed, we used the stress script from [CPU burn arm](https://github.com/ssvb/cpuburn-arm/blob/master/cpuburn-a53.S). 
 
 Since we did not manage to use the EDF-scheduler properly, the following plot shows that the exection time in a stressed system is much higher than without stress.
-<img src="https://github.com/GoneUp/resy-ss17-grp4/blob/master/v3/media/log_rfid_stress.png">
+<img src="https://github.com/inf2381/Realzeitsysteme_SS17/blob/master/Code/media/log_rfid_stress.png">
 
 
 
